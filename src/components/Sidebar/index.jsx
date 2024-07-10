@@ -1,13 +1,18 @@
 import { Link } from 'react-router-dom';
 
-import { Container } from './styles';
+import { Container, UserSection } from './styles';
 
 export function Sidebar(){
     return(
         <Container>
-            <h1>
-                Sidebar
-            </h1>
+            <nav>
+                <Link to={"/evento"}>Evento</Link>
+                <Link to={"/financeiro"}>Financeiro</Link>
+                <Link to={"/cadastro"}>Cadastro</Link>
+            </nav>
+            <UserSection>
+
+            </UserSection>
         </Container>
     )
     

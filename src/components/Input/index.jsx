@@ -2,7 +2,7 @@ import { useState } from "react";
 
 import { Container } from "./styles";
 
-export function Input({title, disabled, mandatory, dataType, data, ...rest}){
+export function Input({title, disabled, mandatory, dataType, data, status, ...rest}){
     const [value, setValue] = useState(data || "");
 
     const handleChange = (e) => {
@@ -27,6 +27,9 @@ export function Input({title, disabled, mandatory, dataType, data, ...rest}){
             inputValue = inputValue.replace(/(\d{3})(\d{3})/, "$1.$2");
         }
         }
+        if(dataType === "NUMBER") {
+            inputValue = inputValue.replace(/\D/g, "");
+        }
 
         setValue(inputValue);
     };
@@ -40,7 +43,8 @@ export function Input({title, disabled, mandatory, dataType, data, ...rest}){
                 <span>{title && mandatory ? '*' : '' }</span>
             </div>
             
-            <input 
+            <input
+            className={status ? 'status' : ''}
             type="text"
             value={value}
             disabled={disabled}

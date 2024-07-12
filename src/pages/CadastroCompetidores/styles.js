@@ -1,11 +1,15 @@
 import styled from "styled-components";
 
 export const Container = styled.div`
+    max-width: 1200px;
+    max-height: 650px;
     margin: 3rem 1rem 0;
     padding: 1rem;
 
     display: grid;
     grid-template-columns: 15rem auto 10rem;
+    grid-template-rows: auto;
+    
     gap: 1rem;
 
     border-radius: 8px;
@@ -50,6 +54,15 @@ export const Container = styled.div`
             gap: .5rem;
         }
     }
+
+    .main-form{
+        overflow-y: scroll;
+        max-height: 580px;
+    }
+
+    @media(min-width: 1200px){
+        margin: auto;
+   }
 `;
 
 export const Date = styled.div`

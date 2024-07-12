@@ -17,6 +17,8 @@ export const Container = styled.button`
     background-color: ${({ theme }) => theme.COLORS.THEME_900};
 
     &.danger {
+        padding: .6rem 1rem;
+
         border: 2px dashed  ${({ theme }) => theme.COLORS.RED};
 
         color: ${({ theme }) => theme.COLORS.RED};

@@ -5,12 +5,14 @@ import avatarPlaceholder from "../../assets/user.svg";
 import { Input } from "../../components/Input";
 import { Button } from "../../components/Button";
 import { Section } from "../../components/Section";
+import { Select } from "../../components/Select";
 
 import { Container, Date } from "./styles";
 
 export function CadastroCompetidor() {
     return (
         <Container>
+            
             <div className="profile">
                 <div>
                     <img src={avatarPlaceholder} alt="" />
@@ -26,7 +28,7 @@ export function CadastroCompetidor() {
                 <Button className={"danger"}>Desativar</Button>
             </div>
 
-            <div>
+            <div className="main-form">
                 <h1>Cadastro Competidor</h1>
 
                 <Section title={"Dados competidor"} />
@@ -37,12 +39,16 @@ export function CadastroCompetidor() {
                         mandatory
                         placeholder="Digite o nome do competidor"
                     />
-                    <Input
-                        title={"Sexo"}
-                        className={"input-medium-width"}
+                    <Select
+                        label={"Sexo"}
+                        id={"sexo"}
+                        name={"sexo"}
                         mandatory
-                        placeholder="Selecione"
-                    />
+                        className={"larger-width"}
+                    >
+                        <option value="Masculino">Masculino</option>
+                        <option value="feminino">Feminino</option>
+                    </Select>
                 </div>
                 <div className="flex">
                     <Input
@@ -52,12 +58,22 @@ export function CadastroCompetidor() {
                         mandatory
                         placeholder="_ _ _ . _ _ _ . _ _ _ . _ _"
                     />
-                    <Input
-                        title={"Categoria"}
-                        data="Juvenil"
-                        className={"input-medium-width"}
+                    <Select
+                        label={"Categoria"}
+                        id={"categoria"}
+                        name={"categoria"}
                         mandatory
-                    />
+                        className={"medium-width"}
+                    >
+                        <option value="kids">Kids</option>
+                        <option value="mirim">Mirim</option>
+                        <option value="juvenil">Juvenil</option>
+                        <option value="iniciante">Iniciante</option>
+                        <option value="feminino">Feminino</option>
+                        <option value="adulto">Adulto</option>
+                        <option value="master">Master</option>
+                        <option value="aberta">Aberta</option>
+                    </Select>
 
                     <Input
                         title={"Data categoria"}
@@ -95,6 +111,7 @@ export function CadastroCompetidor() {
                 </div>
 
                 <Section title={"Contato"} />
+
                 <div className="flex">
                     <Input
                         title={"Telefone"}
@@ -136,6 +153,25 @@ export function CadastroCompetidor() {
                         placeholder="Ex.: Brasil"
                     />
                 </div>
+
+                <Section title={"Dados bancários"} />
+
+                <div className="flex">
+                    <Input
+                        title={"Chave pix"}
+                        placeholder={"Ex.: (99)99999-9999"}
+                    />
+                    <Input
+                        title={"Banco"}
+                    />
+                    <Input
+                        title={"Agência"}
+                    />
+                    <Input
+                        title={"Conta"}
+                    />
+                </div>
+
             </div>
 
             <div className="status" >
@@ -159,7 +195,6 @@ export function CadastroCompetidor() {
                 />
 
             </div>
-
 
         </Container>
     )

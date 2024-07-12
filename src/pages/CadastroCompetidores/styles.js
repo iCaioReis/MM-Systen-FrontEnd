@@ -37,6 +37,19 @@ export const Container = styled.div`
         display: flex;
         gap: 1rem;    
     }
+
+    .profile {
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        padding-bottom: 4.2rem;
+
+        > div {
+            display: flex;
+            flex-direction: column;
+            gap: .5rem;
+        }
+    }
 `;
 
 export const Date = styled.div`

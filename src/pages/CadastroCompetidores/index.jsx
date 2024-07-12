@@ -1,3 +1,5 @@
+import { GoPencil } from "react-icons/go";
+
 import avatarPlaceholder from "../../assets/user.svg";
 
 import { Input } from "../../components/Input";
@@ -9,9 +11,19 @@ import { Container, Date } from "./styles";
 export function CadastroCompetidor() {
     return (
         <Container>
-            <div>
-                <img src={avatarPlaceholder} alt="" />
-                <Button>Salvar</Button>
+            <div className="profile">
+                <div>
+                    <img src={avatarPlaceholder} alt="" />
+                    <Input
+                        title={"Apelido"}
+                        mandatory
+                        data={"Competidor"}
+                        placeholder={"Nome que aparecerá no telão"}
+                    />
+                    <Button><GoPencil />Editar</Button>
+                </div>
+
+                <Button className={"danger"}>Desativar</Button>
             </div>
 
             <div>
@@ -46,7 +58,7 @@ export function CadastroCompetidor() {
                         className={"input-medium-width"}
                         mandatory
                     />
-                    
+
                     <Input
                         title={"Data categoria"}
                         data="11/07/2024"
@@ -55,20 +67,20 @@ export function CadastroCompetidor() {
                     />
 
                     <Date className="date">
-                        <Input 
+                        <Input
                             title={"Nascimento"}
                             className={"input-smaller-width"}
                             dataType={"NUMBER"}
                             mandatory
                             placeholder="Dia"
                         />
-                        <Input 
+                        <Input
                             dataType={"NUMBER"}
                             className={"input-small-width"}
                             mandatory
                             placeholder="Mês"
                         />
-                        <Input 
+                        <Input
                             dataType={"NUMBER"}
                             mandatory
                             placeholder="Ano"
@@ -88,7 +100,7 @@ export function CadastroCompetidor() {
                         title={"Telefone"}
                         placeholder="Ex.: (99) 99999-9999"
                     />
-                    
+
                     <Input
                         title={"E-mail"}
                         placeholder="Ex.: exemplo@email.com"
@@ -124,7 +136,6 @@ export function CadastroCompetidor() {
                         placeholder="Ex.: Brasil"
                     />
                 </div>
-                
             </div>
 
             <div className="status" >

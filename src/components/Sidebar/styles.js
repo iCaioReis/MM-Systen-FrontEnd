@@ -24,7 +24,7 @@ export const Container = styled.div`
 export const UserSection = styled.div`
     width: 100%;
     height: 5rem;
-    padding: 0 1rem;
+    padding: 0 1.5rem;
 
     background-color: ${({ theme }) => theme.COLORS.THEME_900};
 
@@ -46,8 +46,13 @@ export const Profile = styled(Link)`
     color: ${({ theme }) => theme.COLORS.LIGHT_100};
 
     > img {
-        width: 4rem;
-        height: 4rem;
+        width: 3rem;
+        height: 3rem;
+
+        border-radius: 50%;
+        
+        object-fit: cover;
+        
     }
     > div {
         display: flex;

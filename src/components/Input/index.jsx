@@ -2,7 +2,7 @@ import { useState } from "react";
 
 import { Container } from "./styles";
 
-export function Input({title, disabled, mandatory, dataType, data, status, ...rest}){
+export function Input({title, disabled, mandatory, dataType, data, status, className, ...rest}){
     const [value, setValue] = useState(data || "");
 
     const handleChange = (e) => {
@@ -37,7 +37,7 @@ export function Input({title, disabled, mandatory, dataType, data, status, ...re
     console.log(value)
 
     return(
-        <Container>
+        <Container className={className}>
             <div>
                 <p>{title && title}</p>
                 <span>{title && mandatory ? '*' : '' }</span>

@@ -16,6 +16,15 @@ export const Container = styled.div`
         color: ${({ theme }) => theme.COLORS.THEME_700};
     }
 
+    img {
+        width: 15rem;
+        height: 15rem;
+
+        border-radius: 8px;
+
+        object-fit: cover;
+    }
+
     > .status {
         display: flex;
         flex-direction: column;

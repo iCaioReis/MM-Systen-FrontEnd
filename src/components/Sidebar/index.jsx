@@ -1,12 +1,13 @@
 import { Link } from 'react-router-dom';
 
-import avatarPlaceholder from "../../assets/avatar_placeholder.svg";
+import avatarPlaceholder from "../../assets/user.svg";
 
 import { Container, UserSection, Profile } from './styles';
 
 export function Sidebar(){
 
     const avatarUrl = avatarPlaceholder;
+
     return(
         <Container>
             <nav>

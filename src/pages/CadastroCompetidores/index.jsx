@@ -1,4 +1,4 @@
-import { FiAirplay } from "react-icons/fi";
+import avatarPlaceholder from "../../assets/user.svg";
 
 import { Input } from "../../components/Input";
 import { Button } from "../../components/Button";
@@ -7,13 +7,10 @@ import { Section } from "../../components/Section";
 import { Container, Date } from "./styles";
 
 export function CadastroCompetidor() {
-    function imprimir() {
-        alert("Deu certo")
-    }
     return (
         <Container>
             <div>
-                <img src="" alt="" />
+                <img src={avatarPlaceholder} alt="" />
                 <Button>Salvar</Button>
             </div>
 
@@ -21,7 +18,6 @@ export function CadastroCompetidor() {
                 <h1>Cadastro Competidor</h1>
 
                 <Section title={"Dados competidor"} />
-
                 <div className="flex">
                     <Input
                         title={"Nome"}
@@ -31,35 +27,80 @@ export function CadastroCompetidor() {
                     />
                     <Input
                         title={"Sexo"}
-                        data={"Selecione"}
+                        className={"input-medium-width"}
                         mandatory
                         placeholder="Selecione"
                     />
                 </div>
-
                 <div className="flex">
                     <Input
                         title={"CPF"}
                         dataType={"CPF"}
+                        className={"input-larger-width"}
                         mandatory
                         placeholder="_ _ _ . _ _ _ . _ _ _ . _ _"
                     />
+                    <Input
+                        title={"Categoria"}
+                        data="Juvenil"
+                        className={"input-medium-width"}
+                        mandatory
+                    />
+                    
+                    <Input
+                        title={"Data categoria"}
+                        data="11/07/2024"
+                        className={"input-medium-width"}
+                        disabled
+                    />
 
                     <Date className="date">
-                        <Input title={"Nascimento"} dataType={"NUMBER"} mandatory placeholder="_ _ _" />
-                        <Input dataType={"NUMBER"} mandatory placeholder="_ _ _" />
-                        <Input dataType={"NUMBER"} mandatory placeholder="_ _ _" />
-                        <Input title={"Idade"} data={"18"} disabled />
+                        <Input 
+                            title={"Nascimento"}
+                            className={"input-smaller-width"}
+                            dataType={"NUMBER"}
+                            mandatory
+                            placeholder="Dia"
+                        />
+                        <Input 
+                            dataType={"NUMBER"}
+                            className={"input-small-width"}
+                            mandatory
+                            placeholder="Mês"
+                        />
+                        <Input 
+                            dataType={"NUMBER"}
+                            mandatory
+                            placeholder="Ano"
+                        />
+                        <Input
+                            title={"Idade"}
+                            className={"input-smaller-width"}
+                            data={"27"}
+                            disabled
+                        />
                     </Date>
                 </div>
 
                 <Section title={"Contato"} />
                 <div className="flex">
                     <Input
+                        title={"Telefone"}
+                        placeholder="Ex.: (99) 99999-9999"
+                    />
+                    
+                    <Input
+                        title={"E-mail"}
+                        placeholder="Ex.: exemplo@email.com"
+                    />
+                </div>
+                <div className="flex">
+                    <Input
                         title={"Endereço"}
                         placeholder="Ex. Rua, Avenida, Logradouro..."
                     />
                     <Input
+                        className={"input-small-width"}
                         title={"Número"}
                         placeholder={"Nº"}
                     />
@@ -70,20 +111,20 @@ export function CadastroCompetidor() {
                 </div>
                 <div className="flex">
                     <Input
-                        title={"Endereço"}
-                        placeholder="Ex. Rua, Avenida, Logradouro..."
+                        title={"Cidade"}
+                        placeholder="Ex. Vitória da Conquista"
                     />
                     <Input
-                        title={"Número"}
-                        placeholder={"Nº"}
+                        className={"input-small-width"}
+                        title={"UF"}
+                        placeholder={"Ex.: BA"}
                     />
                     <Input
-                        title={"Bairro"}
-                        placeholder="Ex.: Centro"
+                        title={"País"}
+                        placeholder="Ex.: Brasil"
                     />
                 </div>
-
-                <Section title={"Categoria"} />
+                
             </div>
 
             <div className="status" >

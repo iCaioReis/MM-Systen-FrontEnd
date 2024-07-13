@@ -7,17 +7,37 @@ export default createGlobalStyle`
     box-sizing: border-box;
   }
 
+  :root, body, input, button, textarea {
+    font-size: 16px;
+
+    @media(max-width: 1490px){
+      font-size: 14px;
+    }
+    @media(max-width: 1220px){
+      font-size: 12px;
+    }
+    @media(max-width: 1150px){
+      font-size: 10px;
+    }
+  }
+
   ::-webkit-scrollbar {
-    width: 6px;
+    
+    width: 12px;
+    border: 3px solid transparent;
   }
 
   ::-webkit-scrollbar-track {
+    width: 8px;
     margin-left: 6px;
+    
   }
 
   ::-webkit-scrollbar-thumb {
-    background-color: ${({ theme }) => theme.COLORS.THEME_700};
+    background-color: ${({ theme }) => theme.COLORS.LIGHT_400};
+    border: 4px solid ${({ theme }) => theme.COLORS.LIGHT_200};
     border-radius: 8px;
+    
   }
 
 
@@ -29,7 +49,6 @@ export default createGlobalStyle`
 
   body, input, button, textarea {
     font-family: 'Roboto', sans-serif;
-    font-size: 16px;
     outline: none;
   }
 

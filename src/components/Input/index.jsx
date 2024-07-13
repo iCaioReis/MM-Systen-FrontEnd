@@ -34,8 +34,6 @@ export function Input({title, disabled, mandatory, dataType, data, status, class
         setValue(inputValue);
     };
 
-    console.log(value)
-
     return(
         <Container className={className}>
             <div>

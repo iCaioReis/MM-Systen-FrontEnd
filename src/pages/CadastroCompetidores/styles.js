@@ -1,7 +1,7 @@
 import styled from "styled-components";
 
 export const Container = styled.div`
-    max-width: 1200px;
+    max-width: 1300px;
     max-height: 650px;
     margin: 3rem 1rem 0;
     padding: 1rem;
@@ -16,25 +16,6 @@ export const Container = styled.div`
 
     background-color: ${({ theme }) => theme.COLORS.LIGHT_200};
 
-    h1 {
-        color: ${({ theme }) => theme.COLORS.THEME_700};
-    }
-
-    img {
-        width: 15rem;
-        height: 15rem;
-
-        border-radius: 8px;
-
-        object-fit: cover;
-    }
-
-    > .status {
-        display: flex;
-        flex-direction: column;
-        gap: 1rem;
-    }
-
     .flex {
         margin-bottom: .5rem;
 
@@ -42,27 +23,46 @@ export const Container = styled.div`
         gap: 1rem;    
     }
 
-    .profile {
+    @media(min-width: 1650px){
+      margin: auto;
+    }
+`;
+
+export const MainForm = styled.div`
+    overflow-y: scroll;
+    max-height: 575px;
+
+    > h1 {
+        color: ${({ theme }) => theme.COLORS.THEME_700};
+    }
+`;
+
+export const Profile = styled.div`
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+        
+    > div {
         display: flex;
         flex-direction: column;
-        justify-content: space-between;
-        padding-bottom: 4.2rem;
+        gap: .5rem;
 
-        > div {
-            display: flex;
-            flex-direction: column;
-            gap: .5rem;
+
+        img {
+            width: 15rem;
+            height: 15rem;
+
+            border-radius: 8px;
+
+            object-fit: cover;
         }
     }
+`;
 
-    .main-form{
-        overflow-y: scroll;
-        max-height: 580px;
-    }
-
-    @media(min-width: 1200px){
-        margin: auto;
-   }
+export const Status = styled.div`
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
 `;
 
 export const Date = styled.div`

@@ -1,9 +1,10 @@
+import logoEsporte from "../../assets/logoEsporte.png"
 import { useState } from "react";
 
 import { Input } from "../../components/Input";
 import { Button } from "../../components/Button";
 
-import { Container, Form, Background } from "./styles";
+import { Container, Form } from "./styles";
 
 export function SignIn(){
     const [email, setEmail] = useState("");
@@ -15,24 +16,30 @@ export function SignIn(){
                 <h1>Faça Login</h1>
 
                 <Input
-                    placeholder="E-mail"
+                    placeholder="Digite o usuário"
+                    title={"Usuário"}
                     type="text"
                     onChange = {e => setEmail(e.target.value)}
                 />
 
                 <Input
-                    placeholder="Senha"
+                    placeholder="Digite a senha"
+                    title={"Senha"}
                     type="password"
                     onChange = {e => setPassword(e.target.value)}
                 />
 
-                <Button title={"Entrar"} >
+                <Button 
+                    title={"Entrar"}
+                >
                     Entrar
                 </Button>
 
+                <a href={"https://github.com/iCaioReis"} target= {"_blank"}>Developed by <strong>Caio Reis</strong></a>
+
             </Form>
 
-            <Background></Background>
+            <img  src={logoEsporte}/>
         </Container>
     );
 }

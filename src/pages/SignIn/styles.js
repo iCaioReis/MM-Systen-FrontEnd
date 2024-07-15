@@ -5,34 +5,37 @@ export const Container = styled.div`
     height: 100vh;
 
     display: flex;
-    align-items: stretch;
-`;
-
-export const Form = styled.form`
-    padding: 0 136px;
-
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
+    justify-content: space-around;
     align-items: center;
-    
-    text-align: center;
 
-    > h1 {
-        font-size: 48px;
-        color: ${({ theme }) => theme.COLORS.ORANGE};
-    }
-
-   
-    > p {
-        font-size: 14px;
-        color: ${({ theme }) => theme.COLORS.GRAY_100};
-    }
-`;
-
-export const Background = styled.div`
-    flex: 1;
     background: url(${backgroundImg}) no-repeat center center;
     background-size: cover;
 
+    div:nth-child(3){
+        margin-top: -20px;
+    }
+
+    > img {
+        width: 25rem;
+        height: 25rem;
+    }
+`;
+
+export const Form = styled.div`
+    height: min-content;
+
+    padding: 3.5rem;
+
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    align-items: center;
+
+    border-radius: 8px;
+
+    background-color: ${({ theme }) => theme.COLORS.LIGHT_200};
+
+    h1, a {
+        color: ${({ theme }) => theme.COLORS.THEME_700};
+    }
 `;

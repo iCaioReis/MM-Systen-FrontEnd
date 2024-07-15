@@ -1,20 +1,28 @@
 import { Container } from "./styles";
 
-export function Table({data, rows}){
-    const header = ["Nome", "Endereço"]
-    
+export function Table({ header, rows, widths, maxRows }) {
 
     return (
         <Container>
 
             <table>
-                {header.map((element) => {
-                    return (
-                    <th>
-                        {element}
-                    </th>
-                    )
-                })}
+                <thead>
+                    {Object.keys(header).map((field, index) => (
+                        <th key={index} style={{ width: widths[field] || 'auto' }}>
+                            {header[field]}
+                        </th>
+                    ))}
+                </thead>
+
+                <tbody>
+                    {rows.map((row, index) => (
+                        <tr key={index}>
+                            {Object.keys(header).map((field, subIndex) => (
+                                <td key={subIndex}>{row[field]}</td>
+                            ))}
+                        </tr>
+                    ))}
+                </tbody>
             </table>
         </Container>
     )

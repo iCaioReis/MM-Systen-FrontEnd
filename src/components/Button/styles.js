@@ -18,6 +18,12 @@ export const Container = styled.button`
     color: ${({ theme }) => theme.COLORS.LIGHT_100};
     background-color: ${({ theme }) => theme.COLORS.THEME_900};
 
+    &.noBackground {
+        background: none;
+
+        color: ${({ theme }) => theme.COLORS.THEME_900};
+    }
+
     &.danger {
         padding: .6rem 1rem;
 

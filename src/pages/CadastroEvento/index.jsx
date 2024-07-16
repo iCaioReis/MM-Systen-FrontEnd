@@ -65,6 +65,20 @@ export function CadastroEvento() {
         button: " "
     }
 
+    const headerTableRegister = {
+        number: "Nº",
+        name: "Competidor",
+        horse: "Cavalo",
+        button: " "
+    }
+
+    const columnsHeightTableRegister = {
+        number: "",
+        name: "400px",
+        horse: "400px",
+        button: " "
+    }
+
     const rows = [
         {
             id: 1,
@@ -227,6 +241,7 @@ export function CadastroEvento() {
 
                         </div>
 
+                        <Table header={headerTableRegister} rows={rows} widths={columnsHeightTableRegister}></Table>
                     </MainForm>
 
                     <Status>
@@ -268,8 +283,6 @@ export function CadastroEvento() {
                             disabled
                         />
                     </div>
-
-
 
                     <Table header={header} rows={rows} widths={larguras}></Table>
                 </Listing>

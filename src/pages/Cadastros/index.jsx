@@ -9,7 +9,7 @@ export function Cadastros(){
     return(
         <Container>
             <MenuButton title={"Competidores"} to={"/cadastros/competidores"} icon={<PiCowboyHatLight size={60}/>}/>
-            <MenuButton title={"Cavalos"} to={"/financeiro"} icon={<PiHorse size={60}/>}/>
+            <MenuButton title={"Cavalos"} to={"/cadastros/cavalo"} icon={<PiHorse size={60}/>}/>
             <MenuButton title={"Eventos"} to={"/cadastros/eventos"}  icon={<PiRankingLight size={60}/>}/>
             <MenuButton title={"Usuários"} to={"/cadastros"}  icon={<FiUser size={60}/>}/>
         </Container>

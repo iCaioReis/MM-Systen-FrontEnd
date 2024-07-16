@@ -29,11 +29,7 @@ export function SignIn(){
                     onChange = {e => setPassword(e.target.value)}
                 />
 
-                <Button 
-                    title={"Entrar"}
-                >
-                    Entrar
-                </Button>
+                <Button title={"Entrar"}>Entrar</Button>
 
                 <a href={"https://github.com/iCaioReis"} target= {"_blank"}>Developed by <strong>Caio Reis</strong></a>
 

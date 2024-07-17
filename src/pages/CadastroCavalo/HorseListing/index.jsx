@@ -53,13 +53,20 @@ export function HorseListing() {
     const navigate = useNavigate();
 
     function handleDetails(id) {
-        navigate(`/cadastros/cavalo/${id}`);
+        navigate(`/cadastro/cavalo/${id}`);
+        window.location.reload();
+    }
+
+    function handleAdd() {
+        navigate(`/cadastro/cavalo`);
+        window.location.reload();
     }
 
     return (
         <Listing>
+            <h1>Cadastro Cavalo</h1>
             <div className="flex">
-                <Button>Registrar competidor</Button>
+                <Button onClick={handleAdd}>Registrar cavalo</Button>
                 <Input
                     title={" "}
                     placeholder={"Pesquisar por nome"}
@@ -72,7 +79,6 @@ export function HorseListing() {
                 />
             </div>
             
-
             <Table 
                 header={header} 
                 widths={larguras}

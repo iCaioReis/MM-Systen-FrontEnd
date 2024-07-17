@@ -14,8 +14,9 @@ export function SupRoutes() {
             <Route path='/' element={< DefaultLayout />}>
                 <Route path='/' element={< Home />}/>
                 <Route path='/cadastro' element={< Cadastro />}/>
-                <Route path='/cadastro/cavalo' element={< CadastroCavalo />}/>
-                <Route path='/cadastro/competidor' element={< CadastroCompetidor />}/>
+                <Route path='/cadastro/cavalo/' element={< CadastroCavalo />}/>
+                <Route path='/cadastro/cavalo/:id' element={< CadastroCavalo />}/>
+                <Route path='/cadastro/competidor/:id' element={< CadastroCompetidor />}/>
               
             </Route>
         </Routes>

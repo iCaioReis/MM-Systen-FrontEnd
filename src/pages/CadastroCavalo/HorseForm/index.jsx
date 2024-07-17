@@ -10,7 +10,7 @@ import { Select } from "../../../components/Select";
 import { DateContainer, Form, MainForm, Profile, Status } from './styles';
 
 const initialData = {
-    id: "01",
+    id: "",
     state: "",
     cratedAt: "",
     surname: "",
@@ -23,19 +23,38 @@ const initialData = {
     march: ""
 };
 
-export function HorseForm({ horse, mode }) {
+export function HorseForm({ horse, mode = "add" }) {
     const [data, setData] = useState(initialData);
-    const [isEditing, setIsEditing] = useState(mode === 'edit');
+    const [isEditing, setIsEditing] = useState(mode === 'add');
+
+    const calculateAge = (date) => {
+        const today = new Date();
+        const born = new Date(date);
+    
+        let age = today.getFullYear() - born.getFullYear();
+        const month = today.getMonth() - born.getMonth();
+
+        if (month < 0 || (month === 0 && today.getDate() < born.getDate())) {
+            age--;
+        }
+        return(age)
+    }
 
     useEffect(() => {
-        if (horse && mode !== 'add') {
-            setData(horse);
+        if (horse && mode === 'show') {
+            setData({ ...horse, age: calculateAge(horse.born) });
         }
     }, [horse, mode]);
 
     const handleInputChange = (e) => {
         const { name, value } = e.target;
-        setData({ ...data, [name]: value });
+        let updatedData = { ...data, [name]: value };
+
+        if (name === 'born') {
+            updatedData.age = calculateAge(value);
+            console.log(updatedData.born)
+        }
+        setData(updatedData);
     };
 
     const handleSave = () => {
@@ -60,11 +79,13 @@ export function HorseForm({ horse, mode }) {
                         placeholder={"Nome que aparecerá no telão"}
                         disabled={!isEditing && mode !== 'add'}
                     />
-                    <Button type={"button"} onClick={handleSave}>
-                        Salvar
-                    </Button>
-                    {mode !== 'add' && (
-                        <Button type={"button"} onClick={() => setIsEditing(true)}>
+                    {isEditing && (
+                        <Button type={"button"} onClick={handleSave}>
+                            Salvar
+                        </Button>
+                    )}
+                    {mode !== 'add' && !isEditing && (
+                        <Button type={"button"} onClick={() =>  setIsEditing(true)}>
                             Editar
                         </Button>
                     )}

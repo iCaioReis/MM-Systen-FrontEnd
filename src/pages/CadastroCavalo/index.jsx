@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { useParams } from 'react-router-dom';
 
 import { HorseForm } from './HorseForm';
 import { HorseListing } from './HorseListing';
@@ -6,6 +7,8 @@ import { HorseListing } from './HorseListing';
 import { Container } from './styles';
 
 export function CadastroCavalo() {
+    const params = useParams();
+
     const [activePage, setActivePage] = useState('cadastro');
     const handlePage = (page) => {
         setActivePage(page); // Atualiza a página ativa com base no botão clicado
@@ -25,19 +28,19 @@ export function CadastroCavalo() {
         march: ""
     });
 
-    useEffect(() => {
-        const infoHorse = {
-        };
-        setData(infoHorse);
-    }, []);
-
-    const handleChange = (e, formattedValue) => {
-        const { name } = e.target;
-        setData((prevData) => ({
-            ...prevData,
-            [name]: formattedValue !== undefined ? formattedValue : e.target.value,
-        }));
+    const horseTest = {
+        id: "1",
+        state: "Ativo",
+        cratedAt: "16/05/2024",
+        surname: "Cavalo",
+        name: "Cavalo",
+        gender: "",
+        registration: "00112233",
+        born: "2020-07-18",
+        owner: "",
+        march: ""
     };
+
     const [age, setAge] = useState();
 
     const handleDateBorn = (e) => {
@@ -45,18 +48,7 @@ export function CadastroCavalo() {
         setAge(idade)
     }
 
-    const calcularIdade = (date) => {
-        const hoje = new Date();
-        const nascimento = new Date(date);
     
-        let idade = hoje.getFullYear() - nascimento.getFullYear();
-        const mes = hoje.getMonth() - nascimento.getMonth();
-
-        if (mes < 0 || (mes === 0 && hoje.getDate() < nascimento.getDate())) {
-            idade--;
-        }
-        return(idade)
-    }
 
     return (
         <Container>
@@ -65,7 +57,9 @@ export function CadastroCavalo() {
                 <button onClick={() => handlePage('listagem')} className={activePage === 'listagem' ? 'active' : ''}>Listagem</button>
             </nav>
 
-            {activePage === 'cadastro' && ( <HorseForm  mode="add"/> )}
+            {activePage === 'cadastro' && 
+                ( <HorseForm  mode={params.id && "show"} horse={horseTest}/> )
+            }
 
             {activePage === 'listagem' && ( <HorseListing/>)}
         </Container>

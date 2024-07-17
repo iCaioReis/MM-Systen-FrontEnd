@@ -9,9 +9,6 @@ export const Form = styled.div`
 `;
 
 export const MainForm = styled.div`
-    > h1 {
-        color: ${({ theme }) => theme.COLORS.THEME_700};
-    }
 `;
 
 export const Profile = styled.div`

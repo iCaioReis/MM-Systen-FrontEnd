@@ -1,12 +1,16 @@
 import styled from "styled-components";
 
 export const Container = styled.div`
+    h1 {
+        color: ${({ theme }) => theme.COLORS.THEME_700};
+    }
+    
     .flex {
         margin-bottom: .5rem;
 
         display: flex;
         justify-content: center;
-        align-items: center;
+        align-items: end;
         gap: 1rem;    
     }
     > div {

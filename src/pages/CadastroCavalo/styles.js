@@ -24,7 +24,7 @@ export const Container = styled.div`
         display: flex;
         gap: .2rem;
 
-        margin: 1rem 3rem 0;
+        margin: 2rem 3rem 0;
         
         > button {
             padding: .2rem .7rem;
@@ -43,66 +43,5 @@ export const Container = styled.div`
 
     @media(min-width: 1650px){
       margin: auto;
-    }
-`;
-
-export const Form = styled.div`
-    display: grid;
-    grid-template-columns: 15rem auto 10rem;
-    grid-template-rows: auto;
-    
-    gap: 1rem;
-`;
-
-export const MainForm = styled.div`
-    overflow-y: scroll;
-
-    > h1 {
-        color: ${({ theme }) => theme.COLORS.THEME_700};
-    }
-`;
-
-export const Profile = styled.div`
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-        
-    > div {
-        display: flex;
-        flex-direction: column;
-        gap: .5rem;
-
-
-        img {
-            width: 15rem;
-            height: 15rem;
-
-            border-radius: 8px;
-
-            object-fit: cover;
-        }
-    }
-`;
-
-export const Status = styled.div`
-    display: flex;
-    flex-direction: column;
-    gap: 1rem;
-`;
-
-export const Date = styled.div`
-    display: flex;
-    align-items: end;
-    gap: .5rem;
-
-    width: 450px;
-`;
-
-export const Listing = styled.div`
-    >.flex {
-        margin: 0 6rem;
-        align-items: end;
-
-        margin-bottom: 1rem;
     }
 `;

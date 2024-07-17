@@ -1,13 +1,9 @@
 import styled from "styled-components";
 
-export const Container = styled.div`
+export const Container = styled.table`
     width: 100%;
-
-    table, th, td {
-        border-collapse: collapse;
-        
-        margin: 0 auto;
-    }
+    border-collapse: collapse;
+    margin: 0 auto;
 
     thead {
         th:first-child {
@@ -38,10 +34,7 @@ export const Container = styled.div`
             border-left: none;
         }
     }
-
     .width-larger{
         width: 30px;
     }
-    
-    
 `;

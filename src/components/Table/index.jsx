@@ -1,30 +1,23 @@
 import { Container } from "./styles";
 
-export function Table({ header, rows, widths, maxRows }) {
+export function Table({ header, rows, widths, maxRows, ...rest }) {
 
     return (
-        <Container>
-
-            <table>
-                <thead>
+        <Container {...rest}>
+            <thead>
+                <tr>
                     {Object.keys(header).map((field, index) => (
                         <th key={index} style={{ width: widths[field] || 'auto' }}>
                             {header[field]}
                         </th>
                     ))}
-                </thead>
+                </tr>
+            </thead>
 
-                <tbody>
-                    {rows.map((row, index) => (
-                        <tr key={index}>
-                            {Object.keys(header).map((field, subIndex) => (
-                                <td key={subIndex}>{row[field]}</td>
-                            ))}
-                        </tr>
-                    ))}
-                </tbody>
-            </table>
-        </Container>
+            <tbody>
+                {rows}
+            </tbody>
+        </Container >
     )
 
 }

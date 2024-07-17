@@ -14,7 +14,7 @@ export function Sidebar(){
                 <Link to={"/"}>Home</Link>
                 <Link to={"/evento"}>Evento</Link>
                 <Link to={"/financeiro"}>Financeiro</Link>
-                <Link to={"/cadastros"}>Cadastro</Link>
+                <Link to={"/cadastro"}>Cadastro</Link>
             </nav>
             <UserSection>
                 <Profile>

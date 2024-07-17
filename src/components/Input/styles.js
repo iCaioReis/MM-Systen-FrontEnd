@@ -45,18 +45,17 @@ export const Container = styled.div`
 
         &.status {
             text-align: center;
-            font-weight: 900;
+            font-weight: 700;
             font-size: 1.2rem;
 
             padding: .6rem 1rem;
-        }
 
-        &:disabled {
             color: ${({ theme }) => theme.COLORS.THEME_700};
 
             background-color: ${({ theme }) => theme.COLORS.LIGHT_300};
 
             border: 2px dashed  ${({ theme }) => theme.COLORS.THEME_700};
         }
+
     }
 `;

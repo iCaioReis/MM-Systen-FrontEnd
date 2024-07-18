@@ -20,13 +20,13 @@ export const Container = styled.div`
     }
 
     &.input-smaller-width {
-        max-width: 3.5rem;
+        width: 3.5rem;
     }
     &.input-small-width {
-        max-width: 5rem;
+        width: 5rem;
     }
     &.input-medium-width {
-        max-width: 7.5rem;
+        width: 7.5rem;
     }
     &.input-larger-width {
         max-width: 11rem;

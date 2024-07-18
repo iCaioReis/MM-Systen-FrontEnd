@@ -11,7 +11,7 @@ export function Home(){
         <Container>
             <MenuButton title={"Evento"} to={"/evento"} icon={<PiRankingLight size={60}/>}/>
             <MenuButton title={"Financeiro"} to={"/financeiro"} icon={<MdOutlineAttachMoney size={60}/>}/>
-            <MenuButton title={"Cadastros"} to={"/cadastros"}  icon={<HiOutlinePencilSquare size={60}/>}/>
+            <MenuButton title={"Cadastros"} to={"/cadastro"}  icon={<HiOutlinePencilSquare size={60}/>}/>
         </Container>
     )
 }

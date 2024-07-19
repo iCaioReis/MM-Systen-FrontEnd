@@ -20,7 +20,7 @@ const initialData = {
 
     login: "",
     password: "",
-    privileges: "",
+    privilege: "",
 
     name: "",
     phone: "",
@@ -32,6 +32,8 @@ const initialData = {
     email: "",
 
     pix: "",
+    favored: "",
+    
     bank: "",
     agency: "",
     account: ""
@@ -132,8 +134,8 @@ export function UserForm({ user, mode = "add" }) {
 
                     <Select
                         label={"Privilégios"}
-                        name="privileges"
-                        value={data.privileges}
+                        name="privilege"
+                        value={data.privilege}
                         onChange={handleInputChange}
                         mandatory
                         className={"larger-width"}
@@ -220,41 +222,51 @@ export function UserForm({ user, mode = "add" }) {
                     />
                 </div>
 
-                <Section title={"Dados Bancários"}/>
+                <Section title={"Dados Bancários"} />
                 <div className="flex">
-                        <Input
-                            title={"Chave pix"}
-                            name="pix"
-                            value={data.pix}
-                            onChange={handleInputChange}
-                            placeholder={"Ex.: (99)99999-9999"}
-                            disabled={!isEditing && mode !== 'add'}
-                        />
-                        <Input
-                            title={"Banco"}
-                            name="bank"
-                            value={data.bank}
-                            onChange={handleInputChange}
-                            placeholder="Ex.: Banco do Brasil"
-                            disabled={!isEditing && mode !== 'add'}
-                        />
-                        <Input
-                            title={"Agência"}
-                            name="agency"
-                            value={data.agency}
-                            onChange={handleInputChange}
-                            placeholder="Ex.: 188-0"
-                            disabled={!isEditing && mode !== 'add'}
-                        />
-                        <Input
-                            title={"Conta"}
-                            name="account"
-                            value={data.account}
-                            onChange={handleInputChange}
-                            placeholder="Ex.: 12345-0"
-                            disabled={!isEditing && mode !== 'add'}
-                        />
-                    </div>
+                    <Input
+                        title={"Chave pix"}
+                        name="pix"
+                        value={data.pix}
+                        onChange={handleInputChange}
+                        placeholder={"Ex.: (99)99999-9999"}
+                        disabled={!isEditing && mode !== 'add'}
+                    />
+                    <Input
+                        title={"Favorecido"}
+                        name="favored"
+                        value={data.favored}
+                        onChange={handleInputChange}
+                        placeholder={"Ex.: João Silva"}
+                        disabled={!isEditing && mode !== 'add'}
+                    />
+                </div>
+                <div className="flex">
+                    <Input
+                        title={"Banco"}
+                        name="bank"
+                        value={data.bank}
+                        onChange={handleInputChange}
+                        placeholder="Ex.: Banco do Brasil"
+                        disabled={!isEditing && mode !== 'add'}
+                    />
+                    <Input
+                        title={"Agência"}
+                        name="agency"
+                        value={data.agency}
+                        onChange={handleInputChange}
+                        placeholder="Ex.: 188-0"
+                        disabled={!isEditing && mode !== 'add'}
+                    />
+                    <Input
+                        title={"Conta"}
+                        name="account"
+                        value={data.account}
+                        onChange={handleInputChange}
+                        placeholder="Ex.: 12345-0"
+                        disabled={!isEditing && mode !== 'add'}
+                    />
+                </div>
             </MainForm>
 
             <Status>

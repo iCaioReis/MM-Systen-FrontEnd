@@ -4,6 +4,7 @@ import { DefaultLayout } from '../layouts/DefaultLayout';
 
 import { Home } from '../pages/Home';
 import { Cadastro } from '../pages/Cadastro';
+import { NotFound } from '../pages/NotFound';
 import { CadastroCavalo } from '../pages/CadastroCavalo';
 import { CadastroUsuario } from '../pages/CadastroUsuario';
 import { CadastroCompetidor } from '../pages/CadastroCompetidores';
@@ -21,6 +22,8 @@ export function SupRoutes() {
                 <Route path='/cadastro/competidor/' element={< CadastroCompetidor />}/>
                 <Route path='/cadastro/competidor/:id' element={< CadastroCompetidor />}/>
             </Route>
+            
+            <Route path="*" exact={true} element={<NotFound />} />
         </Routes>
     )
 }

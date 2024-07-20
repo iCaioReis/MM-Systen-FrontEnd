@@ -1,6 +1,8 @@
 import { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 
+import { api } from '../../services/api.js';
+
 import { UserForm } from './UserForm';
 import { UserListing } from './UserListing';
 
@@ -13,42 +15,25 @@ export function CadastroUsuario() {
     const handlePage = (page) => {
         setActivePage(page); // Atualiza a página ativa com base no botão clicado
     };
-    
-    const [data, setData] = useState({
-        id: "",
-        state: "",
-        cratedAt: "",
-        surname: "",
-        name: "",
-        gender: "",
-        registration: "",
-        born: "",
-        age: {},
-        owner: "",
-        march: ""
-    });
 
-    const horseTest = {
-        id: "1",
-        state: "Ativo",
-        cratedAt: "16/05/2024",
-        surname: "Cavalo",
-        name: "Cavalo",
-        gender: "",
-        registration: "00112233",
-        born: "2020-07-18",
-        owner: "",
-        march: ""
-    };
+    const [user, setUser] = useState();
+    const [users, setUsers] = useState({});
 
-    const [age, setAge] = useState();
+    useEffect(() => {
+        async function fethUsers() {
+            const res = await api.get(`/users`);
+            setUsers(res.data.Users);
+        }
+        fethUsers();
 
-    const handleDateBorn = (e) => {
-        const idade = calcularIdade(e.target.value);
-        setAge(idade)
-    }
-
-    
+        if(params.id){
+            async function fethUser() {
+                const res = await api.get(`/users/${params.id}`);
+                setUser(res.data.User);
+            }
+            fethUser();
+        }
+    }, []);
 
     return (
         <Container>
@@ -57,11 +42,11 @@ export function CadastroUsuario() {
                 <button onClick={() => handlePage('listagem')} className={activePage === 'listagem' ? 'active' : ''}>Listagem</button>
             </nav>
 
-            {activePage === 'cadastro' && 
-                ( <UserForm  mode={params.id && "show"} horse={horseTest}/> )
+            {activePage === 'cadastro' &&
+                (<UserForm mode={params.id && "show"} user={user} />)
             }
 
-            {activePage === 'listagem' && ( <UserListing/>)}
+            {activePage === 'listagem' && (<UserListing users = {users}/>)}
         </Container>
     );
 }

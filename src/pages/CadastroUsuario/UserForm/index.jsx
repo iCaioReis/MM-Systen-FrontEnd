@@ -1,8 +1,11 @@
 import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 import { FiCamera } from 'react-icons/fi';
 
 import avatarPlaceholder from "../../../assets/user.svg";
+
+import { api } from '../../../services/api.js';
 
 import { Input } from "../../../components/Input";
 import { Button } from "../../../components/Button";
@@ -13,18 +16,18 @@ import { DateContainer, Form, MainForm, Picture, Profile, Status } from './style
 
 const initialData = {
     id: "",
-    state: "",
-    cratedAt: "",
+    state: "active",
+    created_at: "",
 
     picture: "",
 
     login: "",
     password: "",
-    privilege: "",
+    privilege: "common",
 
     name: "",
     phone: "",
-    gender: "",
+    gender: "male",
 
     CPF: "",
     born: "",
@@ -42,6 +45,7 @@ const initialData = {
 export function UserForm({ user, mode = "add" }) {
     const [data, setData] = useState(initialData);
     const [isEditing, setIsEditing] = useState(mode === 'add');
+    const navigate = useNavigate();
 
     const calculateAge = (date) => {
         const today = new Date();
@@ -58,7 +62,7 @@ export function UserForm({ user, mode = "add" }) {
 
     useEffect(() => {
         if (user && mode === 'show') {
-            setData({ ...user, age: calculateAge(user.born) });
+            setData({ ...initialData , ...user, age: calculateAge(user.born) });
         }
     }, [user, mode]);
 
@@ -68,18 +72,41 @@ export function UserForm({ user, mode = "add" }) {
 
         if (name === 'born') {
             updatedData.age = calculateAge(value);
-            console.log(updatedData.born)
         }
-        console.log(updatedData)
         setData(updatedData);
     };
 
     const handleSave = () => {
+        
         if (mode === 'add') {
-            // Lógica para adicionar novo usuário
+            async function addUser() {
+                try {
+                    const res = await api.post(`/users`, data);
+                    const { id } = res.data
+                    alert("Usuário criado com sucesso!")
+                    navigate(`/cadastro/usuario/${id.id}`);
+                    window.location.reload();
+                } catch (error) {
+                    const errorMessage = error.response?.data?.message || error.message;
+                    alert(errorMessage)
+                }
+            }
+            addUser();
+
         } else if (isEditing) {
-            // Lógica para editar usuário
+            
+            async function updateUser() {
+                try {
+                    const res = await api.put(`/users/${user.id}`, data);
+                    alert("Usuário atualizado com sucesso!")
+                } catch (error) {
+                    const errorMessage = error.response?.data?.message || error.message;
+                    alert(errorMessage)
+                }
+            }
+            updateUser();
         }
+            
     };
 
     return (
@@ -88,10 +115,13 @@ export function UserForm({ user, mode = "add" }) {
                 <div>
                     <Picture>
                         <img src={avatarPlaceholder} alt="" />
+                        {mode != "add" && isEditing && (
                         <label htmlFor="avatar">
                             <FiCamera /> Mudar foto
                             <input type="file" id="avatar" disabled={!isEditing && mode !== 'add'} />
                         </label>
+                        )}
+
                     </Picture>
 
                     {isEditing && (
@@ -278,13 +308,13 @@ export function UserForm({ user, mode = "add" }) {
                 />
                 <Input
                     title={"Situação do cadastro"}
-                    value={data.state}
+                    value={data.state == "active" ? "Ativo" : "Inativo"}
                     disabled
                     status
                 />
                 <Input
                     title={"Data Cadastro"}
-                    value={data.cratedAt}
+                    value={data.created_at}
                     disabled
                     status
                 />

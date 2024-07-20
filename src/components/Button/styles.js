@@ -4,7 +4,6 @@ export const Container = styled.button`
     width: 100%;
     height: 2.5rem;
 
-    
     padding: 0 1rem;
 
     border-style: none;
@@ -22,6 +21,10 @@ export const Container = styled.button`
         background: none;
 
         color: ${({ theme }) => theme.COLORS.THEME_900};
+    }
+
+    &.larger-width {
+        width: 20rem;
     }
 
     &.danger {

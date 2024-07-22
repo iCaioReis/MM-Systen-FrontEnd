@@ -20,11 +20,6 @@ export function CadastroUsuario() {
     const [users, setUsers] = useState({});
 
     useEffect(() => {
-        async function fethUsers() {
-            const res = await api.get(`/users`);
-            setUsers(res.data.Users);
-        }
-        fethUsers();
 
         if(params.id){
             async function fethUser() {
@@ -46,7 +41,7 @@ export function CadastroUsuario() {
                 (<UserForm mode={params.id && "show"} user={user} />)
             }
 
-            {activePage === 'listagem' && (<UserListing users = {users}/>)}
+            {activePage === 'listagem' && (<UserListing/>)}
         </Container>
     );
 }

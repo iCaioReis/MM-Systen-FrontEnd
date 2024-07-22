@@ -57,7 +57,22 @@ export function UserForm({ user, mode = "add" }) {
         if (month < 0 || (month === 0 && today.getDate() < born.getDate())) {
             age--;
         }
+
+        if(!age){
+            return ('')
+        }
+
         return (age)
+    }
+
+    function calculateDate(data) {
+        const originalString = data;
+        const [datePart] = originalString.split(' ');
+        const [year, month, day] = datePart.split('-');
+
+        const formattedDate = `${day}/${month}/${year}`;
+
+        return(formattedDate);
     }
 
     useEffect(() => {
@@ -106,8 +121,14 @@ export function UserForm({ user, mode = "add" }) {
             }
             updateUser();
         }
-            
+        window.location.reload();
     };
+
+    const handleState = () => {
+        const newState = data.state == "active" ? "inative" : "active";
+
+        setData({...data, state: newState});
+    }
 
     return (
         <Form>
@@ -135,7 +156,21 @@ export function UserForm({ user, mode = "add" }) {
                         </Button>
                     )}
                 </div>
-                <Button className={"danger"} >Desativar</Button>
+
+                {mode != 'add' && isEditing && data.state == 'active' && 
+                    <Button className={"danger"}
+                        onClick={handleState}
+                    >
+                        Desativar
+                    </Button>
+                }
+                {mode != 'add' && isEditing && data.state == 'inative' && 
+                    <Button
+                        onClick={handleState}
+                    >
+                        Ativar
+                    </Button>
+                }
             </Profile>
 
             <MainForm>
@@ -314,7 +349,7 @@ export function UserForm({ user, mode = "add" }) {
                 />
                 <Input
                     title={"Data Cadastro"}
-                    value={data.created_at}
+                    value={calculateDate(data.created_at)}
                     disabled
                     status
                 />

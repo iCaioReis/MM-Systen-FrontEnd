@@ -1,48 +1,69 @@
 import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
+
+import { FiCamera } from 'react-icons/fi';
 
 import avatarPlaceholder from "../../../assets/user.svg";
+
+import { api } from '../../../services/api.js';
 
 import { Input } from "../../../components/Input";
 import { Button } from "../../../components/Button";
 import { Section } from "../../../components/Section";
 import { Select } from "../../../components/Select";
 
-import { DateContainer, Form, MainForm, Profile, Status } from './styles';
+import { DateContainer, Form, MainForm, Picture, Profile, Status } from './styles';
 
 const initialData = {
     id: "",
-    state: "",
-    cratedAt: "",
+    state: "active",
+    created_at: "0000-00-00",
     surname: "",
     name: "",
-    gender: "",
-    registration: "",
+    gender: "castrated",
+    record: "",
     born: "",
     age: "",
     owner: "",
-    march: ""
+    march: "beat"
 };
 
 export function HorseForm({ horse, mode = "add" }) {
     const [data, setData] = useState(initialData);
     const [isEditing, setIsEditing] = useState(mode === 'add');
+    const navigate = useNavigate();
 
     const calculateAge = (date) => {
         const today = new Date();
         const born = new Date(date);
-    
+
         let age = today.getFullYear() - born.getFullYear();
         const month = today.getMonth() - born.getMonth();
 
         if (month < 0 || (month === 0 && today.getDate() < born.getDate())) {
             age--;
         }
-        return(age)
+
+        if (!age) {
+            return ('')
+        }
+
+        return (age)
+    }
+
+    function calculateDate(data) {
+        const originalString = data;
+        const [datePart] = originalString.split(' ');
+        const [year, month, day] = datePart.split('-');
+
+        const formattedDate = `${day}/${month}/${year}`;
+
+        return (formattedDate);
     }
 
     useEffect(() => {
         if (horse && mode === 'show') {
-            setData({ ...horse, age: calculateAge(horse.born) });
+            setData({ ...initialData, ...horse, age: calculateAge(horse.born) });
         }
     }, [horse, mode]);
 
@@ -52,24 +73,62 @@ export function HorseForm({ horse, mode = "add" }) {
 
         if (name === 'born') {
             updatedData.age = calculateAge(value);
-            console.log(updatedData.born)
         }
         setData(updatedData);
     };
 
     const handleSave = () => {
         if (mode === 'add') {
-            // Lógica para adicionar novo cavalo
+            async function addHorse() {
+                try {
+                    const res = await api.post(`/horses`, data);
+                    const { id } = res.data
+                    alert("Cavalo cadastrado com sucesso!")
+                    navigate(`/cadastro/cavalo/${id.id}`);
+                    window.location.reload();
+                } catch (error) {
+                    const errorMessage = error.response?.data?.message || error.message;
+                    alert(errorMessage)
+                }
+            }
+            addHorse();
+
         } else if (isEditing) {
-            // Lógica para editar cavalo
+            async function updateHorse() {
+                try {
+                    const res = await api.put(`/horses/${horse.id}`, data);
+                    alert("Cavalo atualizado com sucesso!")
+                    window.location.reload();
+                } catch (error) {
+                    const errorMessage = error.response?.data?.message || error.message;
+                    alert(errorMessage)
+                }
+            }
+            updateHorse();
         }
+        
     };
+
+    const handleState = () => {
+        const newState = data.state == "active" ? "inative" : "active";
+
+        setData({ ...data, state: newState });
+    }
 
     return (
         <Form>
             <Profile>
                 <div>
-                    <img src={avatarPlaceholder} alt="" />
+                    <Picture>
+                        <img src={avatarPlaceholder} alt="" />
+                        {mode != "add" && isEditing && (
+                            <label htmlFor="avatar">
+                                <FiCamera /> Mudar foto
+                                <input type="file" id="avatar" disabled={!isEditing && mode !== 'add'} />
+                            </label>
+                        )}
+                    </Picture>
+
                     <Input
                         title={"Apelido"}
                         mandatory
@@ -85,12 +144,25 @@ export function HorseForm({ horse, mode = "add" }) {
                         </Button>
                     )}
                     {mode !== 'add' && !isEditing && (
-                        <Button type={"button"} onClick={() =>  setIsEditing(true)}>
+                        <Button type={"button"} onClick={() => setIsEditing(true)}>
                             Editar
                         </Button>
                     )}
                 </div>
-                <Button className={"danger"}>Desativar</Button>
+                {mode != 'add' && isEditing && data.state == 'active' &&
+                    <Button className={"danger"}
+                        onClick={handleState}
+                    >
+                        Desativar
+                    </Button>
+                }
+                {mode != 'add' && isEditing && data.state == 'inative' &&
+                    <Button
+                        onClick={handleState}
+                    >
+                        Ativar
+                    </Button>
+                }
             </Profile>
 
             <MainForm>
@@ -116,16 +188,16 @@ export function HorseForm({ horse, mode = "add" }) {
                         className={"larger-width"}
                         disabled={!isEditing && mode !== 'add'}
                     >
-                        <option value="castrado">Castrado</option>
-                        <option value="egua">Égua</option>
-                        <option value="garanhao">Garanhão</option>
+                        <option value="castrated">Castrado</option>
+                        <option value="mare">Égua</option>
+                        <option value="stallion">Garanhão</option>
                     </Select>
                 </div>
                 <div className="flex">
                     <Input
                         title={"Registro"}
-                        name="registration"
-                        value={data.registration}
+                        name="record"
+                        value={data.record}
                         onChange={handleInputChange}
                         placeholder="Digite aqui o número de registro"
                         disabled={!isEditing && mode !== 'add'}
@@ -146,8 +218,7 @@ export function HorseForm({ horse, mode = "add" }) {
                             name="age"
                             value={data.age}
                             onChange={handleInputChange}
-                            className={"input-smaller-width"}
-                            
+                            className={"input-small-width"}
                             disabled
                         />
                     </DateContainer>
@@ -167,12 +238,12 @@ export function HorseForm({ horse, mode = "add" }) {
                         name="march"
                         value={data.march}
                         onChange={handleInputChange}
+                        className={"medium-width"}
                         mandatory
-                        className={"larger-width"}
                         disabled={!isEditing && mode !== 'add'}
                     >
-                        <option value="batida">Batida</option>
-                        <option value="picada">Picada</option>
+                        <option value="beat">Batida</option>
+                        <option value="shredded">Picada</option>
                     </Select>
                 </div>
             </MainForm>
@@ -186,13 +257,13 @@ export function HorseForm({ horse, mode = "add" }) {
                 />
                 <Input
                     title={"Situação do cadastro"}
-                    value={data.state}
+                    value={data.state == "active" ? "Ativo" : "Inativo"}
                     disabled
                     status
                 />
                 <Input
                     title={"Data Cadastro"}
-                    value={data.cratedAt}
+                    value={calculateDate(data.created_at)}
                     disabled
                     status
                 />

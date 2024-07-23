@@ -109,11 +109,11 @@ export function UserForm({ user, mode = "add" }) {
             addUser();
 
         } else if (isEditing) {
-            
             async function updateUser() {
                 try {
                     const res = await api.put(`/users/${user.id}`, data);
                     alert("Usuário atualizado com sucesso!")
+                    window.location.reload();
                 } catch (error) {
                     const errorMessage = error.response?.data?.message || error.message;
                     alert(errorMessage)
@@ -121,7 +121,6 @@ export function UserForm({ user, mode = "add" }) {
             }
             updateUser();
         }
-        window.location.reload();
     };
 
     const handleState = () => {

@@ -15,7 +15,7 @@ export const Container = styled.div`
     }
     > div {
         max-width: 1300px;
-        height: 575px;
+        height: 590px;
         margin: 0 1rem;
         padding: 1rem;
 

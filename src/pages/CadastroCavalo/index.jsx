@@ -1,6 +1,8 @@
 import { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 
+import { api } from '../../services/api.js';
+
 import { HorseForm } from './HorseForm';
 import { HorseListing } from './HorseListing';
 
@@ -14,40 +16,17 @@ export function CadastroCavalo() {
         setActivePage(page); // Atualiza a página ativa com base no botão clicado
     };
     
-    const [data, setData] = useState({
-        id: "",
-        state: "",
-        cratedAt: "",
-        surname: "",
-        name: "",
-        gender: "",
-        registration: "",
-        born: "",
-        age: {},
-        owner: "",
-        march: ""
-    });
+    const [horse, setHorse] = useState();
 
-    const horseTest = {
-        id: "1",
-        state: "Ativo",
-        cratedAt: "16/05/2024",
-        surname: "Cavalo",
-        name: "Cavalo",
-        gender: "",
-        registration: "00112233",
-        born: "2020-07-18",
-        owner: "",
-        march: ""
-    };
-
-    const [age, setAge] = useState();
-
-    const handleDateBorn = (e) => {
-        const idade = calcularIdade(e.target.value);
-        setAge(idade)
-    }
-
+    useEffect(() => {
+        if(params.id){
+            async function fethHorse() {
+                const res = await api.get(`/horses/${params.id}`);
+                setHorse(res.data.horse);
+            }
+            fethHorse();
+        }
+    }, []);
     
 
     return (
@@ -58,7 +37,7 @@ export function CadastroCavalo() {
             </nav>
 
             {activePage === 'cadastro' && 
-                ( <HorseForm  mode={params.id && "show"} horse={horseTest}/> )
+                ( <HorseForm  mode={params.id && "show"} horse={horse}/> )
             }
 
             {activePage === 'listagem' && ( <HorseListing/>)}

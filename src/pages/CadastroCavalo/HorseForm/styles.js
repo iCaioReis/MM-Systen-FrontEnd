@@ -33,6 +33,29 @@ export const Profile = styled.div`
     }
 `;
 
+export const Picture = styled.div`
+    position: relative;
+
+    label {
+    height: 2.5rem;
+    width: 15rem;
+    position: absolute;
+    bottom: .3rem;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 1rem;
+
+    border-radius: 0 0 8px 8px;
+
+    background-color: ${({ theme }) => theme.COLORS.THEME_700};
+    input {
+        display: none;
+    }
+}
+`;
+
 export const Status = styled.div`
     display: flex;
     flex-direction: column;

@@ -7,8 +7,8 @@ export const Listing = styled.div`
     }
 
     .listing-table-container {
-        height: 450px;
+        border-radius: 8px;
+        max-height: 440px;
         overflow-y: auto;
     }
-    
 `;

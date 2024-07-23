@@ -12,15 +12,13 @@ export function CadastroUsuario() {
     const params = useParams();
 
     const [activePage, setActivePage] = useState('cadastro');
+    const [user, setUser] = useState();
+
     const handlePage = (page) => {
         setActivePage(page); // Atualiza a página ativa com base no botão clicado
     };
 
-    const [user, setUser] = useState();
-    const [users, setUsers] = useState({});
-
     useEffect(() => {
-
         if(params.id){
             async function fethUser() {
                 const res = await api.get(`/users/${params.id}`);
@@ -43,5 +41,5 @@ export function CadastroUsuario() {
 
             {activePage === 'listagem' && (<UserListing/>)}
         </Container>
-    );
+    ); 
 }

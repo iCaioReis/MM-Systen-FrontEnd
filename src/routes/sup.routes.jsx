@@ -5,9 +5,11 @@ import { DefaultLayout } from '../layouts/DefaultLayout';
 import { Home } from '../pages/Home';
 import { Cadastro } from '../pages/Cadastro';
 import { NotFound } from '../pages/NotFound';
+import { CadastroEvento } from '../pages/CadastroEvento';
 import { CadastroCavalo } from '../pages/CadastroCavalo';
 import { CadastroUsuario } from '../pages/CadastroUsuario';
 import { CadastroCompetidor } from '../pages/CadastroCompetidores';
+
 
 export function SupRoutes() {
     return (
@@ -21,6 +23,8 @@ export function SupRoutes() {
                 <Route path='/cadastro/usuario/:id' element={< CadastroUsuario />}/>
                 <Route path='/cadastro/competidor/' element={< CadastroCompetidor />}/>
                 <Route path='/cadastro/competidor/:id' element={< CadastroCompetidor />}/>
+                <Route path='/cadastro/evento/' element={< CadastroEvento />}/>
+                <Route path='/cadastro/evento/:id' element={< CadastroEvento />}/>
             </Route>
             
             <Route path="*" exact={true} element={<NotFound />} />

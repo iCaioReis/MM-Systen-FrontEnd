@@ -36,21 +36,32 @@ export function HorseForm({ horse, mode = "add" }) {
     const calculateAge = (date) => {
         const today = new Date();
         const born = new Date(date);
-
-        let age = today.getFullYear() - born.getFullYear();
-        const month = today.getMonth() - born.getMonth();
-
-        if (month < 0 || (month === 0 && today.getDate() < born.getDate())) {
-            age--;
+    
+        let years = today.getFullYear() - born.getFullYear();
+        let months = today.getMonth() - born.getMonth();
+        let days = today.getDate() - born.getDate();
+    
+        if (months < 0) {
+            years--;
+            months += 12;
         }
-
-        if (!age) {
-            return ('')
+    
+        if (days < 0) {
+            months--;
+            const lastDayOfPreviousMonth = new Date(today.getFullYear(), today.getMonth(), 0).getDate();
+            days += lastDayOfPreviousMonth;
         }
-
-        return (age)
+    
+        const totalMonths = (years * 12) + months;
+        const totalDays = days;
+    
+        if (totalMonths === 0 && totalDays === 0) {
+            return '';
+        }
+    
+        return `${totalMonths} meses e ${totalDays} dias`;
     }
-
+    
     function calculateDate(data) {
         const originalString = data;
         const [datePart] = originalString.split(' ');
@@ -210,6 +221,7 @@ export function HorseForm({ horse, mode = "add" }) {
                             value={data.born}
                             onChange={handleInputChange}
                             type={"date"}
+                            className={"input-large-width"}
                             mandatory
                             disabled={!isEditing && mode !== 'add'}
                         />
@@ -218,7 +230,7 @@ export function HorseForm({ horse, mode = "add" }) {
                             name="age"
                             value={data.age}
                             onChange={handleInputChange}
-                            className={"input-small-width"}
+                           
                             disabled
                         />
                     </DateContainer>

@@ -2,13 +2,10 @@ import styled from "styled-components";
 
 export const Form = styled.div`
     display: grid;
-    grid-template-columns: 15rem auto 10rem;
+    grid-template-columns: 12rem auto 12rem;
     grid-template-rows: auto;
     
     gap: 1rem;
-`;
-
-export const MainForm = styled.div`
 `;
 
 export const Profile = styled.div`
@@ -23,8 +20,8 @@ export const Profile = styled.div`
 
 
         img {
-            width: 15rem;
-            height: 15rem;
+            width: 12rem;
+            height: 12rem;
 
             border-radius: 8px;
 
@@ -38,7 +35,7 @@ export const Picture = styled.div`
 
     label {
     height: 2.5rem;
-    width: 15rem;
+    width: 12rem;
     position: absolute;
     bottom: .3rem;
 
@@ -56,6 +53,9 @@ export const Picture = styled.div`
 }
 `;
 
+export const MainForm = styled.div`
+`;
+
 export const Status = styled.div`
     display: flex;
     flex-direction: column;
@@ -66,6 +66,19 @@ export const DateContainer = styled.div`
     display: flex;
     align-items: end;
     gap: .5rem;
+    > svg {
+        color: ${({ theme }) => theme.COLORS.THEME_700};
+        margin: .5rem;
+    }
+`;
 
-    width: 620px;
+export const CategoriesContainer = styled.div`
+    max-height: 22rem;
+    overflow-y: auto;
+
+    display: flex;
+    flex-direction: column;
+    gap: .2rem;
+
+    border-radius: 8px;
 `;

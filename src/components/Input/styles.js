@@ -28,6 +28,9 @@ export const Container = styled.div`
     &.input-medium-width {
         width: 7.5rem;
     }
+    &.input-large-width {
+        max-width: 9rem;
+    }
     &.input-larger-width {
         max-width: 11rem;
     }

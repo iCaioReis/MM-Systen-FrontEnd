@@ -13,7 +13,7 @@ export function CadastroCavalo() {
 
     const [activePage, setActivePage] = useState('cadastro');
     const handlePage = (page) => {
-        setActivePage(page); // Atualiza a página ativa com base no botão clicado
+        setActivePage(page);
     };
     
     const [horse, setHorse] = useState();

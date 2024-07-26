@@ -26,6 +26,9 @@ export const Container = styled.button`
     &.larger-width {
         width: 20rem;
     }
+    &.auto-width {
+        width: auto;
+    }
 
     &.danger {
         padding: .6rem 1rem;

@@ -5,6 +5,8 @@ import { useNavigate } from 'react-router-dom';
 
 import { api } from '../../../services/api.js';
 
+import { FormatDate } from "../../../utils/formatDatas.js";
+
 import { Listing } from './styles.js';
 
 import { Input } from "../../../components/Input";
@@ -13,7 +15,7 @@ import { Table } from '../../../components/Table';
 
 const larguras = {
     id: "",
-    name: "400px",
+    name: "500px",
     start_date: "",
     end_date: "",
     state: "200px",
@@ -42,16 +44,6 @@ export function EventListing() {
     function handleAdd() {
         navigate(`/cadastro/evento`);
         window.location.reload();
-    }
-
-    function calculateDate(data) {
-        const originalString = data;
-        const [datePart] = originalString.split(' ');
-        const [year, month, day] = datePart.split('-');
-
-        const formattedDate = `${day}/${month}/${year}`;
-
-        return(formattedDate);
     }
 
     useEffect(() => {
@@ -96,37 +88,20 @@ export function EventListing() {
                         return(
                         <tr key={index}>
                             {Object.keys(header).map((field, subIndex) => {
-                                if (field == "gender") {
+                                if (field == "start_date") {
                                     return (
                                         <td key={subIndex}>
-                                            {row.gender == "castrated" ? "Castrado" : row.gender == "stallion" ? "Garanhão" : "Égua"}
+                                            {FormatDate(row.start_date)}
                                         </td>
                                     )
                                 }
-                                if (field == "march") {
+                                if (field == "end_date") {
                                     return (
                                         <td key={subIndex}>
-                                            {row.march == "beat" ? "Batida" : "Picada"}
+                                            {FormatDate(row.end_date)}
                                         </td>
                                     )
                                 }
-
-                                if (field == "born") {
-                                    return (
-                                        <td key={subIndex}>
-                                            {calculateAge(row.born)}
-                                        </td>
-                                    )
-                                }
-
-                                if (field == "created_at") {
-                                    return (
-                                        <td key={subIndex}>
-                                            {calculateDate(row.created_at)}
-                                        </td>
-                                    )
-                                }
-
                                 if (field == "state") {
                                     return (
                                         <td key={subIndex}>

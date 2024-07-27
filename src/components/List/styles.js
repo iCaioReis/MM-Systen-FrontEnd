@@ -2,7 +2,6 @@ import styled from "styled-components";
 
 export const Container = styled.div`
     width: 100%;
-    color: ${({ theme }) => theme.COLORS.THEME_700};
     position: relative;
   
   .category-list {
@@ -45,6 +44,10 @@ export const Container = styled.div`
   .modal {
     width: 75rem;
     height: 40rem;
+  }
+
+  h1, h3, li {
+    color: ${({ theme }) => theme.COLORS.THEME_700};
   }
 
   li:not(:first-child):hover {

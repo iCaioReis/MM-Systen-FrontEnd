@@ -22,7 +22,6 @@ export function CadastroEvento() {
         if(params.id){
             async function fethEvent() {
                 const res = await api.get(`/events/${params.id}`);
-                console.log(res.data)
                 setEvent(res.data);
             }
             fethEvent();

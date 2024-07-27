@@ -193,9 +193,11 @@ export function EventFormm({ event, mode = "add" }) {
                 <Section title={"Provas"} />
 
                 <CategoriesContainer>
-                    <List title={"Seis Balizas"} categories={categories}></List>
-                    <List title={"Três Tambores"} categories={categories}></List>
-                    <List title={"Maneabilidade"} categories={categories}></List>
+                    {data.proofs && data.proofs.map((proof, index) => {
+                        return(
+                            <List key={index} title={proof.name} categories={proof.categories}></List>
+                        )
+                    })}
                 </CategoriesContainer>
 
             </MainForm>

@@ -18,8 +18,28 @@ export const ModalOverlay = styled.div`
     border-radius: 8px;
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
     position: relative;
+}`;
+
+export const Title = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 5rem;
+
+  justify-content: center;
+
+  > div {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+
+    margin: 1rem 0 3rem;
+
+    h3 {
+      color: ${({ theme }) => theme.COLORS.THEME_600};
+      font-weight: 400;
+    }
   }
-  `;
+`;
   
   
   

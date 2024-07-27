@@ -5,6 +5,8 @@ import { useNavigate } from 'react-router-dom';
 
 import { api } from '../../../services/api.js';
 
+import { FormatCategory } from "../../../utils/formatDatas.js";
+
 import { Listing } from './styles';
 
 import { Input } from "../../../components/Input";
@@ -122,6 +124,13 @@ export function CompetitorListing() {
                                     return (
                                         <td key={subIndex}>
                                             {row.gender == "male" ? "Masculino" : "Feminino"}
+                                        </td>
+                                    )
+                                }
+                                if (field == "category") {
+                                    return (
+                                        <td key={subIndex}>
+                                            {FormatCategory(row.category)}
                                         </td>
                                     )
                                 }

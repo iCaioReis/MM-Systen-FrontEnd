@@ -22,22 +22,12 @@ export default createGlobalStyle`
   }
 
   ::-webkit-scrollbar {
-    
-    width: 12px;
-    border: 3px solid transparent;
-  }
-
-  ::-webkit-scrollbar-track {
-    width: 8px;
-    margin-left: 6px;
-    
+    width: 4px;
   }
 
   ::-webkit-scrollbar-thumb {
     background-color: ${({ theme }) => theme.COLORS.LIGHT_400};
-    border: 4px solid ${({ theme }) => theme.COLORS.LIGHT_200};
     border-radius: 8px;
-    
   }
 
 

@@ -13,11 +13,20 @@ export const ModalOverlay = styled.div`
     z-index: 1000;
 
     .modal {
-    background: ${({ theme }) => theme.COLORS.LIGHT_200};
     padding: 20px;
-    border-radius: 8px;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+
+    display: grid;
+    grid-template-columns: auto 12rem;
+    gap: .5rem;
+
     position: relative;
+
+    border-radius: 8px;
+
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    
+
+    background: ${({ theme }) => theme.COLORS.LIGHT_200};
 }`;
 
 export const Title = styled.div`
@@ -40,6 +49,23 @@ export const Title = styled.div`
     }
   }
 `;
+
+export const MainForm = styled.div`
+
+`;
+
+export const Status = styled.div`
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+
+    > div {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+`;
+
   
   
   

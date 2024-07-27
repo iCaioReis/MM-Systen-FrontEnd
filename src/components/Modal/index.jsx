@@ -2,18 +2,21 @@ import { useState, useEffect } from 'react';
 
 import { api } from '../../services/api';
 
-import { FormatCategory, FormatProof } from '../../utils/formatDatas';
+import { FormatCategory, FormatProof, FormatStatus } from '../../utils/formatDatas';
 
 import { Button } from '../Button';
 import { Input } from '../Input';
 import { Table } from '../Table';
+import { SearchDropdown } from '../SearchDropdown';
 
-import { ModalOverlay, Title } from './styles';
+import { ModalOverlay, Title, MainForm, Status } from './styles';
 
-export function Modal({ isOpen, onClose, content, category, proof }) {
+export function Modal({ isOpen, onClose, category, proof }) {
   if (!isOpen) return null;
 
   const [competitorsWithHorses, setCompetitorsWithHorses] = useState();
+  const [selectedCompetitorId, setSelectedCompetitorId] = useState(null);
+  const [selectedHorseId, setSelectedHorseId] = useState(null);
 
   const larguras = {
     competitor_order: "50px",
@@ -33,7 +36,7 @@ export function Modal({ isOpen, onClose, content, category, proof }) {
       <tr key={index}>
         {Object.keys(header).map((field, subIndex) => {
           if (field === 'competitor_order') {
-            return <td key={subIndex}>{index}</td>; 
+            return <td key={subIndex}>{index}</td>;
           }
           return (
             <td key={subIndex}>{row[field]}</td>
@@ -48,44 +51,89 @@ export function Modal({ isOpen, onClose, content, category, proof }) {
       const res = await api.get(`/categoryRegisters/${category.id}`);
 
       setCompetitorsWithHorses(res.data.competitorHorses);
-      console.log(res.data.competitorHorses)
     }
     fethCompetitors();
 
   }, []);
 
+  const handleSave = async () => {
+    try {
+        const response = await api.post('/categoryRegisters', 
+          {
+            "competitor_id": selectedCompetitorId, 
+            "horse_id": selectedHorseId,
+            "categorie_id": category.id
+          });
+          alert("Registro cadastrado com sucesso!")
+    } catch (error) {
+        const errorMessage = error.response?.data?.message || error.message;
+        alert(errorMessage)
+    }
+};
+
   return (
     <ModalOverlay>
       <div className="modal">
-        <Title>
-          <div>
-            <h3>Prova: </h3>
-            <h1>{FormatProof(proof)}</h1>
+
+        <MainForm>
+          <Title>
+            <div>
+              <h3>Prova: </h3>
+              <h1>{FormatProof(proof)}</h1>
+            </div>
+
+            <div>
+              <h3>Categoria:</h3>
+              <h1>{FormatCategory(category.name)}</h1>
+            </div>
+
+          </Title>
+
+          <Button
+            className="noBackground auto-width exit"
+            onClick={onClose}
+          >X</Button>
+
+          <div className="flex">
+            <SearchDropdown
+              table="competitors"
+              onItemSelected={(id) => setSelectedCompetitorId(id)}
+            />
+            <SearchDropdown
+              table="horses"
+              onItemSelected={(id) => setSelectedHorseId(id)}
+            />
+            <Button onClick={handleSave}>Salvar</Button>
           </div>
 
-          <div>
-            <h3>Categoria:</h3>
-            <h1>{FormatCategory(category.name)}</h1>
+          <Table
+            header={header}
+            widths={larguras}
+            rows={rows}
+          />
+        </MainForm>
+
+        <Status>
+          <div className="inputs">
+            <Input
+              title={"Número único"}
+              value={category.id}
+              disabled
+              status
+            />
+            <Input
+              title={"Status"}
+              value={FormatStatus(category.state)}
+              disabled
+              status
+            />
+
+            <Button>Encerrar inscrições</Button>
           </div>
 
-        </Title>
+          <Button className={"danger"}>Inativar</Button>
 
-        <Button
-          className="noBackground auto-width exit"
-          onClick={onClose}
-        >X</Button>
-
-        <div className="flex">
-          <Input title={"Competidor"} ></Input>
-          <Input title={"Cavalo"} ></Input>
-          <Button>Salvar</Button>
-        </div>
-
-        <Table
-          header={header}
-          widths={larguras}
-          rows={rows}
-        />
+        </Status>
       </div>
     </ModalOverlay>
   );

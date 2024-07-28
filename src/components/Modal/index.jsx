@@ -17,6 +17,8 @@ export function Modal({ isOpen, onClose, category, proof }) {
   const [competitorsWithHorses, setCompetitorsWithHorses] = useState();
   const [selectedCompetitorId, setSelectedCompetitorId] = useState(null);
   const [selectedHorseId, setSelectedHorseId] = useState(null);
+  const [refresh, setRefresh] = useState(false);
+  const [clearSelection, setClearSelection] = useState(false);
 
   const larguras = {
     competitor_order: "50px",
@@ -54,17 +56,23 @@ export function Modal({ isOpen, onClose, category, proof }) {
     }
     fethCompetitors();
 
-  }, []);
+  }, [refresh]);
 
   const handleSave = async () => {
     try {
-        const response = await api.post('/categoryRegisters', 
+        const res = await api.post('/categoryRegisters', 
           {
             "competitor_id": selectedCompetitorId, 
             "horse_id": selectedHorseId,
             "categorie_id": category.id
           });
-          alert("Registro cadastrado com sucesso!")
+          alert("Registro cadastrado com sucesso!");
+
+          setRefresh(prev => !prev)
+          setSelectedCompetitorId(null);
+          setSelectedHorseId(null);
+          setClearSelection(true);
+          setTimeout(() => setClearSelection(false), 0);
     } catch (error) {
         const errorMessage = error.response?.data?.message || error.message;
         alert(errorMessage)
@@ -98,10 +106,12 @@ export function Modal({ isOpen, onClose, category, proof }) {
             <SearchDropdown
               table="competitors"
               onItemSelected={(id) => setSelectedCompetitorId(id)}
+              clearSelection={clearSelection}
             />
             <SearchDropdown
               table="horses"
               onItemSelected={(id) => setSelectedHorseId(id)}
+              clearSelection={clearSelection}
             />
             <Button onClick={handleSave}>Salvar</Button>
           </div>

@@ -6,10 +6,8 @@ import { Container } from './styles';
 
 import { Button } from '../Button';
 import { Modal } from '../Modal';
-import { Input } from '../Input';
-import { Table } from '../Table';
 
-export function List({ title, categories }) {
+export function List({ title, categories, refresh }) {
     const [isOpen, setIsOpen] = useState(false);
     const [modalIsOpen, setModalIsOpen] = useState(false);
     const [modalCategory, setModalCategory] = useState();

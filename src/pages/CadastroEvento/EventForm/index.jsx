@@ -28,17 +28,8 @@ const initialData = {
 export function EventFormm({ event, mode = "add" }) {
     const [data, setData] = useState(initialData);
     const [isEditing, setIsEditing] = useState(mode === 'add');
+    const [refresh, setRefresh] = useState(false);
     const navigate = useNavigate();
-
-    function calculateDate(data) {
-        const originalString = data;
-        const [datePart] = originalString.split(' ');
-        const [year, month, day] = datePart.split('-');
-
-        const formattedDate = `${day}/${month}/${year}`;
-
-        return (formattedDate);
-    }
 
     useEffect(() => {
         if (event && mode === 'show') {
@@ -49,10 +40,6 @@ export function EventFormm({ event, mode = "add" }) {
     const handleInputChange = (e) => {
         const { name, value } = e.target;
         let updatedData = { ...data, [name]: value };
-
-        if (name === 'born') {
-            updatedData.age = calculateAge(value);
-        }
         setData(updatedData);
     };
 
@@ -85,7 +72,6 @@ export function EventFormm({ event, mode = "add" }) {
             }
             updateEvent();
         }
-
     };
 
     const handleState = () => {
@@ -93,18 +79,6 @@ export function EventFormm({ event, mode = "add" }) {
 
         setData({ ...data, state: newState });
     }
-
-    const categories = [
-        { name: 'Kids', status: 'Inativada', competitors: 10 },
-        { name: 'Mirim', status: 'Inscrições encerradas', competitors: 8 },
-        { name: 'Juvenil', status: 'Realizando inscrições', competitors: 12 },
-        { name: 'Iniciante', status: 'Realizando inscrições', competitors: 5 },
-        { name: 'Feminino', status: 'Realizando inscrições', competitors: 7 },
-        { name: 'Adulto', status: 'Realizando inscrições', competitors: 9 },
-        { name: 'Master', status: 'Realizando inscrições', competitors: 14 },
-        { name: 'Aberto', status: 'Realizando inscrições', competitors: 6 },
-    ];
-
 
     return (
         <Form>

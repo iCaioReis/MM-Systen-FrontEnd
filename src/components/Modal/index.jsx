@@ -1,5 +1,7 @@
 import { useState, useEffect } from 'react';
 
+import { FaRegTrashCan } from "react-icons/fa6";
+
 import { api } from '../../services/api';
 
 import { FormatCategory, FormatProof, FormatStatus } from '../../utils/formatDatas';
@@ -28,8 +30,8 @@ export function Modal({ isOpen, onClose, category, proof }) {
   }
   const header = {
     competitor_order: "Ordem",
-    competitor_id: "Competidor",
-    horse_id: "Cavalo",
+    competitor_name: "Competidor",
+    horse_name: "Cavalo",
     button: ""
   }
 
@@ -39,6 +41,9 @@ export function Modal({ isOpen, onClose, category, proof }) {
         {Object.keys(header).map((field, subIndex) => {
           if (field === 'competitor_order') {
             return <td key={subIndex}>{index}</td>;
+          }
+          if (field === 'button') {
+            return <td key={subIndex}><Button className={"noBackground auto-width"}><FaRegTrashCan/></Button></td>;
           }
           return (
             <td key={subIndex}>{row[field]}</td>
@@ -51,6 +56,7 @@ export function Modal({ isOpen, onClose, category, proof }) {
   useEffect(() => {
     async function fethCompetitors() {
       const res = await api.get(`/categoryRegisters/${category.id}`);
+      console.log(res.data.competitorHorses)
 
       setCompetitorsWithHorses(res.data.competitorHorses);
     }

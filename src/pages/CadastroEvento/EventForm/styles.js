@@ -30,6 +30,17 @@ export const Profile = styled.div`
     }
 `;
 
+export const CategoriesContainer = styled.div`
+    max-height: 22rem;
+    overflow-y: auto;
+
+    display: flex;
+    flex-direction: column;
+    gap: .2rem;
+
+    border-radius: 8px;
+`;
+
 export const Picture = styled.div`
     position: relative;
 
@@ -70,15 +81,4 @@ export const DateContainer = styled.div`
         color: ${({ theme }) => theme.COLORS.THEME_700};
         margin: .5rem;
     }
-`;
-
-export const CategoriesContainer = styled.div`
-    max-height: 22rem;
-    overflow-y: auto;
-
-    display: flex;
-    flex-direction: column;
-    gap: .2rem;
-
-    border-radius: 8px;
 `;

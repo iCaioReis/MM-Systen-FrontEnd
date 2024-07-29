@@ -23,6 +23,11 @@ export const Container = styled.button`
         color: ${({ theme }) => theme.COLORS.THEME_900};
     }
 
+    &.noBorder {
+        border-style: none;
+    }
+
+
     &.larger-width {
         width: 20rem;
     }

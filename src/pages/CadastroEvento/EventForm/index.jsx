@@ -14,7 +14,7 @@ import { Section } from "../../../components/Section/index.jsx";
 
 import { List } from '../../../components/List/index.jsx';
 
-import { DateContainer, Form, MainForm, Status, CategoriesContainer, Profile, Picture } from './styles.js';
+import { CategoriesContainer, DateContainer, Form, MainForm, Status, Profile, Picture } from './styles.js';
 
 const initialData = {
     id: "",

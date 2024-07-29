@@ -22,12 +22,15 @@ export default createGlobalStyle`
   }
 
   ::-webkit-scrollbar {
-    width: 4px;
+    width: 14px;
   }
 
   ::-webkit-scrollbar-thumb {
     background-color: ${({ theme }) => theme.COLORS.LIGHT_400};
     border-radius: 8px;
+
+    background-clip: content-box;
+    border: 5px solid transparent;
   }
 
 

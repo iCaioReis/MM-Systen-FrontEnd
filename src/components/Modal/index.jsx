@@ -43,7 +43,13 @@ export function Modal({ isOpen, onClose, category, proof }) {
             return <td key={subIndex}>{index}</td>;
           }
           if (field === 'button') {
-            return <td key={subIndex}><Button className={"noBackground auto-width"}><FaRegTrashCan/></Button></td>;
+            return (
+              <td key={subIndex}>
+                <Button className={"noBackground auto-width"} onClick={() => handleDeleteRegister(row.id)}>
+                  <FaRegTrashCan />
+                </Button>
+              </td>
+            );
           }
           return (
             <td key={subIndex}>{row[field]}</td>
@@ -56,7 +62,6 @@ export function Modal({ isOpen, onClose, category, proof }) {
   useEffect(() => {
     async function fethCompetitors() {
       const res = await api.get(`/categoryRegisters/${category.id}`);
-      console.log(res.data.competitorHorses)
 
       setCompetitorsWithHorses(res.data.competitorHorses);
     }
@@ -66,24 +71,54 @@ export function Modal({ isOpen, onClose, category, proof }) {
 
   const handleSave = async () => {
     try {
-        const res = await api.post('/categoryRegisters', 
-          {
-            "competitor_id": selectedCompetitorId, 
-            "horse_id": selectedHorseId,
-            "categorie_id": category.id
-          });
-          alert("Registro cadastrado com sucesso!");
+      const res = await api.post('/categoryRegisters',
+        {
+          "competitor_id": selectedCompetitorId,
+          "horse_id": selectedHorseId,
+          "categorie_id": category.id
+        });
+      alert("Registro cadastrado com sucesso!");
 
-          setRefresh(prev => !prev)
-          setSelectedCompetitorId(null);
-          setSelectedHorseId(null);
-          setClearSelection(true);
-          setTimeout(() => setClearSelection(false), 0);
+      setRefresh(prev => !prev)
+      setSelectedCompetitorId(null);
+      setSelectedHorseId(null);
+      setClearSelection(true);
+      setTimeout(() => setClearSelection(false), 0);
     } catch (error) {
-        const errorMessage = error.response?.data?.message || error.message;
-        alert(errorMessage)
+      const errorMessage = error.response?.data?.message || error.message;
+      alert(errorMessage)
     }
-};
+  };
+
+  const handleDeleteRegister = async (id) => {
+    try {
+      const res = await api.delete(`/categoryRegisters/${id}`);
+      alert("Registro excluído com sucesso!");
+      setRefresh(prev => !prev)
+      setSelectedCompetitorId(null);
+      setSelectedHorseId(null);
+      setClearSelection(true);
+      setTimeout(() => setClearSelection(false), 0);
+    } catch (error) {
+      const errorMessage = error.response?.data?.message || error.message;
+      alert(errorMessage)
+    }
+  };
+
+  const handleStateCategory = async (state) => {
+    try {
+      await api.put(`/categories/${category.id}`, { state });
+      alert("Status atualizado com sucesso!");
+      setRefresh(prev => !prev)
+      setSelectedCompetitorId(null);
+      setSelectedHorseId(null);
+      setClearSelection(true);
+      setTimeout(() => setClearSelection(false), 0);
+    } catch (error) {
+      const errorMessage = error.response?.data?.message || error.message;
+      console.log(errorMessage)
+    }
+  };
 
   return (
     <ModalOverlay>
@@ -119,14 +154,16 @@ export function Modal({ isOpen, onClose, category, proof }) {
               onItemSelected={(id) => setSelectedHorseId(id)}
               clearSelection={clearSelection}
             />
-            <Button onClick={handleSave}>Salvar</Button>
+            <Button onClick={handleSave} className={"larger-width"}>Adicionar</Button>
           </div>
 
-          <Table
-            header={header}
-            widths={larguras}
-            rows={rows}
-          />
+          <div className="registers">
+            <Table
+              header={header}
+              widths={larguras}
+              rows={rows}
+            />
+          </div>
         </MainForm>
 
         <Status>
@@ -147,7 +184,7 @@ export function Modal({ isOpen, onClose, category, proof }) {
             <Button>Encerrar inscrições</Button>
           </div>
 
-          <Button className={"danger"}>Inativar</Button>
+          <Button className={"danger"} onClick={() => handleStateCategory("inative")}>Inativar</Button>
 
         </Status>
       </div>

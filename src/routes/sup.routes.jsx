@@ -10,6 +10,10 @@ import { CadastroCavalo } from '../pages/CadastroCavalo';
 import { CadastroUsuario } from '../pages/CadastroUsuario';
 import { CadastroCompetidor } from '../pages/CadastroCompetidores';
 
+import { Event } from '../pages/Event';
+import { EventJudge } from '../pages/EventJudge';
+import { Competition } from '../pages/EventJudge/Competition';
+
 
 export function SupRoutes() {
     return (
@@ -25,8 +29,12 @@ export function SupRoutes() {
                 <Route path='/cadastro/competidor/:id' element={< CadastroCompetidor />}/>
                 <Route path='/cadastro/evento/' element={< CadastroEvento />}/>
                 <Route path='/cadastro/evento/:id' element={< CadastroEvento />}/>
+
+                <Route path='/evento' element={<Event/>}/>
+                <Route path='/evento/juiz' element={<EventJudge/>}/>
             </Route>
-            
+
+            <Route path='/evento/juiz/competition/:id' element={<Competition/>}/>
             <Route path="*" exact={true} element={<NotFound />} />
         </Routes>
     )

@@ -54,6 +54,15 @@ export const MainForm = styled.div`
   svg{
     color: ${({ theme }) => theme.COLORS.RED};
   }
+
+  .registers {
+    max-height: 426px;
+
+    position: relative;
+    overflow-y: scroll;
+    
+    border-radius: 8px;
+  }
 `;
 
 export const Status = styled.div`

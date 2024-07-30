@@ -13,14 +13,19 @@ import { SearchDropdown } from '../../../components/SearchDropdown';
 
 import { ModalOverlay, Title, MainForm, Status } from './styles';
 
+import { ModalConfirm } from '../../../components/ModalConfirm';
+
 export function Modal({ isOpen, onClose, category, proof }) {
   if (!isOpen) return null;
 
-  const [competitorsWithHorses, setCompetitorsWithHorses] = useState();
-  const [selectedCompetitorId, setSelectedCompetitorId] = useState(null);
-  const [selectedHorseId, setSelectedHorseId] = useState(null);
   const [refresh, setRefresh] = useState(false);
   const [clearSelection, setClearSelection] = useState(false);
+  const [selectedHorseId, setSelectedHorseId] = useState(null);
+  const [competitorsWithHorses, setCompetitorsWithHorses] = useState();
+  const [selectedCompetitorId, setSelectedCompetitorId] = useState(null);
+  
+  const [isModalConfirmVisible, setIsModalConfirmVisible] = useState(false);
+  const [registerToDelete, setRegisterToDelete] = useState({id: "", horse: "", competitor: ""});
 
   const larguras = {
     competitor_order: "50px",
@@ -45,7 +50,7 @@ export function Modal({ isOpen, onClose, category, proof }) {
           if (field === 'button') {
             return (
               <td key={subIndex}>
-                <Button className={"noBackground auto-width"} onClick={() => handleDeleteRegister(row.id)}>
+                <Button className={"noBackground auto-width"} onClick={() => handleModalConfirm({id: row.id, competitor: row.competitor_name, horse: row.horse_name})}>
                   <FaRegTrashCan />
                 </Button>
               </td>
@@ -90,6 +95,11 @@ export function Modal({ isOpen, onClose, category, proof }) {
     }
   };
 
+  const handleModalConfirm = (competitor) => {
+    setIsModalConfirmVisible(!isModalConfirmVisible);
+    {competitor && setRegisterToDelete(competitor)}
+  } 
+
   const handleDeleteRegister = async (id) => {
     try {
       const res = await api.delete(`/categoryRegisters/${id}`);
@@ -103,6 +113,7 @@ export function Modal({ isOpen, onClose, category, proof }) {
       const errorMessage = error.response?.data?.message || error.message;
       alert(errorMessage)
     }
+    handleModalConfirm()
   };
 
   const handleStateCategory = async (state) => {
@@ -116,12 +127,21 @@ export function Modal({ isOpen, onClose, category, proof }) {
       setTimeout(() => setClearSelection(false), 0);
     } catch (error) {
       const errorMessage = error.response?.data?.message || error.message;
-      console.log(errorMessage)
+      alert(errorMessage);
     }
   };
 
   return (
     <ModalOverlay>
+      
+      <ModalConfirm
+        title={"Você têm certeza que deseja excluir o registro? "}
+        subTitle={`Competidor: ${registerToDelete.competitor}    ->    Cavalo: ${registerToDelete.horse}`}
+        visible={isModalConfirmVisible}
+        onClose={handleModalConfirm}
+        onConfirm={() => handleDeleteRegister(registerToDelete.id)}
+      />
+
       <div className="modal">
 
         <MainForm>
@@ -181,10 +201,19 @@ export function Modal({ isOpen, onClose, category, proof }) {
               status
             />
 
-            <Button>Encerrar inscrições</Button>
+          {(category.state === "active" || category.state === "making_registrations") && 
+            <Button  onClick={() => handleStateCategory("finished_inscriptions")}>Encerrar inscrições</Button>
+          }
+          
           </div>
 
-          <Button className={"danger"} onClick={() => handleStateCategory("inative")}>Inativar</Button>
+          {(category.state === "active" || category.state === "making_registrations") && 
+            <Button className={"danger"} onClick={() => handleStateCategory("inative")}>Inativar</Button>
+          }
+
+          {(category.state === "inative" || category.state === "finished_inscriptions") && 
+            <Button  onClick={() => handleStateCategory("active")}>Reativar</Button>
+          }
 
         </Status>
       </div>

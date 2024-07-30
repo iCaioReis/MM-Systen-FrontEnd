@@ -2,14 +2,14 @@ import { useState, useEffect } from 'react';
 
 import { FaRegTrashCan } from "react-icons/fa6";
 
-import { api } from '../../services/api';
+import { api } from '../../../services/api';
 
-import { FormatCategory, FormatProof, FormatStatus } from '../../utils/formatDatas';
+import { FormatCategory, FormatProof, FormatStatus } from '../../../utils/formatDatas';
 
-import { Button } from '../Button';
-import { Input } from '../Input';
-import { Table } from '../Table';
-import { SearchDropdown } from '../SearchDropdown';
+import { Button } from '../../../components/Button';
+import { Input } from '../../../components/Input';
+import { Table } from '../../../components/Table';
+import { SearchDropdown } from '../../../components/SearchDropdown';
 
 import { ModalOverlay, Title, MainForm, Status } from './styles';
 

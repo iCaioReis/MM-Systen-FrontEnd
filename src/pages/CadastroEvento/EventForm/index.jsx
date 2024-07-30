@@ -12,7 +12,7 @@ import { Input } from "../../../components/Input/index.jsx";
 import { Button } from "../../../components/Button/index.jsx";
 import { Section } from "../../../components/Section/index.jsx";
 
-import { List } from '../../../components/List/index.jsx';
+import { List } from '../List/index.jsx';
 
 import { CategoriesContainer, DateContainer, Form, MainForm, Status, Profile, Picture } from './styles.js';
 

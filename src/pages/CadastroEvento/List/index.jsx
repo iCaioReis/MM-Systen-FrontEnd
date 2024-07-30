@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
 
-import { FormatCategory, FormatStatus, FormatProof } from '../../utils/formatDatas';
+import { FormatCategory, FormatStatus, FormatProof } from '../../../utils/formatDatas';
 
 import { Container } from './styles';
 
-import { Button } from '../Button';
+import { Button } from '../../../components/Button';
 import { Modal } from '../Modal';
 
 export function List({ title, categories, refresh }) {

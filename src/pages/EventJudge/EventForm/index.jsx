@@ -12,8 +12,6 @@ import { Input } from "../../../components/Input/index.jsx";
 import { Button } from "../../../components/Button/index.jsx";
 import { Section } from "../../../components/Section/index.jsx";
 
-import { List } from '../../../components/List/index.jsx';
-
 import { CategoriesContainer, DateContainer, Form, MainForm, Status, Profile, Picture } from './styles.js';
 
 const initialData = {
@@ -169,7 +167,7 @@ export function EventFormm({ event, mode = "add" }) {
                 <CategoriesContainer>
                     {data.proofs && data.proofs.map((proof, index) => {
                         return(
-                            <List key={index} title={proof.name} categories={proof.categories}></List>
+                            <li key={index} title={proof.name} categories={proof.categories}></li>
                         )
                     })}
                 </CategoriesContainer>

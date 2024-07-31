@@ -13,6 +13,7 @@ export const Container = styled.div`
         align-items: end;
         gap: .5rem;    
     }
+    
     > div {
         max-width: 1300px;
         height: 590px;

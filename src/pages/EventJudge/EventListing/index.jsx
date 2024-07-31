@@ -40,11 +40,6 @@ export function EventListing() {
         window.open(`/evento/juiz/competition/${id}`, '_blank');
     }
 
-    function handleAdd() {
-        navigate(`/cadastro/evento`);
-        window.location.reload();
-    }
-
     useEffect(() => {
         async function fethEvents() {
             const res = await api.get(`/events?name=${search}`);

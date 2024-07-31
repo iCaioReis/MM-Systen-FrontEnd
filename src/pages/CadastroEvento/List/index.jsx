@@ -20,6 +20,10 @@ export function List({ title, categories, refresh }) {
     const toggleModal = (category) => {
         setModalCategory(category)
         setModalIsOpen(!modalIsOpen);
+
+        if(modalIsOpen){
+            refresh()
+        }
     };
 
     return (

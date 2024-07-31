@@ -15,17 +15,18 @@ import { ModalOverlay, Title, MainForm, Status } from './styles';
 
 import { ModalConfirm } from '../../../components/ModalConfirm';
 
-export function Modal({ isOpen, onClose, category, proof }) {
+export function Modal({ isOpen, onClose, category}) {
   if (!isOpen) return null;
 
+  const [status, setStatus] = useState({ proof_name: "", categorie_name: "", categorie_state: "" });
   const [refresh, setRefresh] = useState(false);
   const [clearSelection, setClearSelection] = useState(false);
   const [selectedHorseId, setSelectedHorseId] = useState(null);
   const [competitorsWithHorses, setCompetitorsWithHorses] = useState();
   const [selectedCompetitorId, setSelectedCompetitorId] = useState(null);
-  
+
   const [isModalConfirmVisible, setIsModalConfirmVisible] = useState(false);
-  const [registerToDelete, setRegisterToDelete] = useState({id: "", horse: "", competitor: ""});
+  const [registerToDelete, setRegisterToDelete] = useState({ id: "", horse: "", competitor: "" });
 
   const larguras = {
     competitor_order: "50px",
@@ -39,7 +40,6 @@ export function Modal({ isOpen, onClose, category, proof }) {
     horse_name: "Cavalo",
     button: ""
   }
-
   const rows = Array.isArray(competitorsWithHorses) ? competitorsWithHorses.map((row, index) => {
     return (
       <tr key={index}>
@@ -50,7 +50,7 @@ export function Modal({ isOpen, onClose, category, proof }) {
           if (field === 'button') {
             return (
               <td key={subIndex}>
-                <Button className={"noBackground auto-width"} onClick={() => handleModalConfirm({id: row.id, competitor: row.competitor_name, horse: row.horse_name})}>
+                <Button className={"noBackground auto-width"} onClick={() => handleModalConfirm({ id: row.id, competitor: row.competitor_name, horse: row.horse_name })}>
                   <FaRegTrashCan />
                 </Button>
               </td>
@@ -67,11 +67,10 @@ export function Modal({ isOpen, onClose, category, proof }) {
   useEffect(() => {
     async function fethCompetitors() {
       const res = await api.get(`/categoryRegisters/${category.id}`);
-
+      setStatus(res.data.status)
       setCompetitorsWithHorses(res.data.competitorHorses);
     }
     fethCompetitors();
-
   }, [refresh]);
 
   const handleSave = async () => {
@@ -97,8 +96,8 @@ export function Modal({ isOpen, onClose, category, proof }) {
 
   const handleModalConfirm = (competitor) => {
     setIsModalConfirmVisible(!isModalConfirmVisible);
-    {competitor && setRegisterToDelete(competitor)}
-  } 
+    { competitor && setRegisterToDelete(competitor) }
+  }
 
   const handleDeleteRegister = async (id) => {
     try {
@@ -117,23 +116,40 @@ export function Modal({ isOpen, onClose, category, proof }) {
   };
 
   const handleStateCategory = async (state) => {
-    try {
-      await api.put(`/categories/${category.id}`, { state });
-      alert("Status atualizado com sucesso!");
-      setRefresh(prev => !prev)
-      setSelectedCompetitorId(null);
-      setSelectedHorseId(null);
-      setClearSelection(true);
-      setTimeout(() => setClearSelection(false), 0);
-    } catch (error) {
-      const errorMessage = error.response?.data?.message || error.message;
-      alert(errorMessage);
+    if(state == "finished_inscriptions") {
+      try {
+        await api.put (`categoryRegisters/${category.id}`);
+        await api.put(`/categories/${category.id}`, { state });
+        alert("Status atualizado com sucesso!");
+        setRefresh(prev => !prev)
+        setSelectedCompetitorId(null);
+        setSelectedHorseId(null);
+        setClearSelection(true);
+        setTimeout(() => setClearSelection(false), 0);
+      } catch (error) {
+        const errorMessage = error.response?.data?.message || error.message;
+        alert(errorMessage);
+      }
+    }
+    else {
+      try {
+        await api.put(`/categories/${category.id}`, { state });
+        alert("Status atualizado com sucesso!");
+        setRefresh(prev => !prev)
+        setSelectedCompetitorId(null);
+        setSelectedHorseId(null);
+        setClearSelection(true);
+        setTimeout(() => setClearSelection(false), 0);
+      } catch (error) {
+        const errorMessage = error.response?.data?.message || error.message;
+        alert(errorMessage);
+      }
     }
   };
 
   return (
     <ModalOverlay>
-      
+
       <ModalConfirm
         title={"Você têm certeza que deseja excluir o registro? "}
         subTitle={`Competidor: ${registerToDelete.competitor}    ->    Cavalo: ${registerToDelete.horse}`}
@@ -148,12 +164,12 @@ export function Modal({ isOpen, onClose, category, proof }) {
           <Title>
             <div>
               <h3>Prova: </h3>
-              <h1>{FormatProof(proof)}</h1>
+              <h1>{FormatProof(status.proof_name)}</h1>
             </div>
 
             <div>
               <h3>Categoria:</h3>
-              <h1>{FormatCategory(category.name)}</h1>
+              <h1>{FormatCategory(status.categorie_name)}</h1>
             </div>
 
           </Title>
@@ -163,19 +179,21 @@ export function Modal({ isOpen, onClose, category, proof }) {
             onClick={onClose}
           >X</Button>
 
-          <div className="flex">
-            <SearchDropdown
-              table="competitors"
-              onItemSelected={(id) => setSelectedCompetitorId(id)}
-              clearSelection={clearSelection}
-            />
-            <SearchDropdown
-              table="horses"
-              onItemSelected={(id) => setSelectedHorseId(id)}
-              clearSelection={clearSelection}
-            />
-            <Button onClick={handleSave} className={"larger-width"}>Adicionar</Button>
-          </div>
+          {(status.categorie_state === "active" || status.categorie_state === "making_registrations") &&
+            <div className="flex">
+              <SearchDropdown
+                table="competitors"
+                onItemSelected={(id) => setSelectedCompetitorId(id)}
+                clearSelection={clearSelection}
+              />
+              <SearchDropdown
+                table="horses"
+                onItemSelected={(id) => setSelectedHorseId(id)}
+                clearSelection={clearSelection}
+              />
+              <Button onClick={handleSave} className={"larger-width"}>Adicionar</Button>
+            </div>
+          }
 
           <div className="registers">
             <Table
@@ -196,23 +214,23 @@ export function Modal({ isOpen, onClose, category, proof }) {
             />
             <Input
               title={"Status"}
-              value={FormatStatus(category.state)}
+              value={FormatStatus(status.categorie_state)}
               disabled
               status
             />
 
-          {(category.state === "active" || category.state === "making_registrations") && 
-            <Button  onClick={() => handleStateCategory("finished_inscriptions")}>Encerrar inscrições</Button>
-          }
-          
+            {(status.categorie_state === "active" || status.categorie_state === "making_registrations") &&
+              <Button onClick={() => handleStateCategory("finished_inscriptions")}>Encerrar inscrições</Button>
+            }
+
           </div>
 
-          {(category.state === "active" || category.state === "making_registrations") && 
+          {(status.categorie_state === "active" || status.categorie_state === "making_registrations") &&
             <Button className={"danger"} onClick={() => handleStateCategory("inative")}>Inativar</Button>
           }
 
-          {(category.state === "inative" || category.state === "finished_inscriptions") && 
-            <Button  onClick={() => handleStateCategory("active")}>Reativar</Button>
+          {(status.categorie_state === "inative" || status.categorie_state === "finished_inscriptions") &&
+            <Button onClick={() => handleStateCategory("active")}>Reativar</Button>
           }
 
         </Status>

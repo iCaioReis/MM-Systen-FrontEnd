@@ -6,6 +6,8 @@ import { FiCamera } from 'react-icons/fi';
 
 import avatarPlaceholder from "../../../assets/user.svg";
 
+import { FormatStatus } from '../../../utils/formatDatas.js';
+
 import { api } from '../../../services/api.js';
 
 import { Input } from "../../../components/Input/index.jsx";
@@ -28,8 +30,11 @@ const initialData = {
 export function EventFormm({ event, mode = "add" }) {
     const [data, setData] = useState(initialData);
     const [isEditing, setIsEditing] = useState(mode === 'add');
-    const [refresh, setRefresh] = useState(false);
     const navigate = useNavigate();
+
+    const refresh = () => {
+        window.location.reload();
+    }
 
     useEffect(() => {
         if (event && mode === 'show') {
@@ -68,16 +73,19 @@ export function EventFormm({ event, mode = "add" }) {
                 } catch (error) {
                     const errorMessage = error.response?.data?.message || error.message;
                     alert(errorMessage)
+                    window.location.reload();
                 }
             }
             updateEvent();
         }
     };
 
-    const handleState = () => {
-        const newState = data.state == "active" ? "inative" : "active";
+    const handleState = (state) => {
+        const newState = state;
 
         setData({ ...data, state: newState });
+        if(state == "finished_inscriptions"){
+        }
     }
 
     return (
@@ -104,19 +112,22 @@ export function EventFormm({ event, mode = "add" }) {
                             Editar
                         </Button>
                     )}
+                    <Button type={"button"} >
+                        Resultados
+                    </Button>
                 </div>
                 {mode != 'add' && isEditing && data.state == 'active' &&
                     <Button className={"danger"}
-                        onClick={handleState}
+                        onClick={() => handleState( "inative")}
                     >
                         Desativar
                     </Button>
                 }
-                {mode != 'add' && isEditing && data.state == 'inative' &&
+                {mode != 'add' && isEditing && (data.state == 'inative' || data.state == 'finished_inscriptions') &&
                     <Button
-                        onClick={handleState}
+                        onClick={() => handleState("active")}
                     >
-                        Ativar
+                        Reativar
                     </Button>
                 }
             </Profile>
@@ -168,8 +179,8 @@ export function EventFormm({ event, mode = "add" }) {
 
                 <CategoriesContainer>
                     {data.proofs && data.proofs.map((proof, index) => {
-                        return(
-                            <List key={index} title={proof.name} categories={proof.categories}></List>
+                        return (
+                            <List key={index} title={proof.name} categories={proof.categories} refresh={refresh}></List>
                         )
                     })}
                 </CategoriesContainer>
@@ -177,18 +188,25 @@ export function EventFormm({ event, mode = "add" }) {
             </MainForm>
 
             <Status>
-                <Input
-                    title={"Número único"}
-                    value={data.id}
-                    disabled
-                    status
-                />
-                <Input
-                    title={"Status"}
-                    value={data.state == "active" ? "Ativo" : "Inativo"}
-                    disabled
-                    status
-                />
+               
+                    <Input
+                        title={"Número único"}
+                        value={data.id}
+                        disabled
+                        status
+                    />
+                    <Input
+                        title={"Status"}
+                        value={FormatStatus (data.state)}
+                        disabled
+                        status
+                    />
+
+                {mode != 'add' && isEditing && data.state == 'active' &&
+                    <Button onClick={() => handleState( "finished_inscriptions")}  >
+                        Encerrar inscrições
+                    </Button>
+                }
             </Status>
         </Form>
     );

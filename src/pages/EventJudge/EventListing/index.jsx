@@ -5,7 +5,7 @@ import { useNavigate } from 'react-router-dom';
 
 import { api } from '../../../services/api.js';
 
-import { FormatDate } from "../../../utils/formatDatas.js";
+import { FormatDate, FormatStatus } from "../../../utils/formatDatas.js";
 
 import { Listing } from './styles.js';
 
@@ -37,12 +37,13 @@ export function EventListing() {
     const navigate = useNavigate();
 
     function handleDetails(id) {
-        window.open(`/evento/juiz/competition/${id}`, '_blank');
+        navigate(`/evento/juiz/${id}`);
+        window.location.reload();
     }
 
     useEffect(() => {
         async function fethEvents() {
-            const res = await api.get(`/events?name=${search}`);
+            const res = await api.get(`/competition?name=${search}`);
             setEvents(res.data.events);
         }
         fethEvents();
@@ -93,7 +94,7 @@ export function EventListing() {
                                 if (field == "state") {
                                     return (
                                         <td key={subIndex}>
-                                            {row.state == "active" ? "Ativo" : "Inativo"}
+                                            {FormatStatus (row.state)}
                                         </td>
                                     )
                                 }

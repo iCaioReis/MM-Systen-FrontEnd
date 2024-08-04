@@ -1,4 +1,3 @@
-
 export function FormatCategory(category) {
     const Categories = {
         kids: "Kids",
@@ -42,4 +41,14 @@ export function FormatDate(data) {
     const formattedDate = `${day}/${month}/${year}`;
 
     return(formattedDate);
+}
+
+
+export function FormatFouls(foul) {
+    const Fouls = {
+        foul: "Falta",
+        SAT: "SAT (Erro de percurso)",
+        NPC: "NPC (Não compareceu)"
+    } 
+    return(Fouls[foul])
 }

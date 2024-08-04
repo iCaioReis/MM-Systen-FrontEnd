@@ -31,11 +31,12 @@ export const Container = styled.div`
 
         background: ${({ theme }) => theme.COLORS.LIGHT_200};
 
-        > h2 {
+        > h2, h3 {
             color: ${({ theme }) => theme.COLORS.THEME_900};
         }
 
         .flex{
+            display: flex;
             gap: 2rem;
             button {
                 width: 10rem;

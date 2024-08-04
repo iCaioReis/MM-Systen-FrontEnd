@@ -5,6 +5,7 @@ import { Container } from "./styles";
 
 export function Input({ title, disabled, mandatory, dataType, data, status, className, onChange, ...rest }) {
     const FormatCpf = "###.###.###-##";
+    const FormatTimer = "###.####";
 
     const [value, setValue] = useState(data || "");
 
@@ -38,6 +39,19 @@ export function Input({ title, disabled, mandatory, dataType, data, status, clas
                     {...rest}
                     ></PatternFormat>
             }
+            {dataType == "timer" &&
+                <PatternFormat 
+                    format={FormatTimer}
+                    mask={"_ "}
+                    allowEmptyFormatting
+                    className={status ? 'status' : ''}
+                    value={value}
+                    disabled={disabled}
+                    onChange={handleChange}
+                    {...rest}
+                    ></PatternFormat>
+            }
+
             {!dataType &&
                 <input
                 className={status ? 'status' : ''}

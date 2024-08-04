@@ -102,10 +102,11 @@ export const Title = styled.div`
 `;
 
 export const Timer = styled.div`
-    > input {
+    margin: 0 auto;
+    input {
         width: 30rem;
         height: 7.4rem;
-        padding: 0 4rem;
+        padding: 0 2rem;
 
         font-size: 80px;
         color: ${({ theme }) => theme.COLORS.LIGHT_100};
@@ -118,35 +119,35 @@ export const Timer = styled.div`
 `;
 
 export const Fouls = styled.div`
-    > div {
-        text-align: left;
-    }
+    height: 17rem;
 
     display: flex;
     flex-direction: column;
     gap: .5rem;
-    
 
+    text-align: left;
+    
     > .header{
         display: flex;
         align-items: center;
         gap: 4px;
     }
 
-    > ul, li {
-        list-style: none;
+    > .tabela {
+        text-align: center;
+        overflow-y: scroll;
+    }
+    table {
+        color: ${({ theme }) => theme.COLORS.LIGHT_100}; 
 
-        li {
-            border-radius: 8px;
-            background-color: ${({ theme }) => theme.COLORS.LIGHT_300};
-            padding: .5rem;
-            margin-bottom: 2px;
+        svg {
+            color: ${({ theme }) => theme.COLORS.RED}; 
         }
     }
 `;
 
 export const Actions = styled.div`
-    margin-bottom: 6rem;
+    margin-bottom: 1rem;
 
     display: flex;
     flex-direction: column;

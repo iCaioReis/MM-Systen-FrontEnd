@@ -32,6 +32,7 @@ export function SupRoutes() {
 
                 <Route path='/evento' element={<Event/>}/>
                 <Route path='/evento/juiz' element={<EventJudge/>}/>
+                <Route path='/evento/juiz/:id' element={<EventJudge/>}/>
             </Route>
 
             <Route path='/evento/juiz/competition/:id' element={<Competition/>}/>

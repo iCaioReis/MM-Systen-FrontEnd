@@ -1,69 +1,221 @@
+import { useState, useEffect } from 'react';
+import { useParams } from 'react-router-dom';
+
+import { FaRegTrashCan } from "react-icons/fa6";
 import { FaArrowLeft, FaArrowRight } from "react-icons/fa";
+
+import { api } from '../../../services/api';
 
 import avatarPlaceholder from "../../../assets/user.svg";
 
 import { Input } from "../../../components/Input";
+import { Table } from '../../../components/Table';
 import { Button } from "../../../components/Button";
-import { Select } from "../../../components/Select";
-import { Section } from "../../../components/Section"
+import { Section } from "../../../components/Section";
+import { ModalConfirm } from '../../../components/ModalConfirm';
+
+import { FormatCategory, FormatProof, FormatStatus, FormatFouls } from "../../../utils/formatDatas";
 
 import { Container, Content, Fouls, Profile, Actions, Main, Picture, Title, Timer } from "./styles";
 
+const larguras = {
+    name: "",
+    amount: "150px",
+    button: "30px"
+}
+const header = {
+    name: "Falta",
+    amount: "Acréssimo",
+    button: ""
+}
+
 export function Competition() {
+    const [categoryData, setCategoryData] = useState({ status: { categorie_name: "", categorie_state: "", proof_name: "" }, competitorHorses: [{ id: "", competitor_order: "", competitor_id: "", horse_id: "", categorie_id: "", competitor_name: "", horse_name: "" }] },);
+    const [competingRegisterNumber, setCompetingRegisterNumber] = useState(0)
+    const [fouls, setFouls] = useState([{ id: "", name: "", amount: "" }]);
+    const [refresh, setRefresh] = useState(false);
+
+    const [isModalConfirmVisible, setIsModalConfirmVisible] = useState(false);
+    const [registerToDelete, setRegisterToDelete] = useState({ id: "", horse: "", competitor: "" });
+
+    const params = useParams();
+
+    useEffect(() => {
+        async function fetchData() {
+            try {
+                const resCompetitors = await api.get(`/categoryRegisters/${params.id}`);
+                if (resCompetitors.data.status.last_competitor) {
+                    setCompetingRegisterNumber(resCompetitors.data.status.last_competitor);
+                }
+                setCategoryData(resCompetitors.data);
+
+                const resFouls = await api.get(`/fouls/${resCompetitors.data.competitorHorses[competingRegisterNumber].id}`);
+                setFouls(resFouls.data.fouls);
+            } catch (error) {
+                console.error("Failed to fetch data", error);
+            }
+        }
+        fetchData();
+    }, [refresh]);
+
+    const handleNextCompetitor = () => {
+        if ((competingRegisterNumber + 1) == categoryData.competitorHorses.length) { return };
+        const next = competingRegisterNumber + 1;
+        setCompetingRegisterNumber(next);
+        setRefresh(prev => !prev);
+    }
+    const handlePreviousCompetitor = () => {
+        if (competingRegisterNumber == 0) { return }
+        const next = competingRegisterNumber - 1
+        setCompetingRegisterNumber(next)
+        setRefresh(prev => !prev)
+    }
+    const handleFouls = ({ foul, amount }) => {
+        async function fetchData() {
+            try {
+                await api.post("/fouls", {
+                    register_id: categoryData.competitorHorses[competingRegisterNumber].id,
+                    name: foul,
+                    amount: amount
+                });
+                setRefresh(prev => !prev)
+            } catch (error) {
+                alert("Erro ao processar falta")
+            }
+        }
+        fetchData();
+    }
+    const handleState = () => {
+    }
+    const handleModalConfirm = (register) => {
+        setIsModalConfirmVisible(!isModalConfirmVisible);
+        { register && setRegisterToDelete(register) }
+    }
+    async function deleteFoul() {
+        try {
+            await api.delete(`/fouls/${registerToDelete.id}`);
+            alert("Falta excluída com sucesso!");
+            handleModalConfirm();
+            setRefresh(prev => !prev);
+        } catch (error) {
+            alert("Erro ao tentar excluir falta", error);
+        }
+    }
+
     return (
         <Container>
+            <ModalConfirm
+                title={"Você têm certeza que deseja excluir a falta? "}
+                subTitle={`Falta:`}
+                visible={isModalConfirmVisible}
+                onClose={handleModalConfirm}
+                onConfirm={deleteFoul}
+            />
             <div className="zone"></div>
             <Content>
                 <Profile>
                     <Picture>
                         <img src={avatarPlaceholder} alt="" />
 
-                        <label htmlFor="avatar">Apelido do Cavalo</label>
+                        <label htmlFor="avatar">{categoryData.competitorHorses[competingRegisterNumber].horse_name}</label>
                     </Picture>
                     <Picture>
                         <img src={avatarPlaceholder} alt="" />
 
-                        <label htmlFor="avatar">Apelido do Competidor</label>
+                        <label htmlFor="avatar">{categoryData.competitorHorses[competingRegisterNumber].competitor_name}</label>
                     </Picture>
                 </Profile>
 
                 <Main>
-
                     <Title className="title">
                         <h1>Nome do Evento</h1>
-                        <span>Prova</span>
+                        <span>{FormatProof(categoryData.status.proof_name)}</span>
                         <span> - </span>
-                        <span>Categoria</span>
+                        <span>{FormatCategory(categoryData.status.categorie_name)}</span>
                     </Title>
 
                     <Timer className="timer">
-                        <input type="text" />
+                        <Input dataType="timer" type="text" />
                     </Timer>
 
                     <Fouls className="fouls">
-                    <Section title={"Faltas"}/>
+                        <Section title={"Faltas"} />
 
                         <div className="header">
-                            <Button>Falta +5s</Button>
-                            <Button>10 faltas +50s</Button>
-                            <Button className={"danger"}>SAT</Button>
-                            <Button className={"danger"}>NPC</Button>
+                            <Button onClick={() => handleFouls({ foul: 'foul', amount: 1 })}>Falta +5s</Button>
+                            <Button onClick={() => handleFouls({ foul: 'foul', amount: 10 })}>10 faltas +50s</Button>
+                            <Button onClick={() => handleFouls({ foul: 'SAT', amount: "NA" })} className={"danger"}>SAT</Button>
+                            <Button onClick={() => handleFouls({ foul: 'NPC', amount: "NA" })} className={"danger"}>NPC</Button>
                         </div>
-                        
-                        <ul>
-                            <li>Falta + 5 Segundos</li>
-                            <li>10 Faltas + 50 Segundos</li>
-                            <li>SAT</li>
-                            <li>NPC</li>
-                        </ul>
+
+                        <div className="tabela">
+                            <Table
+                                header={header}
+                                widths={larguras}
+                                rows={
+                                    fouls.map((row, index) => {
+                                        const id = row.id
+                                        return (
+                                            <tr key={index}>
+                                                {Object.keys(header).map((field, subIndex) => {
+                                                    if (field == "name") {
+                                                        return (
+                                                            <td key={subIndex}>
+                                                                {FormatFouls(row.name)}
+                                                            </td>
+                                                        )
+                                                    }
+                                                    if (field == "amount" && row.name == "foul") {
+                                                        return (
+                                                            <td key={subIndex}>
+                                                                {row.amount * 5}
+                                                            </td>
+                                                        )
+                                                    }
+                                                    if (field == "button") {
+                                                        return (
+                                                            <td key={subIndex}>
+                                                                <Button
+                                                                    className={"noBackground auto-width"}
+                                                                    onClick={() => handleModalConfirm(row)}
+                                                                >
+                                                                    <FaRegTrashCan />
+                                                                </Button>
+                                                            </td>
+                                                        )
+                                                    }
+                                                    return (
+                                                        <td key={subIndex}>{row[field]}</td>
+                                                    )
+                                                })}
+                                            </tr>
+                                        )
+                                    })
+                                } />
+                        </div>
                     </Fouls>
 
                 </Main>
 
                 <Actions>
-                    <Input disabled status title={"Competidor"} />
-                    <Button><FaArrowLeft/>  Anterior</Button>
-                    <Button>Próximo  <FaArrowRight/></Button>
+                    <Input
+                        disabled
+                        status
+                        title={"Competidor"}
+                        value={`${(competingRegisterNumber + 1)} de ${categoryData.competitorHorses.length}`}
+                    />
+                    <Input
+                        disabled
+                        status
+                        title={"Status"}
+                        value={FormatStatus(categoryData.competitorHorses[competingRegisterNumber].state)}
+                    />
+                    {competingRegisterNumber != 0 && <Button onClick={() => handlePreviousCompetitor()}><FaArrowLeft />Anterior</Button>}
+
+                    {competingRegisterNumber != (categoryData.competitorHorses.length - 1) &&
+                        <Button onClick={() => handleNextCompetitor()}>Próximo<FaArrowRight /></Button>}
+                    <Button>Finalizar</Button>
+
                 </Actions>
             </Content>
         </Container>

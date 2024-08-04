@@ -5,7 +5,7 @@ import { useNavigate } from 'react-router-dom';
 
 import { api } from '../../../services/api.js';
 
-import { FormatDate } from "../../../utils/formatDatas.js";
+import { FormatDate, FormatStatus } from "../../../utils/formatDatas.js";
 
 import { Listing } from './styles.js';
 
@@ -98,14 +98,14 @@ export function EventListing() {
                                 if (field == "end_date") {
                                     return (
                                         <td key={subIndex}>
-                                            {FormatDate(row.end_date)}
+                                             {FormatDate(row.end_date)}
                                         </td>
                                     )
                                 }
                                 if (field == "state") {
                                     return (
                                         <td key={subIndex}>
-                                            {row.state == "active" ? "Ativo" : "Inativo"}
+                                            {FormatStatus (row.state)}
                                         </td>
                                     )
                                 }

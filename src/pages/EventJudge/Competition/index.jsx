@@ -30,11 +30,13 @@ const header = {
 }
 
 export function Competition() {
-    const [categoryData, setCategoryData] = useState({ status: { categorie_name: "", categorie_state: "", proof_name: "" }, competitorHorses: [{ id: "", competitor_order: "", competitor_id: "", horse_id: "", categorie_id: "", competitor_name: "", horse_name: "" }] },);
+    const [loading, setLoading] = useState(true);
+    const [categoryData, setCategoryData] = useState();
     const [competingRegisterNumber, setCompetingRegisterNumber] = useState(0)
     const [fouls, setFouls] = useState([{ id: "", name: "", amount: "" }]);
     const [refresh, setRefresh] = useState(false);
-
+    const [hasExecuted, setHasExecuted] = useState(false);
+    const [time, setTime] = useState("");
     const [isModalConfirmVisible, setIsModalConfirmVisible] = useState(false);
     const [registerToDelete, setRegisterToDelete] = useState({ id: "", horse: "", competitor: "" });
 
@@ -44,24 +46,43 @@ export function Competition() {
         async function fetchData() {
             try {
                 const resCompetitors = await api.get(`/categoryRegisters/${params.id}`);
+                let lastCompetitor = 0;
+
                 if (resCompetitors.data.status.last_competitor) {
-                    setCompetingRegisterNumber(resCompetitors.data.status.last_competitor);
+                    lastCompetitor = resCompetitors.data.status.last_competitor;
+                }
+
+                if (resCompetitors.data.status.last_competitor >= resCompetitors.data.competitorHorses.length) {
+                    lastCompetitor = 0;
+                }
+
+                if (!hasExecuted) {
+                    setCompetingRegisterNumber(lastCompetitor);
+
+                    //await api.put(`/registersJudge/${resCompetitors.data.competitorHorses[lastCompetitor].id}`, {
+                    //    state: "running"
+                    //});
+                    setHasExecuted(true);
+                    setRefresh(prev => !prev);
                 }
                 setCategoryData(resCompetitors.data);
+                setTime(resCompetitors.data.competitorHorses[competingRegisterNumber].time)
 
                 const resFouls = await api.get(`/fouls/${resCompetitors.data.competitorHorses[competingRegisterNumber].id}`);
                 setFouls(resFouls.data.fouls);
+                setLoading(false)
             } catch (error) {
                 console.error("Failed to fetch data", error);
             }
         }
         fetchData();
     }, [refresh]);
-
     const handleNextCompetitor = () => {
         if ((competingRegisterNumber + 1) == categoryData.competitorHorses.length) { return };
         const next = competingRegisterNumber + 1;
         setCompetingRegisterNumber(next);
+        //console.log(categoryData.competitorHorses[competingRegisterNumber].time)
+        setTime("");
         setRefresh(prev => !prev);
     }
     const handlePreviousCompetitor = () => {
@@ -85,11 +106,40 @@ export function Competition() {
         }
         fetchData();
     }
-    const handleState = () => {
+    const handleFinish = () => {
+        async function putTimeAndState() {
+            try {
+                if(!time){
+                    throw new Error("Campo timer vazio!");
+                }
+                await api.put(`/registersJudge/${categoryData.competitorHorses[competingRegisterNumber].id}`, {
+                    state: "finished",
+                    time: time
+                })
+                setRefresh(prev => !prev)
+            } catch (error) {
+                alert(`Erro ao tentar salvar: ${error}`);
+            }
+        }
+        putTimeAndState();
     }
     const handleModalConfirm = (register) => {
         setIsModalConfirmVisible(!isModalConfirmVisible);
         { register && setRegisterToDelete(register) }
+    }
+    const handleRegisterState = (state) => {
+        async function handleState() {
+            try {
+                await api.put(`/registersJudge/${categoryData.competitorHorses[competingRegisterNumber].id}`, {
+                    state: state
+                });
+              } catch (error) {
+                const errorMessage = error.response?.data?.message || error.message;
+                alert(errorMessage);
+              }
+        }
+        handleState();
+        setRefresh(prev =>! prev);
     }
     async function deleteFoul() {
         try {
@@ -100,6 +150,14 @@ export function Competition() {
         } catch (error) {
             alert("Erro ao tentar excluir falta", error);
         }
+    }
+
+    if(loading){
+        return(
+            <Container>
+                <h1>Carregando...</h1>
+            </Container>
+        )
     }
 
     return (
@@ -122,7 +180,7 @@ export function Competition() {
                     <Picture>
                         <img src={avatarPlaceholder} alt="" />
 
-                        <label htmlFor="avatar">{categoryData.competitorHorses[competingRegisterNumber].competitor_name}</label>
+                        <label htmlFor="avatar">{categoryData.competitorHorses[competingRegisterNumber].competitor_name || ""}</label>
                     </Picture>
                 </Profile>
 
@@ -135,18 +193,26 @@ export function Competition() {
                     </Title>
 
                     <Timer className="timer">
-                        <Input dataType="timer" type="text" />
+                        <Input 
+                            dataType="timer"
+                            type="text"
+                            value={time}
+                            onChange={(e) => setTime(e.target.value)}
+                        />
                     </Timer>
 
                     <Fouls className="fouls">
                         <Section title={"Faltas"} />
 
+
+                        {categoryData.competitorHorses[competingRegisterNumber].state != "finished" &&
                         <div className="header">
                             <Button onClick={() => handleFouls({ foul: 'foul', amount: 1 })}>Falta +5s</Button>
                             <Button onClick={() => handleFouls({ foul: 'foul', amount: 10 })}>10 faltas +50s</Button>
                             <Button onClick={() => handleFouls({ foul: 'SAT', amount: "NA" })} className={"danger"}>SAT</Button>
                             <Button onClick={() => handleFouls({ foul: 'NPC', amount: "NA" })} className={"danger"}>NPC</Button>
                         </div>
+                        }
 
                         <div className="tabela">
                             <Table
@@ -210,12 +276,23 @@ export function Competition() {
                         title={"Status"}
                         value={FormatStatus(categoryData.competitorHorses[competingRegisterNumber].state)}
                     />
-                    {competingRegisterNumber != 0 && <Button onClick={() => handlePreviousCompetitor()}><FaArrowLeft />Anterior</Button>}
-
+                    {competingRegisterNumber != 0 &&
+                        categoryData.competitorHorses[competingRegisterNumber].state != "running" &&
+                        <Button onClick={() => handlePreviousCompetitor()}><FaArrowLeft/>Anterior</Button>
+                    }
                     {competingRegisterNumber != (categoryData.competitorHorses.length - 1) &&
-                        <Button onClick={() => handleNextCompetitor()}>Próximo<FaArrowRight /></Button>}
-                    <Button>Finalizar</Button>
-
+                        categoryData.competitorHorses[competingRegisterNumber].state != "running" &&
+                        <Button onClick={() => handleNextCompetitor()}>Próximo<FaArrowRight/></Button>
+                    }
+                    {categoryData.competitorHorses[competingRegisterNumber].state == "running" && 
+                        <Button onClick={handleFinish}>Finalizar</Button>
+                    }
+                    {categoryData.competitorHorses[competingRegisterNumber].state == "active" && 
+                        <Button onClick={() => handleRegisterState("running")}>Iniciar</Button>
+                    }
+                    {categoryData.competitorHorses[competingRegisterNumber].state == "finished" && 
+                        <Button className={"danger"} onClick={() => handleRegisterState("running")}>Reativar</Button>
+                    }
                 </Actions>
             </Content>
         </Container>

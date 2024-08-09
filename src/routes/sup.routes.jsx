@@ -13,6 +13,7 @@ import { CadastroCompetidor } from '../pages/CadastroCompetidores';
 import { Event } from '../pages/Event';
 import { EventJudge } from '../pages/EventJudge';
 import { Competition } from '../pages/EventJudge/Competition';
+import { Results } from '../pages/Results';
 
 
 export function SupRoutes() {
@@ -33,6 +34,8 @@ export function SupRoutes() {
                 <Route path='/evento' element={<Event/>}/>
                 <Route path='/evento/juiz' element={<EventJudge/>}/>
                 <Route path='/evento/juiz/:id' element={<EventJudge/>}/>
+                <Route path='/evento/results/' element={<Results/>}></Route> 
+                <Route path='/evento/results/:id' element={<Results/>}></Route>
             </Route>
 
             <Route path='/evento/juiz/competition/:id' element={<Competition/>}/>

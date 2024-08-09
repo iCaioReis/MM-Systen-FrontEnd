@@ -42,9 +42,7 @@ export function EventFormm({ event, mode = "add" }) {
     }, [event]);
 
     return (
-
         <Form>
-
             <Profile>
                 <div>
                     <Picture>
@@ -59,7 +57,6 @@ export function EventFormm({ event, mode = "add" }) {
                     </Button>
                 </div>
             </Profile>
-
 
             <MainForm>
                 <h1>Arbitragem - Evento</h1>
@@ -108,7 +105,6 @@ export function EventFormm({ event, mode = "add" }) {
                 </CategoriesContainer>
 
             </MainForm>
-
 
             <Status>
 

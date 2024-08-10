@@ -1,14 +1,22 @@
 import logoEsporte from "../../assets/logoEsporte.png"
 import { useState } from "react";
 
+import { useAuth } from '../../hooks/auth';
+
 import { Input } from "../../components/Input";
 import { Button } from "../../components/Button";
 
 import { Container, Form } from "./styles";
 
 export function SignIn(){
-    const [email, setEmail] = useState("");
+    const [login, setLogin] = useState("");
     const [password, setPassword] = useState("");
+
+    const { signIn } = useAuth();
+
+    function handleSignIn(){
+        signIn({ login, password });
+    }
   
     return(
         <Container>
@@ -19,7 +27,7 @@ export function SignIn(){
                     placeholder="Digite o usuário"
                     title={"Usuário"}
                     type="text"
-                    onChange = {e => setEmail(e.target.value)}
+                    onChange = {e => setLogin(e.target.value)}
                 />
 
                 <Input
@@ -29,7 +37,7 @@ export function SignIn(){
                     onChange = {e => setPassword(e.target.value)}
                 />
 
-                <Button title={"Entrar"}>Entrar</Button>
+                <Button title={"Entrar"} onClick={handleSignIn}>Entrar</Button>
 
                 <a href={"https://github.com/iCaioReis"} target= {"_blank"}>Developed by <strong>Caio Reis</strong></a>
 

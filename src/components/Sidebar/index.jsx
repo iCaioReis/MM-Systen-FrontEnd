@@ -1,4 +1,6 @@
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
+
+import { useAuth } from "../../hooks/auth";
 
 import avatarPlaceholder from "../../assets/user.svg";
 
@@ -7,6 +9,14 @@ import { Container, UserSection, Profile } from './styles';
 export function Sidebar(){
 
     const avatarUrl = avatarPlaceholder;
+
+    const { signOut } = useAuth();
+    const navigation = useNavigate();
+
+    function handleSignOut(){
+        navigation("/")
+        signOut();
+    }
 
     return(
         <Container>
@@ -26,7 +36,7 @@ export function Sidebar(){
                 </div>
                 </Profile>
 
-                <Link>Sair</Link>
+                <Link onClick={handleSignOut}>Sair</Link>
             </UserSection>
         </Container>
     )

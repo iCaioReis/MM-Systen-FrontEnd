@@ -6,16 +6,16 @@ import { FaArrowRight } from "react-icons/fa6";
 import avatarPlaceholder from "../../../assets/user.svg";
 
 import { FormatStatus } from '../../../utils/formatDatas.js';
+import { generateExcelTable } from '../../../utils/generateExcelTable.js';
 
 import { api } from '../../../services/api.js';
 
 import { Input } from "../../../components/Input/index.jsx";
 import { Button } from "../../../components/Button/index.jsx";
-import { Section } from "../../../components/Section/index.jsx";
 import { Select } from '../../../components/Select/index.jsx';
 import { Table } from '../../../components/Table/index.jsx';
 
-import { CategoriesContainer, DateContainer, Form, MainForm, Status, Profile, Picture } from './styles.js';
+import { DateContainer, Form, MainForm, Profile, Picture } from './styles.js';
 
 const initialData = {
     id: "",
@@ -25,22 +25,25 @@ const initialData = {
     start_date: "",
     end_date: "",
 };
-
 const larguras = {
-    index:"60px",
+    index:"40px",
     competitor: "",
     horse: "",
     time: "",
-    acress: "150px",
-    SAT: "65px",
-    NPC: "65px"
+    foul: "75px",
+    acress: "100px",
+    totalTime: "100px",
+    SAT: "60px",
+    NPC: "60px"
 }
 const header = {
     index:"N",
     competitor_name: "Competidor",
     horse_name: "Cavalo",
     time: "tempo",
+    foul: "Faltas",
     acress: "Acréssimo",
+    totalTime: "Tempo total",
     SAT: "SAT",
     NPC: "NPC"
 }
@@ -76,10 +79,6 @@ export function EventFormm({ mode = "show" }) {
         }
     }, [event]);
 
-    function exibir() {
-        console.log(results.proofs[proof -1].categories[categorie -1])
-    }
-
     if(loading){
         return (
             <div>
@@ -106,7 +105,7 @@ export function EventFormm({ mode = "show" }) {
                     disabled
                     status
                 />
-                <Button onClick={() => exibir()} >Exportar Excel</Button>
+                <Button onClick={() => generateExcelTable(results)}>Exportar Excel</Button>
             </Profile>
 
             <MainForm>

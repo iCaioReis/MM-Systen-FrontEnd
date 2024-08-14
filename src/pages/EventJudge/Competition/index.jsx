@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
+import screenfull from 'screenfull';
 
 import { FaRegTrashCan } from "react-icons/fa6";
 import { FaArrowLeft, FaArrowRight } from "react-icons/fa";
@@ -47,18 +48,15 @@ export function Competition() {
             try {
                 const resCompetitors = await api.get(`/categoryRegisters/${params.id}`);
                 let lastCompetitor = 0;
-
                 if (resCompetitors.data.status.last_competitor) {
                     lastCompetitor = resCompetitors.data.status.last_competitor;
                 }
-
                 if (resCompetitors.data.status.last_competitor >= resCompetitors.data.competitorHorses.length) {
                     lastCompetitor = 0;
                 }
-
                 if (!hasExecuted) {
                     setCompetingRegisterNumber(lastCompetitor);
-
+                    setTime(resCompetitors.data.competitorHorses[competingRegisterNumber].time)
                     //await api.put(`/registersJudge/${resCompetitors.data.competitorHorses[lastCompetitor].id}`, {
                     //    state: "running"
                     //});
@@ -66,8 +64,7 @@ export function Competition() {
                     setRefresh(prev => !prev);
                 }
                 setCategoryData(resCompetitors.data);
-                setTime(resCompetitors.data.competitorHorses[competingRegisterNumber].time)
-
+        
                 const resFouls = await api.get(`/fouls/${resCompetitors.data.competitorHorses[competingRegisterNumber].id}`);
                 setFouls(resFouls.data.fouls);
                 setLoading(false)
@@ -77,6 +74,8 @@ export function Competition() {
         }
         fetchData();
     }, [refresh]);
+    
+
     const handleNextCompetitor = () => {
         if ((competingRegisterNumber + 1) == categoryData.competitorHorses.length) { return };
         const next = competingRegisterNumber + 1;
@@ -151,6 +150,9 @@ export function Competition() {
             alert("Erro ao tentar excluir falta", error);
         }
     }
+    const setFullScreen = () => {
+        screenfull.request();
+    }
 
     if(loading){
         return(
@@ -198,6 +200,7 @@ export function Competition() {
                             type="text"
                             value={time}
                             onChange={(e) => setTime(e.target.value)}
+                            disabled={categoryData.competitorHorses[competingRegisterNumber].state != "running" }
                         />
                     </Timer>
 
@@ -205,7 +208,7 @@ export function Competition() {
                         <Section title={"Faltas"} />
 
 
-                        {categoryData.competitorHorses[competingRegisterNumber].state != "finished" &&
+                        {categoryData.competitorHorses[competingRegisterNumber].state == "running" &&
                         <div className="header">
                             <Button onClick={() => handleFouls({ foul: 'foul', amount: 1 })}>Falta +5s</Button>
                             <Button onClick={() => handleFouls({ foul: 'foul', amount: 10 })}>10 faltas +50s</Button>
@@ -288,7 +291,7 @@ export function Competition() {
                         <Button onClick={handleFinish}>Finalizar</Button>
                     }
                     {categoryData.competitorHorses[competingRegisterNumber].state == "active" && 
-                        <Button onClick={() => handleRegisterState("running")}>Iniciar</Button>
+                        <Button onClick={() => [handleRegisterState("running"), setFullScreen()]}>Iniciar</Button>
                     }
                     {categoryData.competitorHorses[competingRegisterNumber].state == "finished" && 
                         <Button className={"danger"} onClick={() => handleRegisterState("running")}>Reativar</Button>

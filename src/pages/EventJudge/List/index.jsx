@@ -9,12 +9,12 @@ import { Button } from '../../../components/Button';
 export function List({ title, categories, refresh }) {
     const [isOpen, setIsOpen] = useState(false);
 
-
     const toggleDropdown = () => {
         setIsOpen(!isOpen);
     };
 
     function handleDetails(id) {
+        
         window.open(`/evento/juiz/competition/${id}`, '_blank');
     }
 

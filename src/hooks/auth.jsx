@@ -21,6 +21,7 @@ function AuthProvider({ children }){
             setData({ user, token })
 
         } catch (error) {
+            console.log(error)
             if(error.res){
                 alert(error.res.data.message);
             }else {

@@ -26,7 +26,7 @@ const initialData = {
     end_date: "",
 };
 const larguras = {
-    index:"40px",
+    index: "40px",
     competitor: "",
     horse: "",
     time: "",
@@ -37,7 +37,7 @@ const larguras = {
     NPC: "60px"
 }
 const header = {
-    index:"N",
+    index: "N",
     competitor_name: "Competidor",
     horse_name: "Cavalo",
     time: "tempo",
@@ -61,7 +61,7 @@ export function EventFormm({ mode = "show" }) {
     const params = useParams();
 
     useEffect(() => {
-        if(params.id){
+        if (params.id) {
             async function fethEvent() {
                 const eventData = await api.get(`/events/${params.id}`);
                 const results = await api.get(`/results/${params.id}`);
@@ -79,7 +79,7 @@ export function EventFormm({ mode = "show" }) {
         }
     }, [event]);
 
-    if(loading){
+    if (loading) {
         return (
             <div>
                 <h1>Carregando...</h1>
@@ -174,38 +174,94 @@ export function EventFormm({ mode = "show" }) {
                     </Select>
                 </div>
 
-                <Table 
-                header={header} 
-                widths={larguras}
-                rows = {
-                    results.proofs[proof - 1].categories[categorie - 1].competitors
-                        .sort((a, b) => {
-                            // Remover espaços, underscores, e a unidade 's' do tempo
-                            const timeA = parseFloat(a.time.replace(/[\s_]/g, '').replace('s', '')) || Infinity;
-                            const timeB = parseFloat(b.time.replace(/[\s_]/g, '').replace('s', '')) || Infinity;
-                            return timeA - timeB;
-                        })
-                        .map((row, index) => {
-                            const id = row.id;
-                            return (
-                                <tr key={index}>
-                                    {Object.keys(header).map((field, subIndex) => {
-                                        if (field == "index") {
+                <Table
+                    header={header}
+                    widths={larguras}
+                   
+                    rows = {
+                        results.proofs[proof - 1].categories[categorie - 1].competitors
+                            .sort((a, b) => {
+                                // Remover espaços, underscores, e a unidade 's' do tempo
+                                const timeA = parseFloat(a.time.replace(/[\s_s]/g, '').replace('s', '')) || Infinity;
+                                const timeB = parseFloat(b.time.replace(/[\s_s]/g, '').replace('s', '')) || Infinity;
+                    
+                                // Encontrar o objeto de foul em cada competidor
+                                const foulA = a.fouls.find(foul => foul.name === 'foul');
+                                const foulB = b.fouls.find(foul => foul.name === 'foul');
+                    
+                                // Calcular o tempo total com acréscimo das faltas
+                                const totalTimeA = timeA + (foulA ? foulA.amount * 5 : 0);
+                                const totalTimeB = timeB + (foulB ? foulB.amount * 5 : 0);
+                    
+                                return totalTimeA - totalTimeB;
+                            })
+                            .map((row, index) => {
+                                return (
+                                    <tr key={index}>
+                                        {Object.keys(header).map((field, subIndex) => {
+                                            if (field === "index") {
+                                                return (
+                                                    <td key={subIndex}>
+                                                        {index + 1}
+                                                    </td>
+                                                );
+                                            }
+                    
+                                            if (field === "foul") {
+                                                const foulItem = row.fouls.find(foul => foul.name === 'foul');
+                                                return (
+                                                    <td key={subIndex}>
+                                                        {foulItem ? foulItem.amount : '-'}
+                                                    </td>
+                                                );
+                                            }
+                    
+                                            if (field === "acress") {
+                                                const foulItem = row.fouls.find(foul => foul.name === 'foul');
+                                                return (
+                                                    <td key={subIndex}>
+                                                        {foulItem ? foulItem.amount * 5 + ".000 s" : '0.000 s'}
+                                                    </td>
+                                                );
+                                            }
+                    
+                                            if (field === "totalTime") {
+                                                const foulItem = row.fouls.find(foul => foul.name === 'foul');
+                                                const totalTime = foulItem ? (parseFloat(row.time) + foulItem.amount * 5).toFixed(3) + " s" : row.time;
+                                                return (
+                                                    <td key={subIndex}>
+                                                        {totalTime}
+                                                    </td>
+                                                );
+                                            }
+
+                                            if (field === "SAT") {
+                                                const foulItem = row.fouls.find(foul => foul.name === 'SAT');
+                                                return (
+                                                    <td key={subIndex}>
+                                                        {foulItem ? "SAT" : '-'}
+                                                    </td>
+                                                );
+                                            }
+
+                                            if (field === "NPC") {
+                                                const foulItem = row.fouls.find(foul => foul.name === 'NPC');
+                                                return (
+                                                    <td key={subIndex}>
+                                                        {foulItem ? "NPC" : '-'}
+                                                    </td>
+                                                );
+                                            }
+                    
                                             return (
-                                                <td key={subIndex}>
-                                                    {index + 1}
-                                                </td>
+                                                <td key={subIndex}>{row[field]}</td>
                                             );
-                                        }
-                                        return (
-                                            <td key={subIndex}>{row[field]}</td>
-                                        );
-                                    })}
-                                </tr>
-                            );
-                        })
-                }
-            />
+                                        })}
+                                    </tr>
+                                );
+                            })
+                    }                    
+                />
 
             </MainForm>
         </Form>

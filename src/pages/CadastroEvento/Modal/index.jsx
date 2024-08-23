@@ -45,7 +45,7 @@ export function Modal({ isOpen, onClose, category}) {
       <tr key={index}>
         {Object.keys(header).map((field, subIndex) => {
           if (field === 'competitor_order') {
-            return <td key={subIndex}>{index}</td>;
+            return <td key={subIndex}>{index + 1}</td>;
           }
           if (field === 'button') {
             return (

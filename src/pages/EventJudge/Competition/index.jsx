@@ -47,13 +47,11 @@ export function Competition() {
         async function fetchData() {
             try {
                 const resCompetitors = await api.get(`/categoryRegisters/${params.id}`);
-                let lastCompetitor = 0;
-                if (resCompetitors.data.status.last_competitor) {
-                    lastCompetitor = resCompetitors.data.status.last_competitor;
-                }
-                if (resCompetitors.data.status.last_competitor >= resCompetitors.data.competitorHorses.length) {
-                    lastCompetitor = 0;
-                }
+
+                let lastCompetitor = resCompetitors.data.competitorHorses.findIndex(competitor => competitor.time === null);
+                
+                lastCompetitor == -1 ? lastCompetitor = 0 : lastCompetitor = lastCompetitor
+
                 if (!hasExecuted) {
                     setCompetingRegisterNumber(lastCompetitor);
                     

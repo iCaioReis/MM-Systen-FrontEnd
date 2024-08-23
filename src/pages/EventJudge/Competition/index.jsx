@@ -56,12 +56,14 @@ export function Competition() {
                 }
                 if (!hasExecuted) {
                     setCompetingRegisterNumber(lastCompetitor);
-                    setTime(resCompetitors.data.competitorHorses[competingRegisterNumber].time)
-                    //await api.put(`/registersJudge/${resCompetitors.data.competitorHorses[lastCompetitor].id}`, {
-                    //    state: "running"
-                    //});
+                    
                     setHasExecuted(true);
                     setRefresh(prev => !prev);
+                }
+                if(resCompetitors.data.competitorHorses[competingRegisterNumber].time){
+                    setTime(resCompetitors.data.competitorHorses[competingRegisterNumber].time)
+                }else{
+                    setTime("");
                 }
                 setCategoryData(resCompetitors.data);
         
@@ -81,7 +83,6 @@ export function Competition() {
         const next = competingRegisterNumber + 1;
         setCompetingRegisterNumber(next);
         //console.log(categoryData.competitorHorses[competingRegisterNumber].time)
-        setTime("");
         setRefresh(prev => !prev);
     }
     const handlePreviousCompetitor = () => {

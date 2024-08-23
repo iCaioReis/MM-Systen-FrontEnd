@@ -50,16 +50,19 @@ export function Competition() {
 
                 let lastCompetitor = resCompetitors.data.competitorHorses.findIndex(competitor => competitor.time === null);
                 
-                lastCompetitor == -1 ? lastCompetitor = 0 : lastCompetitor = lastCompetitor
+                lastCompetitor == -1 ? lastCompetitor = 0 : lastCompetitor = lastCompetitor;
+
+                let runningCompetitor = resCompetitors.data.competitorHorses.findIndex(competitor => competitor.state === "running");
+
+                runningCompetitor != -1 ? lastCompetitor = runningCompetitor : lastCompetitor = lastCompetitor;
 
                 if (!hasExecuted) {
                     setCompetingRegisterNumber(lastCompetitor);
-                    
                     setHasExecuted(true);
                     setRefresh(prev => !prev);
                 }
-                if(resCompetitors.data.competitorHorses[competingRegisterNumber].time){
-                    setTime(resCompetitors.data.competitorHorses[competingRegisterNumber].time)
+                if(resCompetitors.data.competitorHorses[lastCompetitor].time){
+                    setTime(resCompetitors.data.competitorHorses[lastCompetitor].time)
                 }else{
                     setTime("");
                 }
@@ -67,6 +70,15 @@ export function Competition() {
         
                 const resFouls = await api.get(`/fouls/${resCompetitors.data.competitorHorses[competingRegisterNumber].id}`);
                 setFouls(resFouls.data.fouls);
+                if(resFouls.data.fouls.find(foul => foul.name == "SAT" || foul.name == "NPC")){
+                    setTime("000.000");
+                }
+
+                const finishedCompetitors = resCompetitors.data.competitorHorses.filter(competitor => competitor.state == "finished").length;
+                if(finishedCompetitors == resCompetitors.data.competitorHorses.length){
+                    await api.put(`/categories/${params.id}`, { state: "finished" });
+                }
+                
                 setLoading(false)
             } catch (error) {
                 console.error("Failed to fetch data", error);
@@ -80,7 +92,6 @@ export function Competition() {
         if ((competingRegisterNumber + 1) == categoryData.competitorHorses.length) { return };
         const next = competingRegisterNumber + 1;
         setCompetingRegisterNumber(next);
-        //console.log(categoryData.competitorHorses[competingRegisterNumber].time)
         setRefresh(prev => !prev);
     }
     const handlePreviousCompetitor = () => {
@@ -90,6 +101,9 @@ export function Competition() {
         setRefresh(prev => !prev)
     }
     const handleFouls = ({ foul, amount }) => {
+        if (foul == "SAT" || foul == "NCP"){
+            setTime("000.000");
+        }
         async function fetchData() {
             try {
                 await api.post("/fouls", {
@@ -131,6 +145,8 @@ export function Competition() {
                 await api.put(`/registersJudge/${categoryData.competitorHorses[competingRegisterNumber].id}`, {
                     state: state
                 });
+                await api.put(`/categories/${params.id}`, { state: "running" });
+
               } catch (error) {
                 const errorMessage = error.response?.data?.message || error.message;
                 alert(errorMessage);

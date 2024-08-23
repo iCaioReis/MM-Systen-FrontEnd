@@ -5,7 +5,7 @@ import { Container } from "./styles";
 
 export function Input({ title, disabled, mandatory, dataType, data, status, className, onChange, ...rest }) {
     const FormatCpf = "###.###.###-##";
-    const FormatTimer = "###.#### s";
+    const FormatTimer = "###.### s";
 
     const [value, setValue] = useState(data || "");
 

@@ -29,6 +29,7 @@ const initialData = {
 
 export function EventFormm({ event, mode = "add" }) {
     const [data, setData] = useState(initialData);
+    const [shouldSave, setShouldSave] = useState(false);
     const [isEditing, setIsEditing] = useState(mode === 'add');
     const navigate = useNavigate();
 
@@ -64,7 +65,7 @@ export function EventFormm({ event, mode = "add" }) {
             }
             addEvent();
 
-        } else if (isEditing) {
+        } else {
             async function updateEvent() {
                 try {
                     const res = await api.put(`/events/${event.id}`, data);
@@ -84,9 +85,16 @@ export function EventFormm({ event, mode = "add" }) {
         const newState = state;
 
         setData({ ...data, state: newState });
-        if(state == "finished_inscriptions"){
-        }
+
+        setShouldSave(true);
     }
+
+    useEffect(() => {
+        if (shouldSave) {
+            handleSave();
+            setShouldSave(false);
+        }
+    }, [shouldSave, data]);
 
     return (
         <Form>
@@ -112,9 +120,8 @@ export function EventFormm({ event, mode = "add" }) {
                             Editar
                         </Button>
                     )}
-                    <Button type={"button"} >
-                        Resultados
-                    </Button>
+                    <Button type={"button"}>Registrar Competidor</Button>
+                    <Button type={"button"}>Gerar Relatório</Button>
                 </div>
                 {mode != 'add' && isEditing && data.state == 'active' &&
                     <Button className={"danger"}
@@ -202,7 +209,7 @@ export function EventFormm({ event, mode = "add" }) {
                         status
                     />
 
-                {mode != 'add' && isEditing && data.state == 'active' &&
+                {mode != 'add' && data.state == 'active' &&
                     <Button onClick={() => handleState( "finished_inscriptions")}  >
                         Encerrar inscrições
                     </Button>

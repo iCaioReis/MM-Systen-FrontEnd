@@ -10,9 +10,13 @@ import { FormatStatus } from '../../../utils/formatDatas.js';
 
 import { api } from '../../../services/api.js';
 
+import { Modal } from '../../../components/Modal/index.jsx';
 import { Input } from "../../../components/Input/index.jsx";
 import { Button } from "../../../components/Button/index.jsx";
+import { Select } from "../../../components/Select/index.jsx";
 import { Section } from "../../../components/Section/index.jsx";
+import { SearchDropdown } from '../../../components/SearchDropdown/index.jsx';
+
 
 import { List } from '../List/index.jsx';
 
@@ -31,17 +35,21 @@ export function EventFormm({ event, mode = "add" }) {
     const [data, setData] = useState(initialData);
     const [shouldSave, setShouldSave] = useState(false);
     const [isEditing, setIsEditing] = useState(mode === 'add');
+    const [showModalAddUser, setShowModalAddUser] = useState(false);
     const navigate = useNavigate();
-
-    const refresh = () => {
-        window.location.reload();
-    }
 
     useEffect(() => {
         if (event && mode === 'show') {
             setData({ ...initialData, ...event });
         }
     }, [event, mode]);
+
+    useEffect(() => {
+        if (shouldSave) {
+            handleSave();
+            setShouldSave(false);
+        }
+    }, [shouldSave, data]);
 
     const handleInputChange = (e) => {
         const { name, value } = e.target;
@@ -89,15 +97,59 @@ export function EventFormm({ event, mode = "add" }) {
         setShouldSave(true);
     }
 
-    useEffect(() => {
-        if (shouldSave) {
-            handleSave();
-            setShouldSave(false);
-        }
-    }, [shouldSave, data]);
+    const handleShowModalAddUser = () => {
+        setShowModalAddUser(!showModalAddUser);
+    }
+
+    const refresh = () => {
+        window.location.reload();
+    }
 
     return (
         <Form>
+            <Modal
+                visible={showModalAddUser}
+                onClose={handleShowModalAddUser}
+                content={
+                    <div className='content'>
+                        <h2>Registrar competidores em todas as provas</h2>
+                        <div className="flex">
+                            <SearchDropdown
+                                tabindex="0"
+                                table="competitors"
+                            //onItemSelected={(id) => setSelectedCompetitorId(id)}
+                            //clearSelection={clearSelection}
+                            />
+                            <SearchDropdown
+                                tabindex="1"
+                                table="horses"
+                            //onItemSelected={(id) => setSelectedHorseId(id)}
+                            //clearSelection={clearSelection}
+                            />
+                            <Select
+                                label={"Categoria"}
+                                name="category"
+                                //value={data.category}
+                                //onChange={handleChange}
+                                mandatory
+                            >
+                                <option value="">Selecione</option>
+                                <option value="kids">Kids</option>
+                                <option value="little">Mirim</option>
+                                <option value="juvenile">Juvenil</option>
+                                <option value="beginner">Iniciante</option>
+                                <option value="female">Feminino</option>
+                                <option value="adult">Adulto</option>
+                                <option value="master">Master</option>
+                                <option value="open">Aberta</option>
+                            </Select>
+
+                            <Button onClick={handleSave}>Adicionar</Button>
+                        </div>
+                    </div>
+                }
+            />
+
             <Profile>
                 <div>
                     <Picture>
@@ -120,12 +172,12 @@ export function EventFormm({ event, mode = "add" }) {
                             Editar
                         </Button>
                     )}
-                    <Button type={"button"}>Registrar Competidor</Button>
+                    <Button type={"button"} onClick={() => handleShowModalAddUser()}>Registrar Competidor</Button>
                     <Button type={"button"}>Gerar Relatório</Button>
                 </div>
                 {mode != 'add' && isEditing && data.state == 'active' &&
                     <Button className={"danger"}
-                        onClick={() => handleState( "inative")}
+                        onClick={() => handleState("inative")}
                     >
                         Desativar
                     </Button>
@@ -195,22 +247,22 @@ export function EventFormm({ event, mode = "add" }) {
             </MainForm>
 
             <Status>
-               
-                    <Input
-                        title={"Número único"}
-                        value={data.id}
-                        disabled
-                        status
-                    />
-                    <Input
-                        title={"Status"}
-                        value={FormatStatus (data.state)}
-                        disabled
-                        status
-                    />
+
+                <Input
+                    title={"Número único"}
+                    value={data.id}
+                    disabled
+                    status
+                />
+                <Input
+                    title={"Status"}
+                    value={FormatStatus(data.state)}
+                    disabled
+                    status
+                />
 
                 {mode != 'add' && data.state == 'active' &&
-                    <Button onClick={() => handleState( "finished_inscriptions")}  >
+                    <Button onClick={() => handleState("finished_inscriptions")}  >
                         Encerrar inscrições
                     </Button>
                 }

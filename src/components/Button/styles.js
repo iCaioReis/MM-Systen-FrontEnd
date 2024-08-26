@@ -53,4 +53,7 @@ export const Container = styled.button`
             background-color: ${({ theme }) => theme.COLORS.RED};
         }
     }
+    &:focus{
+        border: 3px solid  ${({ theme }) => theme.COLORS.LIGHT_100};
+    }
 `;

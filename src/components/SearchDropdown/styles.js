@@ -24,8 +24,13 @@ export const Container = styled.div`
         z-index: 1
         }
     
-    li:hover {
-    cursor: pointer;
-    background-color: ${({ theme }) => theme.COLORS.LIGHT_300};
+    
+    li {
+        color: ${({ theme }) => theme.COLORS.THEME_700};
+
+        &:hover{
+            cursor: pointer;
+            background-color: ${({ theme }) => theme.COLORS.LIGHT_300} !important;
+        }
     }
 `;

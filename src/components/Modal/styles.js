@@ -39,7 +39,7 @@ export const Container = styled.div`
 
         .flex{
             display: flex;
-            gap: 2rem;
+            gap: 1rem;
             button {
                 width: 10rem;
             }

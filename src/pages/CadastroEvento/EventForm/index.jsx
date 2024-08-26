@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 
 import { FaArrowRight } from "react-icons/fa6";
 import { FiCamera } from 'react-icons/fi';
@@ -16,7 +16,6 @@ import { Button } from "../../../components/Button/index.jsx";
 import { Select } from "../../../components/Select/index.jsx";
 import { Section } from "../../../components/Section/index.jsx";
 import { SearchDropdown } from '../../../components/SearchDropdown/index.jsx';
-
 
 import { List } from '../List/index.jsx';
 
@@ -35,8 +34,14 @@ export function EventFormm({ event, mode = "add" }) {
     const [data, setData] = useState(initialData);
     const [shouldSave, setShouldSave] = useState(false);
     const [isEditing, setIsEditing] = useState(mode === 'add');
+    const [clearSelection, setClearSelection] = useState(false);
+    const [selectedHorseId, setSelectedHorseId] = useState(null);
+    const [selectedCompetitorId, setSelectedCompetitorId] = useState(null);
+    const [selectedCategory, setSelectedCategory] = useState("");
     const [showModalAddUser, setShowModalAddUser] = useState(false);
+
     const navigate = useNavigate();
+    const params = useParams();
 
     useEffect(() => {
         if (event && mode === 'show') {
@@ -95,15 +100,41 @@ export function EventFormm({ event, mode = "add" }) {
         setData({ ...data, state: newState });
 
         setShouldSave(true);
+    };
+
+    const handleSaveCompetitor = () => {
+
+        async function addCompetitorInAllProofs() {
+            try {
+                await api.post(`/allCategoryRegisters`,
+                    {
+                        "competitor_id": selectedCompetitorId,
+                        "horse_id": selectedHorseId,
+                        "event_id": params.id,
+                        "categoryName": selectedCategory
+                    });
+                alert("Registro cadastrado com sucesso!");
+
+                setSelectedCompetitorId(null);
+                setSelectedHorseId(null);
+                setSelectedCategory("");
+                setClearSelection(true);
+                setTimeout(() => setClearSelection(false), 0);
+            } catch (error) {
+                const errorMessage = error.response?.data?.message || error.message;
+                alert(errorMessage)
+            }
+        }
+        addCompetitorInAllProofs();
     }
 
     const handleShowModalAddUser = () => {
         setShowModalAddUser(!showModalAddUser);
-    }
+    };
 
     const refresh = () => {
         window.location.reload();
-    }
+    };
 
     return (
         <Form>
@@ -117,20 +148,20 @@ export function EventFormm({ event, mode = "add" }) {
                             <SearchDropdown
                                 tabindex="0"
                                 table="competitors"
-                            //onItemSelected={(id) => setSelectedCompetitorId(id)}
-                            //clearSelection={clearSelection}
+                                onItemSelected={(id) => setSelectedCompetitorId(id)}
+                                clearSelection={clearSelection}
                             />
                             <SearchDropdown
                                 tabindex="1"
                                 table="horses"
-                            //onItemSelected={(id) => setSelectedHorseId(id)}
-                            //clearSelection={clearSelection}
+                                onItemSelected={(id) => setSelectedHorseId(id)}
+                                clearSelection={clearSelection}
                             />
                             <Select
                                 label={"Categoria"}
                                 name="category"
-                                //value={data.category}
-                                //onChange={handleChange}
+                                value={selectedCategory}
+                                onChange={e => setSelectedCategory(e.target.value)}
                                 mandatory
                             >
                                 <option value="">Selecione</option>
@@ -144,7 +175,7 @@ export function EventFormm({ event, mode = "add" }) {
                                 <option value="open">Aberta</option>
                             </Select>
 
-                            <Button onClick={handleSave}>Adicionar</Button>
+                            <Button onClick={handleSaveCompetitor}>Adicionar</Button>
                         </div>
                     </div>
                 }

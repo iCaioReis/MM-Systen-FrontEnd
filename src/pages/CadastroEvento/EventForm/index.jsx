@@ -203,8 +203,14 @@ export function EventFormm({ event, mode = "add" }) {
                             Editar
                         </Button>
                     )}
-                    <Button type={"button"} onClick={() => handleShowModalAddUser()}>Registrar Competidor</Button>
-                    <Button type={"button"}>Gerar Relatório</Button>
+                    {params.id && 
+                        <Button type={"button"} onClick={() => handleShowModalAddUser()}>Registrar Competidor</Button>
+                    }
+
+                    {//params.id && 
+                    //<Button type={"button"}>Gerar Relatório</Button>
+                    }
+                    
                 </div>
                 {mode != 'add' && isEditing && data.state == 'active' &&
                     <Button className={"danger"}

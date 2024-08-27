@@ -10,7 +10,7 @@ export function Sidebar(){
 
     const avatarUrl = avatarPlaceholder;
 
-    const { signOut } = useAuth();
+    const { signOut, user } = useAuth();
     const navigation = useNavigate();
 
     function handleSignOut(){
@@ -32,7 +32,7 @@ export function Sidebar(){
 
                 <div>
                     <span>Seja Bem-vindo,</span>
-                    <strong>Teste</strong>
+                    <strong>{user.login}</strong>
                 </div>
                 </Profile>
 

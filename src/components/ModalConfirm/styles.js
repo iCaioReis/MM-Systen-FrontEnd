@@ -14,7 +14,7 @@ export const Container = styled.div`
 
     background: rgba(0, 0, 0, 0.7);
     
-    .modal {
+    .modalConfirm {
         width: 40rem;
         height: 20rem;
 

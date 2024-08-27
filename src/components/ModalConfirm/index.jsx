@@ -7,7 +7,7 @@ export function ModalConfirm({title, subTitle, onClose, onConfirm, visible}){
 
     return(
         <Container>
-            <div className="modal">
+            <div className="modalConfirm">
                 <h2>{title}</h2>
                 <h3>{subTitle}</h3>
                 <div className="flex">

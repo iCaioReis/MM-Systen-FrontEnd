@@ -52,8 +52,9 @@ export const Title = styled.div`
 
 export const MainForm = styled.div`
   svg{
-    color: ${({ theme }) => theme.COLORS.RED};
-  }
+    color: ${({ theme }) => theme.COLORS.THEME_700};
+    }
+  
 
   .registers {
     max-height: 426px;
@@ -62,6 +63,17 @@ export const MainForm = styled.div`
     overflow-y: scroll;
     
     border-radius: 8px;
+  }
+  .flex-buttons {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+
+    > .pencil{
+      background: none;
+      border: none;
+    }
   }
 `;
 

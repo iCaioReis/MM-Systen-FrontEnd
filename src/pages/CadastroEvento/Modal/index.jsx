@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 
-import { FaRegTrashCan } from "react-icons/fa6";
+import { FaRegTrashCan, FaPencil, FaArrowTurnDown, FaArrowTurnUp } from "react-icons/fa6";
 
 import { api } from '../../../services/api';
 
@@ -45,14 +45,31 @@ export function Modal({ isOpen, onClose, category}) {
       <tr key={index}>
         {Object.keys(header).map((field, subIndex) => {
           if (field === 'competitor_order') {
-            return <td key={subIndex}>{index + 1}</td>;
+            return <td key={subIndex}>
+              <div className="flex-buttons">
+              <button><FaArrowTurnUp/></button>
+
+              {index + 1}
+              
+              <button><FaArrowTurnDown/></button>
+              </div>
+              </td>;
           }
           if (field === 'button') {
             return (
               <td key={subIndex}>
-                <Button className={"noBackground auto-width"} onClick={() => handleModalConfirm({ id: row.id, competitor: row.competitor_name, horse: row.horse_name })}>
+                <div className="flex-buttons">
+
+                <button className='pencil'><FaPencil /></button>
+                <Button 
+                  className={"noBackground auto-width trash"} 
+                  onClick={() => handleModalConfirm({ 
+                    id: row.id,
+                    competitor: row.competitor_name,
+                    horse: row.horse_name })}>
                   <FaRegTrashCan />
                 </Button>
+                </div>
               </td>
             );
           }

@@ -5,7 +5,7 @@ import { FormatCategory, FormatStatus, FormatProof } from '../../../utils/format
 import { Container } from './styles';
 
 import { Button } from '../../../components/Button';
-import { Modal } from '../Modal';
+import { ModalCategory } from '../ModalCategory';
 
 export function List({ title, categories, refresh }) {
     const [isOpen, setIsOpen] = useState(false);
@@ -28,7 +28,7 @@ export function List({ title, categories, refresh }) {
 
     return (
         <Container>
-            <Modal
+            <ModalCategory
                 isOpen={modalIsOpen}
                 onClose={toggleModal}
                 category={modalCategory}

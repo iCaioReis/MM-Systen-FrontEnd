@@ -6,16 +6,18 @@ import { api } from '../../../services/api';
 
 import { FormatCategory, FormatProof, FormatStatus } from '../../../utils/formatDatas';
 
-import { Button } from '../../../components/Button';
 import { Input } from '../../../components/Input';
 import { Table } from '../../../components/Table';
+import { Button } from '../../../components/Button';
+import { Modal } from '../../../components/Modal';
+import { ModalConfirm } from '../../../components/ModalConfirm';
 import { SearchDropdown } from '../../../components/SearchDropdown';
 
 import { ModalOverlay, Title, MainForm, Status } from './styles';
 
-import { ModalConfirm } from '../../../components/ModalConfirm';
 
-export function Modal({ isOpen, onClose, category}) {
+
+export function ModalCategory({ isOpen, onClose, category}) {
   if (!isOpen) return null;
 
   const [status, setStatus] = useState({ proof_name: "", categorie_name: "", categorie_state: "" });
@@ -82,6 +84,7 @@ export function Modal({ isOpen, onClose, category}) {
   }) : [];
 
   useEffect(() => {
+    console.log(competitorsWithHorses)
     async function fethCompetitors() {
       const res = await api.get(`/categoryRegisters/${category.id}`);
       setStatus(res.data.status)

@@ -15,6 +15,8 @@ export const Container = styled.div`
     background: rgba(0, 0, 0, 0.7);
     
     .modal {
+        width: auto !important;
+        height: auto !important;
         min-width: 40rem;
         min-height: 20rem;
 

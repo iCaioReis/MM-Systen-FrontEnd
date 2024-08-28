@@ -17,7 +17,7 @@ import { ModalOverlay, Title, MainForm, Status } from './styles';
 
 
 
-export function ModalCategory({ isOpen, onClose, category}) {
+export function ModalCategory({ isOpen, onClose, category }) {
   if (!isOpen) return null;
 
   const [status, setStatus] = useState({ proof_name: "", categorie_name: "", categorie_state: "" });
@@ -26,9 +26,14 @@ export function ModalCategory({ isOpen, onClose, category}) {
   const [selectedHorseId, setSelectedHorseId] = useState(null);
   const [competitorsWithHorses, setCompetitorsWithHorses] = useState();
   const [selectedCompetitorId, setSelectedCompetitorId] = useState(null);
-
   const [isModalConfirmVisible, setIsModalConfirmVisible] = useState(false);
   const [registerToDelete, setRegisterToDelete] = useState({ id: "", horse: "", competitor: "" });
+  const [showModalEditRegister, setShowModalEditRegister] = useState(false);
+  const [registerToEdit, setRegisterToEdit] = useState([{"id": 0, "name": "" }, {"id": 0, "name": "" }]);
+  const [editCompetitorId, setEditCompetitorId] = useState(null);
+  const [editHorseId, setEditHorseId] = useState(null);
+  const [editRegisterId, setEditRegisterId] = useState(null);
+
 
   const larguras = {
     competitor_order: "50px",
@@ -49,28 +54,32 @@ export function ModalCategory({ isOpen, onClose, category}) {
           if (field === 'competitor_order') {
             return <td key={subIndex}>
               <div className="flex-buttons">
-              <button><FaArrowTurnUp/></button>
+                <button><FaArrowTurnUp /></button>
 
-              {index + 1}
-              
-              <button><FaArrowTurnDown/></button>
+                {index + 1}
+
+                <button><FaArrowTurnDown /></button>
               </div>
-              </td>;
+            </td>;
           }
           if (field === 'button') {
             return (
               <td key={subIndex}>
                 <div className="flex-buttons">
-
-                <button className='pencil'><FaPencil /></button>
-                <Button 
-                  className={"noBackground auto-width trash"} 
-                  onClick={() => handleModalConfirm({ 
-                    id: row.id,
-                    competitor: row.competitor_name,
-                    horse: row.horse_name })}>
-                  <FaRegTrashCan />
-                </Button>
+                  {/*console.log(row)*/}
+                  <button 
+                    className='pencil'
+                    onClick={() => handleModalEditRegister(row)}
+                  ><FaPencil /></button>
+                  <Button
+                    className={"noBackground auto-width trash"}
+                    onClick={() => handleModalConfirm({
+                      id: row.id,
+                      competitor: row.competitor_name,
+                      horse: row.horse_name
+                    })}>
+                    <FaRegTrashCan />
+                  </Button>
                 </div>
               </td>
             );
@@ -84,10 +93,10 @@ export function ModalCategory({ isOpen, onClose, category}) {
   }) : [];
 
   useEffect(() => {
-    console.log(competitorsWithHorses)
     async function fethCompetitors() {
       const res = await api.get(`/categoryRegisters/${category.id}`);
       setStatus(res.data.status)
+      console.log(res.data)
       setCompetitorsWithHorses(res.data.competitorHorses);
     }
     fethCompetitors();
@@ -119,6 +128,17 @@ export function ModalCategory({ isOpen, onClose, category}) {
     { competitor && setRegisterToDelete(competitor) }
   }
 
+  const handleModalEditRegister = (register) => {
+    setEditRegisterId(register.id);
+    setEditCompetitorId(register.competitor_id);
+    setEditHorseId(register.horse_id);
+    setRegisterToEdit([
+      {id: register.competitor_id, name: register.competitor_name}, 
+      {id: register.horse_id, name: register.horse_name}]);
+      
+    setShowModalEditRegister(!showModalEditRegister);
+  }
+
   const handleDeleteRegister = async (id) => {
     try {
       const res = await api.delete(`/categoryRegisters/${id}`);
@@ -136,9 +156,9 @@ export function ModalCategory({ isOpen, onClose, category}) {
   };
 
   const handleStateCategory = async (state) => {
-    if(state == "finished_inscriptions") {
+    if (state == "finished_inscriptions") {
       try {
-        await api.put (`categoryRegisters/${category.id}`);
+        //await api.put(`categoryRegisters/${category.id}`);
         await api.put(`/categories/${category.id}`, { state });
         alert("Status atualizado com sucesso!");
         setRefresh(prev => !prev)
@@ -167,8 +187,49 @@ export function ModalCategory({ isOpen, onClose, category}) {
     }
   };
 
+  const handleEditRegister = async () => {
+      try {
+        await api.put(`categoryRegisters/${editRegisterId}`, {"competitor_id": editCompetitorId, "horse_id": editHorseId});
+        alert("Registro salvo com sucesso!");
+        
+        setEditHorseId(null);
+        setEditRegisterId(null);
+        setEditCompetitorId(null);
+        setRefresh(prev => !prev);
+      } catch (error) {
+        const errorMessage = error.response?.data?.message || error.message;
+        alert(errorMessage);
+      }
+  };
+
+
   return (
     <ModalOverlay>
+      <Modal
+        visible={showModalEditRegister}
+        onClose={handleModalEditRegister}
+        content={
+          <div className='content'>
+            <h2>Editar Registro</h2>
+            <div className="flex">
+              <SearchDropdown
+                tabindex="0"
+                table="competitors"
+                initialId={2}
+                initialData={registerToEdit[0]}
+                onItemSelected={(id) => setEditCompetitorId(id)}
+              />
+              <SearchDropdown
+                tabindex="1"
+                table="horses"
+                initialData={registerToEdit[1]}
+                onItemSelected={(id) => setEditHorseId(id)}
+              />
+              <Button onClick={() => handleEditRegister()}>Salvar</Button>
+            </div>
+          </div>
+        }
+      />
 
       <ModalConfirm
         title={"Você têm certeza que deseja excluir o registro? "}
@@ -241,6 +302,9 @@ export function ModalCategory({ isOpen, onClose, category}) {
 
             {(status.categorie_state === "active" || status.categorie_state === "making_registrations") &&
               <Button onClick={() => handleStateCategory("finished_inscriptions")}>Encerrar inscrições</Button>
+            }
+            {(status.categorie_state === "active" || status.categorie_state === "making_registrations") &&
+              <Button>Ordenar competidores</Button>
             }
 
           </div>

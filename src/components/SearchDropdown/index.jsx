@@ -3,12 +3,20 @@ import { api } from '../../services/api';
 import { Input } from '../Input';
 import { Container } from './styles';
 
-export function SearchDropdown({ table, onItemSelected, clearSelection }) {
+export function SearchDropdown({ table, onItemSelected, clearSelection, initialData }) {
     const [showDropdown, setShowDropdown] = useState(false);
     const [data, setData] = useState([]);
     const [search, setSearch] = useState("");
     const [selectedItemId, setSelectedItemId] = useState(null);
     const [highlightedIndex, setHighlightedIndex] = useState(-1);
+
+    useEffect(() => {
+        if (initialData) {
+            setSearch(initialData.name);
+            setSelectedItemId(initialData.id);
+            setShowDropdown(false);
+        }
+    }, [initialData]);
 
     useEffect(() => {
         if (clearSelection) {

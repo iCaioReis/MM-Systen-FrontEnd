@@ -1,4 +1,4 @@
-function organizeCompetitions(competitions) {
+export function sortCategoryRegisters(competitions) {
     const organized = [];
     const lastAppearance = {};
     let currentOrder = 1;
@@ -56,5 +56,5 @@ const competitions = [
     { id: 55, state: 'finished', competitor_order: 14, time: '000.0000 s', competitor_id: 8, horse_id: 2 },
 ];
 
-const organizedCompetitions = organizeCompetitions(competitions);
-console.log(organizedCompetitions);
+//const organizedCompetitions = sortCategoryRegisters(competitions);
+//console.log(organizedCompetitions);

@@ -5,6 +5,7 @@ import { FaRegTrashCan, FaPencil, FaArrowTurnDown, FaArrowTurnUp } from "react-i
 import { api } from '../../../services/api';
 
 import { FormatCategory, FormatProof, FormatStatus } from '../../../utils/formatDatas';
+import { sortCategoryRegisters } from '../../../utils/sortCategoryRegisters';
 
 import { Input } from '../../../components/Input';
 import { Table } from '../../../components/Table';
@@ -14,8 +15,6 @@ import { ModalConfirm } from '../../../components/ModalConfirm';
 import { SearchDropdown } from '../../../components/SearchDropdown';
 
 import { ModalOverlay, Title, MainForm, Status } from './styles';
-
-
 
 export function ModalCategory({ isOpen, onClose, category }) {
   if (!isOpen) return null;
@@ -29,7 +28,7 @@ export function ModalCategory({ isOpen, onClose, category }) {
   const [isModalConfirmVisible, setIsModalConfirmVisible] = useState(false);
   const [registerToDelete, setRegisterToDelete] = useState({ id: "", horse: "", competitor: "" });
   const [showModalEditRegister, setShowModalEditRegister] = useState(false);
-  const [registerToEdit, setRegisterToEdit] = useState([{"id": 0, "name": "" }, {"id": 0, "name": "" }]);
+  const [registerToEdit, setRegisterToEdit] = useState([{ "id": 0, "name": "" }, { "id": 0, "name": "" }]);
   const [editCompetitorId, setEditCompetitorId] = useState(null);
   const [editHorseId, setEditHorseId] = useState(null);
   const [editRegisterId, setEditRegisterId] = useState(null);
@@ -47,57 +46,13 @@ export function ModalCategory({ isOpen, onClose, category }) {
     horse_name: "Cavalo",
     button: ""
   }
-  const rows = Array.isArray(competitorsWithHorses) ? competitorsWithHorses.map((row, index) => {
-    return (
-      <tr key={index}>
-        {Object.keys(header).map((field, subIndex) => {
-          if (field === 'competitor_order') {
-            return <td key={subIndex}>
-              <div className="flex-buttons">
-                <button><FaArrowTurnUp /></button>
-
-                {index + 1}
-
-                <button><FaArrowTurnDown /></button>
-              </div>
-            </td>;
-          }
-          if (field === 'button') {
-            return (
-              <td key={subIndex}>
-                <div className="flex-buttons">
-                  {/*console.log(row)*/}
-                  <button 
-                    className='pencil'
-                    onClick={() => handleModalEditRegister(row)}
-                  ><FaPencil /></button>
-                  <Button
-                    className={"noBackground auto-width trash"}
-                    onClick={() => handleModalConfirm({
-                      id: row.id,
-                      competitor: row.competitor_name,
-                      horse: row.horse_name
-                    })}>
-                    <FaRegTrashCan />
-                  </Button>
-                </div>
-              </td>
-            );
-          }
-          return (
-            <td key={subIndex}>{row[field]}</td>
-          );
-        })}
-      </tr>
-    );
-  }) : [];
 
   useEffect(() => {
     async function fethCompetitors() {
       const res = await api.get(`/categoryRegisters/${category.id}`);
       setStatus(res.data.status)
-      console.log(res.data)
       setCompetitorsWithHorses(res.data.competitorHorses);
+      console.log(res.data.competitorHorses)
     }
     fethCompetitors();
   }, [refresh]);
@@ -108,7 +63,8 @@ export function ModalCategory({ isOpen, onClose, category }) {
         {
           "competitor_id": selectedCompetitorId,
           "horse_id": selectedHorseId,
-          "categorie_id": category.id
+          "categorie_id": category.id,
+          "competitor_order": competitorsWithHorses.length + 1
         });
       alert("Registro cadastrado com sucesso!");
 
@@ -133,9 +89,9 @@ export function ModalCategory({ isOpen, onClose, category }) {
     setEditCompetitorId(register.competitor_id);
     setEditHorseId(register.horse_id);
     setRegisterToEdit([
-      {id: register.competitor_id, name: register.competitor_name}, 
-      {id: register.horse_id, name: register.horse_name}]);
-      
+      { id: register.competitor_id, name: register.competitor_name },
+      { id: register.horse_id, name: register.horse_name }]);
+
     setShowModalEditRegister(!showModalEditRegister);
   }
 
@@ -188,19 +144,68 @@ export function ModalCategory({ isOpen, onClose, category }) {
   };
 
   const handleEditRegister = async () => {
-      try {
-        await api.put(`categoryRegisters/${editRegisterId}`, {"competitor_id": editCompetitorId, "horse_id": editHorseId});
-        alert("Registro salvo com sucesso!");
-        
-        setEditHorseId(null);
-        setEditRegisterId(null);
-        setEditCompetitorId(null);
-        setRefresh(prev => !prev);
-      } catch (error) {
-        const errorMessage = error.response?.data?.message || error.message;
-        alert(errorMessage);
-      }
+    try {
+      await api.put(`categoryRegisters/${editRegisterId}`, { "competitor_id": editCompetitorId, "horse_id": editHorseId });
+      alert("Registro salvo com sucesso!");
+
+      setEditHorseId(null);
+      setEditRegisterId(null);
+      setEditCompetitorId(null);
+      setRefresh(prev => !prev);
+    } catch (error) {
+      const errorMessage = error.response?.data?.message || error.message;
+      alert(errorMessage);
+    }
   };
+
+  const handleAutoSortCategory = async () => {
+    const orderedRecords = sortCategoryRegisters(competitorsWithHorses);
+
+    try {
+      await api.put(`/sortCategoryRegisters`, orderedRecords);
+      alert("Registros ordenados com sucesso!");
+      setRefresh(prev => !prev)
+    } catch (error) {
+      const errorMessage = error.response?.data?.message || error.message;
+      alert(errorMessage);
+    }
+  };
+
+  const handleOrderRegister = ({ direction, order }) => {
+    if (direction == "up") {
+      if (order == 1) {
+        return
+      }
+      const newOrder = competitorsWithHorses;
+
+      newOrder[order - 1].competitor_order -= 1;
+      newOrder[order - 2].competitor_order += 1;
+      saveNewOrder(newOrder);
+    }
+
+    if (direction == "down") {
+      if (order == competitorsWithHorses.length) {
+        return
+      }
+      const newOrder = competitorsWithHorses;
+
+      newOrder[order - 1].competitor_order += 1;
+      newOrder[order].competitor_order -= 1;
+      saveNewOrder(newOrder);
+    }
+
+  }
+
+  const saveNewOrder = async (order) => {
+    try {
+      await api.put(`/sortCategoryRegisters`, order);
+      alert("Registros ordenados com sucesso!");
+      setRefresh(prev => !prev)
+    } catch (error) {
+      const errorMessage = error.response?.data?.message || error.message;
+      alert(errorMessage);
+    }
+  }
 
 
   return (
@@ -239,7 +244,7 @@ export function ModalCategory({ isOpen, onClose, category }) {
         onConfirm={() => handleDeleteRegister(registerToDelete.id)}
       />
 
-      <div className="modal">
+      <div className="modalCategory">
 
         <MainForm>
           <Title>
@@ -280,7 +285,49 @@ export function ModalCategory({ isOpen, onClose, category }) {
             <Table
               header={header}
               widths={larguras}
-              rows={rows}
+              rows={Array.isArray(competitorsWithHorses) ? competitorsWithHorses.map((row, index) => {
+                return (
+                  <tr key={index}>
+                    {Object.keys(header).map((field, subIndex) => {
+                      if (field === 'competitor_order') {
+                        return <td key={subIndex}>
+                          <div className="flex-buttons">
+                            <button className='up' onClick={() => handleOrderRegister({ direction: "up", order: row.competitor_order })}><FaArrowTurnUp /></button>
+
+                            {index + 1}
+
+                            <button className='down' onClick={() => handleOrderRegister({ direction: "down", order: row.competitor_order })}><FaArrowTurnDown /></button>
+                          </div>
+                        </td>;
+                      }
+                      if (field === 'button') {
+                        return (
+                          <td key={subIndex}>
+                            <div className="flex-buttons">
+                              <button
+                                className='edit'
+                                onClick={() => handleModalEditRegister(row)}
+                              ><FaPencil /></button>
+                              <button
+                                className={"delete"}
+                                onClick={() => handleModalConfirm({
+                                  id: row.id,
+                                  competitor: row.competitor_name,
+                                  horse: row.horse_name
+                                })}>
+                                <FaRegTrashCan />
+                              </button>
+                            </div>
+                          </td>
+                        );
+                      }
+                      return (
+                        <td key={subIndex}>{row[field]}</td>
+                      );
+                    })}
+                  </tr>
+                );
+              }) : []}
             />
           </div>
         </MainForm>
@@ -304,7 +351,7 @@ export function ModalCategory({ isOpen, onClose, category }) {
               <Button onClick={() => handleStateCategory("finished_inscriptions")}>Encerrar inscrições</Button>
             }
             {(status.categorie_state === "active" || status.categorie_state === "making_registrations") &&
-              <Button>Ordenar competidores</Button>
+              <Button onClick={() => handleAutoSortCategory()}>Ordenar Registros</Button>
             }
 
           </div>

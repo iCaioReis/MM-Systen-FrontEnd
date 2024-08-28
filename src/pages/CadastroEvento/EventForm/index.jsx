@@ -130,6 +130,9 @@ export function EventFormm({ event, mode = "add" }) {
 
     const handleShowModalAddUser = () => {
         setShowModalAddUser(!showModalAddUser);
+        if(showModalAddUser){
+            refresh()
+        }
     };
 
     const refresh = () => {

@@ -12,7 +12,10 @@ export const ModalOverlay = styled.div`
     align-items: center;
     z-index: 1000;
 
-    .modal {
+    .modalCategory {
+    width: 75rem;
+    height: 40rem;
+
     padding: 20px;
 
     display: grid;
@@ -25,7 +28,6 @@ export const ModalOverlay = styled.div`
 
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
     
-
     background: ${({ theme }) => theme.COLORS.LIGHT_200};
 }`;
 
@@ -68,11 +70,35 @@ export const MainForm = styled.div`
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 8px;
+    gap: 16px;
 
-    > .pencil{
+    button {
       background: none;
       border: none;
+
+      padding: 4px;
+      margin: 4px 0;
+    }
+
+    .delete {
+      svg {
+        color: ${({ theme }) => theme.COLORS.RED};
+      }
+    }
+
+    .up, .down{
+      background-color: ${({ theme }) => theme.COLORS.THEME_700};
+      border-radius: 8px;
+      padding: 4px 6px;
+      svg {
+        color: ${({ theme }) => theme.COLORS.LIGHT_200};
+      }
+    }
+
+    .up {
+      svg {
+        transform: rotateY(180deg);
+      }
     }
   }
 `;

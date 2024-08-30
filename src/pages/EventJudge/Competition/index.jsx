@@ -16,30 +16,18 @@ import { ModalConfirm } from '../../../components/ModalConfirm';
 
 import { FormatCategory, FormatProof, FormatStatus, FormatFouls } from "../../../utils/formatDatas";
 
-import { Container, Content, Fouls, Profile, Actions, Main, Picture, Title, Timer } from "./styles";
-
-const larguras = {
-    name: "",
-    amount: "150px",
-    button: "30px"
-}
-const header = {
-    name: "Falta",
-    amount: "Acréssimo",
-    button: ""
-}
+import { Container, Content, JudgeArea, Profile, Actions, Main, Picture, Title, Timer, InputFouls, EliminatoryFouls, HiddenCheckbox, StyledLabel } from "./styles";
 
 export function Competition() {
     const [loading, setLoading] = useState(true);
-    const [categoryData, setCategoryData] = useState();
-    const [competingRegisterNumber, setCompetingRegisterNumber] = useState(0)
-    const [fouls, setFouls] = useState([{ id: "", name: "", amount: "" }]);
     const [refresh, setRefresh] = useState(false);
     const [hasExecuted, setHasExecuted] = useState(false);
-    const [time, setTime] = useState("");
-    const [addition, ddition] = useState("000.000");
-    const [isModalConfirmVisible, setIsModalConfirmVisible] = useState(false);
-    const [registerToDelete, setRegisterToDelete] = useState({ id: "", horse: "", competitor: "" });
+
+    const [categoryData, setCategoryData] = useState(null);
+    const [competingRegisterNumber, setCompetingRegisterNumber] = useState();
+    const [competingRegisterData, setCompetingRegisterData] = useState();
+
+    const [addition, setAdition] = useState("000.000");
 
     const params = useParams();
 
@@ -47,6 +35,7 @@ export function Competition() {
         async function fetchData() {
             try {
                 const resCompetitors = await api.get(`/categoryRegisters/${params.id}`);
+                setCategoryData(resCompetitors.data);
 
                 let lastCompetitor = resCompetitors.data.competitorHorses.findIndex(competitor => competitor.time === null);
 
@@ -61,73 +50,65 @@ export function Competition() {
                     setHasExecuted(true);
                     setRefresh(prev => !prev);
                 }
-                if (resCompetitors.data.competitorHorses[lastCompetitor].time) {
-                    setTime(resCompetitors.data.competitorHorses[lastCompetitor].time)
-                } else {
-                    setTime("");
-                }
-                setCategoryData(resCompetitors.data);
-
-                const resFouls = await api.get(`/fouls/${resCompetitors.data.competitorHorses[competingRegisterNumber].id}`);
-                setFouls(resFouls.data.fouls);
-                if (resFouls.data.fouls.find(foul => foul.name == "SAT" || foul.name == "NPC")) {
-                    setTime("000.000");
-                }
-
-                const finishedCompetitors = resCompetitors.data.competitorHorses.filter(competitor => competitor.state == "finished").length;
-                if (finishedCompetitors == resCompetitors.data.competitorHorses.length) {
-                    await api.put(`/categories/${params.id}`, { state: "finished" });
-                }
-
-                setLoading(false)
             } catch (error) {
                 console.error("Failed to fetch data", error);
             }
         }
         fetchData();
-    }, [refresh]);
+    }, []);
 
+    useEffect(() => {
+        if (categoryData != null) {
+            async function fetchData() {
+                try {
+                    const finishedCompetitors = categoryData.competitorHorses.filter(competitor => competitor.state == "finished").length;
+                    if (finishedCompetitors == categoryData.competitorHorses.length) {
+                        await api.put(`/categories/${params.id}`, { state: "finished" });
+                    }
+
+                    const competitor = await api.get(`/registersJudge/${categoryData.competitorHorses[competingRegisterNumber].id}`);
+                    setCompetingRegisterData(competitor.data.register);
+                    setLoading(false);
+                } catch (error) {
+                    console.error("Failed to fetch data", error);
+                }
+            }
+            fetchData();
+            console.log(competingRegisterData);
+        }
+    }, [refresh, competingRegisterNumber]);
 
     const handleNextCompetitor = () => {
         if ((competingRegisterNumber + 1) == categoryData.competitorHorses.length) { return };
+        setCompetingRegisterData((prevData) => ({
+            ...prevData,
+            fouls: "",
+            time: "",
+            SAT: false,
+            NCP: false
+        }));
         const next = competingRegisterNumber + 1;
         setCompetingRegisterNumber(next);
         setRefresh(prev => !prev);
     }
     const handlePreviousCompetitor = () => {
         if (competingRegisterNumber == 0) { return }
+        setCompetingRegisterData((prevData) => ({
+            ...prevData,
+            fouls: "",
+            time: "",
+            SAT: false,
+            NCP: false
+        }));
         const next = competingRegisterNumber - 1
         setCompetingRegisterNumber(next)
-        setRefresh(prev => !prev)
-    }
-    const handleFouls = ({ foul, amount }) => {
-        if (foul == "SAT" || foul == "NCP") {
-            setTime("000.000");
-        }
-        async function fetchData() {
-            try {
-                await api.post("/fouls", {
-                    register_id: categoryData.competitorHorses[competingRegisterNumber].id,
-                    name: foul,
-                    amount: amount
-                });
-                setRefresh(prev => !prev)
-            } catch (error) {
-                alert("Erro ao processar falta")
-            }
-        }
-        fetchData();
+        setRefresh(prev => !prev);
     }
     const handleFinish = () => {
+        competingRegisterData.state = "finished";
         async function putTimeAndState() {
             try {
-                if (!time) {
-                    throw new Error("Campo timer vazio!");
-                }
-                await api.put(`/registersJudge/${categoryData.competitorHorses[competingRegisterNumber].id}`, {
-                    state: "finished",
-                    time: time
-                })
+                await api.put(`/registersJudge/${competingRegisterData.id}`, competingRegisterData)
                 setRefresh(prev => !prev)
             } catch (error) {
                 alert(`Erro ao tentar salvar: ${error}`);
@@ -135,14 +116,10 @@ export function Competition() {
         }
         putTimeAndState();
     }
-    const handleModalConfirm = (register) => {
-        setIsModalConfirmVisible(!isModalConfirmVisible);
-        { register && setRegisterToDelete(register) }
-    }
     const handleRegisterState = (state) => {
         async function handleState() {
             try {
-                await api.put(`/registersJudge/${categoryData.competitorHorses[competingRegisterNumber].id}`, {
+                await api.put(`/registersJudge/${competingRegisterData.id}`, {
                     state: state
                 });
                 await api.put(`/categories/${params.id}`, { state: "running" });
@@ -155,18 +132,52 @@ export function Competition() {
         handleState();
         setRefresh(prev => !prev);
     }
-    async function deleteFoul() {
-        try {
-            await api.delete(`/fouls/${registerToDelete.id}`);
-            alert("Falta excluída com sucesso!");
-            handleModalConfirm();
-            setRefresh(prev => !prev);
-        } catch (error) {
-            alert("Erro ao tentar excluir falta", error);
-        }
-    }
     const setFullScreen = () => {
         screenfull.request();
+    }
+    const handleInputChange = (e) => {
+        let { name, value } = e.target;
+
+        if (!value || value < 0) {
+            value = 0
+        }
+
+        setCompetingRegisterData((prevData) => ({
+            ...prevData,
+            [name]: name === 'fouls' ? parseInt(value, 10) : value
+        }));
+
+        console.log(competingRegisterData)
+    };
+    const handleButtonAddFoul = (qut) => {
+        setCompetingRegisterData((prevData) => ({
+            ...prevData,
+            fouls: prevData.fouls + qut
+        }));
+    };
+    const handleButtonDecrementFoul = () => {
+        setCompetingRegisterData((prevData) => ({
+            ...prevData,
+            fouls: prevData.fouls > 0 ? prevData.fouls - 1 : 0
+        }));
+    };
+    const handleSatFoul = () => {
+        setCompetingRegisterData((prevData) => ({
+            ...prevData,
+            time: '000.000',
+            fouls: 0,
+            SAT: !prevData.SAT
+        }));
+        console.log(competingRegisterData)
+    }
+    const handleNcpFoul = () => {
+        setCompetingRegisterData((prevData) => ({
+            ...prevData,
+            time: "000.000",
+            fouls: 0,
+            NCP: !prevData.NCP
+        }));
+        console.log(competingRegisterData)
     }
 
     if (loading) {
@@ -179,6 +190,7 @@ export function Competition() {
 
     return (
         <Container>
+            {/* 
             <ModalConfirm
                 title={"Você têm certeza que deseja excluir a falta? "}
                 subTitle={`Falta:`}
@@ -186,68 +198,115 @@ export function Competition() {
                 onClose={handleModalConfirm}
                 onConfirm={deleteFoul}
             />
+            */}
             <div className="zone"></div>
             <Content>
                 <Profile>
                     <Picture>
                         <img src={avatarPlaceholder} alt="" />
 
-                        <label htmlFor="avatar">{categoryData.competitorHorses[competingRegisterNumber].horse_name}</label>
+                        <label htmlFor="avatar">{competingRegisterData.horse_surname}</label>
                     </Picture>
                     <Picture>
                         <img src={avatarPlaceholder} alt="" />
 
-                        <label htmlFor="avatar">{categoryData.competitorHorses[competingRegisterNumber].competitor_name || ""}</label>
+                        <label htmlFor="avatar">{competingRegisterData.competitor_surname || ""}</label>
                     </Picture>
                 </Profile>
 
                 <Main>
                     <Title className="title">
-                        <h1>Nome do Evento</h1>
+                        <h1>{competingRegisterData.event_name}</h1>
                         <span>{FormatProof(categoryData.status.proof_name)}</span>
                         <span> - </span>
                         <span>{FormatCategory(categoryData.status.categorie_name)}</span>
                     </Title>
 
                     <Timer className="timer">
-                        <Input
-                            className={"addition"}
-                            type="text"
-                            value={`${addition} s`}
-                            disabled={true}
-                        />
+                        {competingRegisterData.fouls != 0 &&
+                            <Input
+                                className={"addition"}
+                                type="text"
+                                value={`+ ${competingRegisterData.fouls * 5} s`}
+                                disabled={true}
+                            />
+                        }
+
                         <Input
                             dataType="timer"
                             type="text"
-                            value={time}
+                            value={`${parseFloat(competingRegisterData.time) + parseFloat(competingRegisterData.fouls) * 5}`}
                             disabled={true}
                         />
+                        <span className='s'>s</span>
                     </Timer>
 
-                    <Fouls className="fouls">
-
-                        {categoryData.competitorHorses[competingRegisterNumber].state == "running" &&
+                    <JudgeArea>
+                        
                             <div className="header">
                                 <div className="flex timeAndFoul">
+                                    <span>Tempo: </span>
                                     <Input
+                                        onChange={handleInputChange}
+                                        name="time"
                                         dataType="timer"
                                         type="text"
                                         className="inputTimer"
-                                        value={time}
-                                        onChange={(e) => setTime(e.target.value)}
+                                        value={competingRegisterData.time}
+                                        disabled = {competingRegisterData.state != "running" || competingRegisterData.SAT || competingRegisterData.NCP ? true : false}
                                     />
-                                    <button id="menos" onclick="menos();">-</button>
-                                    <input type='number' min="0" minlength="0" />
-                                    <button id="mais" onclick="mais();">+</button>
+                                    <span>Faltas: </span>
+
+                                    <InputFouls>
+                                        <button
+                                            className='decrement'
+                                            onClick={() => handleButtonDecrementFoul()}
+                                            disabled = {competingRegisterData.state != "running" || competingRegisterData.SAT || competingRegisterData.NCP ? true : false}
+                                        >-</button>
+                                        <input
+                                            type='number'
+                                            min="0"
+                                            minLength="0"
+                                            onChange={handleInputChange}
+                                            value={competingRegisterData.fouls}
+                                            name="fouls"
+                                            disabled = {competingRegisterData.state != "running" || competingRegisterData.SAT || competingRegisterData.NCP ? true : false}
+                                        />
+                                        <button 
+                                            className='add'
+                                            onClick={() => handleButtonAddFoul(1)}
+                                            disabled = {competingRegisterData.state != "running" || competingRegisterData.SAT || competingRegisterData.NCP ? true : false}
+                                        >+</button>
+                                    </InputFouls>
+
                                 </div>
-                                <div className="flex">
-                                    <Button onClick={() => handleFouls({ foul: 'SAT', amount: "NA" })} className={"danger"}>SAT</Button>
-                                    <Button onClick={() => handleFouls({ foul: 'NPC', amount: "NA" })} className={"danger"}>NPC</Button>
-                                </div>
+                                <EliminatoryFouls>
+                                    <HiddenCheckbox
+                                        onChange={() => handleSatFoul()}
+                                        id="SAT" 
+                                        name="SAT"
+                                        checked={competingRegisterData.SAT}
+                                        disabled = {competingRegisterData.time == "___.___" ? false : competingRegisterData.NCP || competingRegisterData.fouls !=0 || competingRegisterData.time > "000.000" || competingRegisterData.state != "running"  ? true : false}                                     />
+                                    <StyledLabel 
+                                        htmlFor="SAT"
+                                        disabled = {competingRegisterData.time == "___.___" ? false : competingRegisterData.NCP || competingRegisterData.fouls !=0 || competingRegisterData.time > "000.000" || competingRegisterData.state != "running"  ? true : false}                                    >SAT</StyledLabel>
+
+                                    <HiddenCheckbox
+                                        onChange={() => handleNcpFoul()}
+                                        id="NCP"
+                                        name="NCP"
+                                        checked={competingRegisterData.NCP}
+                                        disabled = {competingRegisterData.time == "___.___" ? false : competingRegisterData.SAT || competingRegisterData.fouls !=0 || competingRegisterData.time > "000.000" || competingRegisterData.state != "running"  ? true : false}
+                                    />
+                                    <StyledLabel
+                                        htmlFor="NCP"
+                                        disabled = { competingRegisterData.time == "___.___" ? false : competingRegisterData.SAT || competingRegisterData.fouls !=0 || competingRegisterData.time > "000.000" || competingRegisterData.state != "running" ? true : false}
+                                    >NCP</StyledLabel>
+                                </EliminatoryFouls>
 
                             </div>
-                        }
-                    </Fouls>
+                        
+                    </JudgeArea>
 
                 </Main>
 
@@ -262,23 +321,23 @@ export function Competition() {
                         disabled
                         status
                         title={"Status"}
-                        value={FormatStatus(categoryData.competitorHorses[competingRegisterNumber].state)}
+                        value={FormatStatus(competingRegisterData.state)}
                     />
                     {competingRegisterNumber != 0 &&
-                        categoryData.competitorHorses[competingRegisterNumber].state != "running" &&
+                        competingRegisterData.state != "running" &&
                         <Button onClick={() => handlePreviousCompetitor()}><FaArrowLeft />Anterior</Button>
                     }
                     {competingRegisterNumber != (categoryData.competitorHorses.length - 1) &&
-                        categoryData.competitorHorses[competingRegisterNumber].state != "running" &&
+                        competingRegisterData.state != "running" &&
                         <Button onClick={() => handleNextCompetitor()}>Próximo<FaArrowRight /></Button>
                     }
-                    {categoryData.competitorHorses[competingRegisterNumber].state == "running" &&
+                    {competingRegisterData.state == "running" &&
                         <Button onClick={handleFinish}>Finalizar</Button>
                     }
-                    {categoryData.competitorHorses[competingRegisterNumber].state == "active" &&
+                    {competingRegisterData.state == "active" &&
                         <Button onClick={() => [handleRegisterState("running"), setFullScreen()]}>Iniciar</Button>
                     }
-                    {categoryData.competitorHorses[competingRegisterNumber].state == "finished" &&
+                    {competingRegisterData.state == "finished" &&
                         <Button className={"danger"} onClick={() => handleRegisterState("running")}>Reativar</Button>
                     }
                 </Actions>

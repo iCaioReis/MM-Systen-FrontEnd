@@ -21,7 +21,7 @@ export function EventJudge() {
     useEffect(() => {
         if(params.id){
             async function fethEvent() {
-                const res = await api.get(`/events/${params.id}`);
+                const res = await api.get(`/competition/${params.id}`);
                 setEvent(res.data);
             }
             fethEvent();

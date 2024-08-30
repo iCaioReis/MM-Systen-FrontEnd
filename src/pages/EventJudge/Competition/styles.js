@@ -113,6 +113,7 @@ export const Timer = styled.div`
         height: 7.4rem;
         padding: 0 2rem;
 
+        letter-spacing: .5rem;
         font-size: 80px;
         color: ${({ theme }) => theme.COLORS.LIGHT_100};
 
@@ -135,22 +136,31 @@ export const Timer = styled.div`
             text-align: center;
 
             font-size: 2rem;
+            letter-spacing: 0;
 
             border-radius: 1rem 1rem 0 0;
 
             background-color: ${({ theme }) => theme.COLORS.RED};
         }
-    }   
+    }
+    .s {
+        position: absolute;
+        right: 3rem;
+        bottom: .7rem;
+
+        font-size: 80px;
+        color: ${({ theme }) => theme.COLORS.LIGHT_100};
+    }
 `;
 
-export const Fouls = styled.div`
+export const JudgeArea = styled.div`
     input[type="number"]::-webkit-outer-spin-button,
     input[type="number"]::-webkit-inner-spin-button {
         -webkit-appearance: none;
     }
     width: 30rem;
 
-    margin: 0 auto 4rem;
+    margin: 0 auto 6rem;
 
     display: flex;
     flex-direction: column;
@@ -164,9 +174,9 @@ export const Fouls = styled.div`
         gap: .5rem;
 
         > .timeAndFoul{
-            height: 5rem;
+            height: 4rem;
 
-            padding: 0 5rem ;
+            padding: 0 2rem ;
             
             align-items: center;
             justify-content: space-between;
@@ -175,8 +185,16 @@ export const Fouls = styled.div`
 
             background-color: ${({ theme }) => theme.COLORS.THEME_600};
 
+            span {
+                color: ${({ theme }) => theme.COLORS.LIGHT_100};
+            }
+
             .inputTimer {
-                width:  10rem;
+                input {
+                    letter-spacing: .07rem;
+                    font-size: 1.5rem;
+                }   
+                max-width:  8rem;
             }
         }
 
@@ -194,4 +212,84 @@ export const Actions = styled.div`
     flex-direction: column;
     justify-content: end;
     gap: .5rem;
+`;
+
+export const InputFouls = styled.div`
+    display: flex;
+
+    > button {
+        width: 2rem;
+        font-size: 2rem;
+        color: ${({ theme }) => theme.COLORS.LIGHT_100};
+        
+        background-color: ${({ theme }) => theme.COLORS.THEME_900};
+
+        border-style: none;
+    }
+
+    >input {
+        width: 3rem;
+
+        font-size: 1.5rem;
+        text-align: center;
+
+        border-style: none;
+    }
+
+    >.add {
+        border-radius: 0 4px 4px 0;
+    }
+    >.decrement {
+        border-radius: 4px 0 0 4px;
+    }
+`;
+
+export const EliminatoryFouls = styled.div`
+  display: flex;
+  gap: 10px;
+`;
+
+export const HiddenCheckbox = styled.input.attrs({ type: 'checkbox' })`
+  display: none;
+`;
+
+export const StyledLabel = styled.label`
+    text-align: center;
+    width: 100%;
+    padding: 10px 20px;
+
+    font-weight: 700;
+    color: ${({ theme }) => theme.COLORS.RED};
+    
+    border-radius: 5px;
+    border: 2px dashed  ${({ theme }) => theme.COLORS.RED};
+
+    background-color: transparent;
+    transition: filter 0.2s;
+
+    cursor: pointer; /* Cursor de ponteiro para indicar que é clicável */
+    cursor: ${props => (props.disabled ? 'not-allowed' : 'pointer')}; 
+    user-select: none; /* Previne a seleção do texto ao clicar */
+
+  ${HiddenCheckbox}:checked + & {
+    color: ${({ theme }) => theme.COLORS.LIGHT_100};
+    background-color: ${({ theme }) => theme.COLORS.RED};
+    
+  }
+        
+    &:hover {
+        filter: none;
+        
+        color: ${props => (props.disabled ? ({ theme }) => theme.COLORS.RED : ({ theme }) => theme.COLORS.LIGHT_100)};
+        
+        background-color: ${props => (props.disabled ? ({ theme }) => theme.COLORS.LIGHT_100 : ({ theme }) => theme.COLORS.RED)};
+
+        
+    }
+    &:disabled{
+        filter: none;
+        color: ${({ theme }) => theme.COLORS.RED};
+        background-color: none;
+    }
+
 `;

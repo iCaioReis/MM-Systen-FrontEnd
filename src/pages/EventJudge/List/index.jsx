@@ -14,7 +14,6 @@ export function List({ title, categories, refresh }) {
     };
 
     function handleDetails(id) {
-        
         window.open(`/evento/juiz/competition/${id}`, '_blank');
     }
 

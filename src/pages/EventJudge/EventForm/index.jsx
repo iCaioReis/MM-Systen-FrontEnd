@@ -48,9 +48,6 @@ export function EventFormm({ event, mode = "add" }) {
                     <Picture>
                         <img src={avatarPlaceholder} alt="" />
                     </Picture>
-                    <Button>
-                        Resultados
-                    </Button>
                     <Button onClick={() => refresh()}>
                         <TfiReload/>
                         Atualizar Status

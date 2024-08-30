@@ -102,12 +102,7 @@ export const Title = styled.div`
 `;
 
 export const Timer = styled.div`
-    position: fixed;
-    top: 50%;
-    left: 50%;
-    margin-top: -5rem; /* Negative half of height. */
-    margin-left: -15rem;
-    
+    margin: 0 auto;
     input {
         width: 30rem;
         height: 7.4rem;
@@ -121,68 +116,32 @@ export const Timer = styled.div`
 
         background-color: ${({ theme }) => theme.COLORS.THEME_700};
     }
-    .addition{
-        position: absolute;
-        top: -3.2rem;
-        left: 2rem;
-
-        z-index: -1;
-        input {
-            width: 10rem;
-            height: 4rem;
-            padding: 0;
-
-            text-align: center;
-
-            font-size: 2rem;
-
-            border-radius: 1rem 1rem 0 0;
-
-            background-color: ${({ theme }) => theme.COLORS.RED};
-        }
-    }   
 `;
 
 export const Fouls = styled.div`
-    input[type="number"]::-webkit-outer-spin-button,
-    input[type="number"]::-webkit-inner-spin-button {
-        -webkit-appearance: none;
-    }
-    width: 30rem;
-
-    margin: 0 auto 4rem;
+    height: 17rem;
 
     display: flex;
     flex-direction: column;
     gap: .5rem;
 
     text-align: left;
-
+    
     > .header{
         display: flex;
-        flex-direction: column;
-        gap: .5rem;
+        align-items: center;
+        gap: 4px;
+    }
 
-        > .timeAndFoul{
-            height: 5rem;
+    > .tabela {
+        text-align: center;
+        overflow-y: scroll;
+    }
+    table {
+        color: ${({ theme }) => theme.COLORS.LIGHT_100}; 
 
-            padding: 0 5rem ;
-            
-            align-items: center;
-            justify-content: space-between;
-            
-            border-radius: 1rem;
-
-            background-color: ${({ theme }) => theme.COLORS.THEME_600};
-
-            .inputTimer {
-                width:  10rem;
-            }
-        }
-
-        .flex {
-            display: flex;
-            gap: .5rem;
+        svg {
+            color: ${({ theme }) => theme.COLORS.RED}; 
         }
     }
 `;

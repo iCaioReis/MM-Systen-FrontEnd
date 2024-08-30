@@ -10,6 +10,7 @@ import { api } from '../../../services/api';
 import avatarPlaceholder from "../../../assets/user.svg";
 
 import { Input } from "../../../components/Input";
+import { Table } from '../../../components/Table';
 import { Button } from "../../../components/Button";
 import { Section } from "../../../components/Section";
 import { ModalConfirm } from '../../../components/ModalConfirm';
@@ -37,7 +38,6 @@ export function Competition() {
     const [refresh, setRefresh] = useState(false);
     const [hasExecuted, setHasExecuted] = useState(false);
     const [time, setTime] = useState("");
-    const [addition, ddition] = useState("000.000");
     const [isModalConfirmVisible, setIsModalConfirmVisible] = useState(false);
     const [registerToDelete, setRegisterToDelete] = useState({ id: "", horse: "", competitor: "" });
 
@@ -49,7 +49,7 @@ export function Competition() {
                 const resCompetitors = await api.get(`/categoryRegisters/${params.id}`);
 
                 let lastCompetitor = resCompetitors.data.competitorHorses.findIndex(competitor => competitor.time === null);
-
+                
                 lastCompetitor == -1 ? lastCompetitor = 0 : lastCompetitor = lastCompetitor;
 
                 let runningCompetitor = resCompetitors.data.competitorHorses.findIndex(competitor => competitor.state === "running");
@@ -61,24 +61,24 @@ export function Competition() {
                     setHasExecuted(true);
                     setRefresh(prev => !prev);
                 }
-                if (resCompetitors.data.competitorHorses[lastCompetitor].time) {
+                if(resCompetitors.data.competitorHorses[lastCompetitor].time){
                     setTime(resCompetitors.data.competitorHorses[lastCompetitor].time)
-                } else {
+                }else{
                     setTime("");
                 }
                 setCategoryData(resCompetitors.data);
-
+        
                 const resFouls = await api.get(`/fouls/${resCompetitors.data.competitorHorses[competingRegisterNumber].id}`);
                 setFouls(resFouls.data.fouls);
-                if (resFouls.data.fouls.find(foul => foul.name == "SAT" || foul.name == "NPC")) {
+                if(resFouls.data.fouls.find(foul => foul.name == "SAT" || foul.name == "NPC")){
                     setTime("000.000");
                 }
 
                 const finishedCompetitors = resCompetitors.data.competitorHorses.filter(competitor => competitor.state == "finished").length;
-                if (finishedCompetitors == resCompetitors.data.competitorHorses.length) {
+                if(finishedCompetitors == resCompetitors.data.competitorHorses.length){
                     await api.put(`/categories/${params.id}`, { state: "finished" });
                 }
-
+                
                 setLoading(false)
             } catch (error) {
                 console.error("Failed to fetch data", error);
@@ -86,7 +86,7 @@ export function Competition() {
         }
         fetchData();
     }, [refresh]);
-
+    
 
     const handleNextCompetitor = () => {
         if ((competingRegisterNumber + 1) == categoryData.competitorHorses.length) { return };
@@ -101,7 +101,7 @@ export function Competition() {
         setRefresh(prev => !prev)
     }
     const handleFouls = ({ foul, amount }) => {
-        if (foul == "SAT" || foul == "NCP") {
+        if (foul == "SAT" || foul == "NCP"){
             setTime("000.000");
         }
         async function fetchData() {
@@ -121,7 +121,7 @@ export function Competition() {
     const handleFinish = () => {
         async function putTimeAndState() {
             try {
-                if (!time) {
+                if(!time){
                     throw new Error("Campo timer vazio!");
                 }
                 await api.put(`/registersJudge/${categoryData.competitorHorses[competingRegisterNumber].id}`, {
@@ -147,13 +147,13 @@ export function Competition() {
                 });
                 await api.put(`/categories/${params.id}`, { state: "running" });
 
-            } catch (error) {
+              } catch (error) {
                 const errorMessage = error.response?.data?.message || error.message;
                 alert(errorMessage);
-            }
+              }
         }
         handleState();
-        setRefresh(prev => !prev);
+        setRefresh(prev =>! prev);
     }
     async function deleteFoul() {
         try {
@@ -169,8 +169,8 @@ export function Competition() {
         screenfull.request();
     }
 
-    if (loading) {
-        return (
+    if(loading){
+        return(
             <Container>
                 <h1>Carregando...</h1>
             </Container>
@@ -210,43 +210,73 @@ export function Competition() {
                     </Title>
 
                     <Timer className="timer">
-                        <Input
-                            className={"addition"}
-                            type="text"
-                            value={`${addition} s`}
-                            disabled={true}
-                        />
-                        <Input
+                        <Input 
                             dataType="timer"
                             type="text"
                             value={time}
-                            disabled={true}
+                            onChange={(e) => setTime(e.target.value)}
+                            disabled={categoryData.competitorHorses[competingRegisterNumber].state != "running" }
                         />
                     </Timer>
 
                     <Fouls className="fouls">
+                        <Section title={"Faltas"} />
+
 
                         {categoryData.competitorHorses[competingRegisterNumber].state == "running" &&
-                            <div className="header">
-                                <div className="flex timeAndFoul">
-                                    <Input
-                                        dataType="timer"
-                                        type="text"
-                                        className="inputTimer"
-                                        value={time}
-                                        onChange={(e) => setTime(e.target.value)}
-                                    />
-                                    <button id="menos" onclick="menos();">-</button>
-                                    <input type='number' min="0" minlength="0" />
-                                    <button id="mais" onclick="mais();">+</button>
-                                </div>
-                                <div className="flex">
-                                    <Button onClick={() => handleFouls({ foul: 'SAT', amount: "NA" })} className={"danger"}>SAT</Button>
-                                    <Button onClick={() => handleFouls({ foul: 'NPC', amount: "NA" })} className={"danger"}>NPC</Button>
-                                </div>
-
-                            </div>
+                        <div className="header">
+                            <Button onClick={() => handleFouls({ foul: 'foul', amount: 1 })}>Falta +5s</Button>
+                            <Button onClick={() => handleFouls({ foul: 'foul', amount: 10 })}>10 faltas +50s</Button>
+                            <Button onClick={() => handleFouls({ foul: 'SAT', amount: "NA" })} className={"danger"}>SAT</Button>
+                            <Button onClick={() => handleFouls({ foul: 'NPC', amount: "NA" })} className={"danger"}>NPC</Button>
+                        </div>
                         }
+
+                        <div className="tabela">
+                            <Table
+                                header={header}
+                                widths={larguras}
+                                rows={
+                                    fouls.map((row, index) => {
+                                        const id = row.id
+                                        return (
+                                            <tr key={index}>
+                                                {Object.keys(header).map((field, subIndex) => {
+                                                    if (field == "name") {
+                                                        return (
+                                                            <td key={subIndex}>
+                                                                {FormatFouls(row.name)}
+                                                            </td>
+                                                        )
+                                                    }
+                                                    if (field == "amount" && row.name == "foul") {
+                                                        return (
+                                                            <td key={subIndex}>
+                                                                {row.amount * 5}
+                                                            </td>
+                                                        )
+                                                    }
+                                                    if (field == "button") {
+                                                        return (
+                                                            <td key={subIndex}>
+                                                                <Button
+                                                                    className={"noBackground auto-width"}
+                                                                    onClick={() => handleModalConfirm(row)}
+                                                                >
+                                                                    <FaRegTrashCan />
+                                                                </Button>
+                                                            </td>
+                                                        )
+                                                    }
+                                                    return (
+                                                        <td key={subIndex}>{row[field]}</td>
+                                                    )
+                                                })}
+                                            </tr>
+                                        )
+                                    })
+                                } />
+                        </div>
                     </Fouls>
 
                 </Main>
@@ -266,19 +296,19 @@ export function Competition() {
                     />
                     {competingRegisterNumber != 0 &&
                         categoryData.competitorHorses[competingRegisterNumber].state != "running" &&
-                        <Button onClick={() => handlePreviousCompetitor()}><FaArrowLeft />Anterior</Button>
+                        <Button onClick={() => handlePreviousCompetitor()}><FaArrowLeft/>Anterior</Button>
                     }
                     {competingRegisterNumber != (categoryData.competitorHorses.length - 1) &&
                         categoryData.competitorHorses[competingRegisterNumber].state != "running" &&
-                        <Button onClick={() => handleNextCompetitor()}>Próximo<FaArrowRight /></Button>
+                        <Button onClick={() => handleNextCompetitor()}>Próximo<FaArrowRight/></Button>
                     }
-                    {categoryData.competitorHorses[competingRegisterNumber].state == "running" &&
+                    {categoryData.competitorHorses[competingRegisterNumber].state == "running" && 
                         <Button onClick={handleFinish}>Finalizar</Button>
                     }
-                    {categoryData.competitorHorses[competingRegisterNumber].state == "active" &&
+                    {categoryData.competitorHorses[competingRegisterNumber].state == "active" && 
                         <Button onClick={() => [handleRegisterState("running"), setFullScreen()]}>Iniciar</Button>
                     }
-                    {categoryData.competitorHorses[competingRegisterNumber].state == "finished" &&
+                    {categoryData.competitorHorses[competingRegisterNumber].state == "finished" && 
                         <Button className={"danger"} onClick={() => handleRegisterState("running")}>Reativar</Button>
                     }
                 </Actions>

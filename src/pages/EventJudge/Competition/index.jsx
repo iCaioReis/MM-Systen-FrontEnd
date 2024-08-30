@@ -2,7 +2,6 @@ import { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import screenfull from 'screenfull';
 
-import { FaRegTrashCan } from "react-icons/fa6";
 import { FaArrowLeft, FaArrowRight } from "react-icons/fa";
 
 import { api } from '../../../services/api';
@@ -11,10 +10,8 @@ import avatarPlaceholder from "../../../assets/user.svg";
 
 import { Input } from "../../../components/Input";
 import { Button } from "../../../components/Button";
-import { Section } from "../../../components/Section";
-import { ModalConfirm } from '../../../components/ModalConfirm';
 
-import { FormatCategory, FormatProof, FormatStatus, FormatFouls } from "../../../utils/formatDatas";
+import { FormatCategory, FormatProof, FormatStatus } from "../../../utils/formatDatas";
 
 import { Container, Content, JudgeArea, Profile, Actions, Main, Picture, Title, Timer, InputFouls, EliminatoryFouls, HiddenCheckbox, StyledLabel } from "./styles";
 
@@ -26,8 +23,6 @@ export function Competition() {
     const [categoryData, setCategoryData] = useState(null);
     const [competingRegisterNumber, setCompetingRegisterNumber] = useState();
     const [competingRegisterData, setCompetingRegisterData] = useState();
-
-    const [addition, setAdition] = useState("000.000");
 
     const params = useParams();
 
@@ -61,7 +56,8 @@ export function Competition() {
         if (categoryData != null) {
             async function fetchData() {
                 try {
-                    const finishedCompetitors = categoryData.competitorHorses.filter(competitor => competitor.state == "finished").length;
+                    const result = await api.get(`/categoryRegisters/${params.id}`);
+                    const finishedCompetitors = result.data.competitorHorses.filter(competitor => competitor.state == "finished").length;
                     if (finishedCompetitors == categoryData.competitorHorses.length) {
                         await api.put(`/categories/${params.id}`, { state: "finished" });
                     }
@@ -146,8 +142,6 @@ export function Competition() {
             ...prevData,
             [name]: name === 'fouls' ? parseInt(value, 10) : value
         }));
-
-        console.log(competingRegisterData)
     };
     const handleButtonAddFoul = (qut) => {
         setCompetingRegisterData((prevData) => ({
@@ -168,7 +162,6 @@ export function Competition() {
             fouls: 0,
             SAT: !prevData.SAT
         }));
-        console.log(competingRegisterData)
     }
     const handleNcpFoul = () => {
         setCompetingRegisterData((prevData) => ({
@@ -177,7 +170,7 @@ export function Competition() {
             fouls: 0,
             NCP: !prevData.NCP
         }));
-        console.log(competingRegisterData)
+
     }
 
     if (loading) {

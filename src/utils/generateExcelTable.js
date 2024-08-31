@@ -11,10 +11,21 @@ export function generateExcelTable(data) {
             const categorieName = FormatCategory(categorie.name);
             //console.log(`Prova: ${proofName}   Categoria: ${categorieName}`)
 
-            const sheetData = [["N", "Competidor", "Cavalo", "Tempo", "Faltas", "Acréssimo", "Tempo total", "SAT", "NPC"]];
+            const sheetData = [["N", "Competidor", "Cavalo", "Tempo", "Faltas", "Acréssimo", "Tempo total", "SAT", "NCP"]];
 
             categorie.competitors.map((competitor, index) => {
-                const competitorSheetData = [`${index + 1}`, `${competitor.competitor_name}`, `${competitor.horse_name}`]
+                console.log(competitor)
+                const competitorSheetData = [
+                    `${index + 1}`, 
+                    `${competitor.competitor_name}`, 
+                    `${competitor.horse_name}`,
+                    `${competitor.time} s`,
+                    `${competitor.fouls}`,
+                    `${competitor.fouls * 5}.000 s`,
+                    `${parseFloat(competitor.time) + parseInt(competitor.fouls)*5}`,
+                    `${competitor.SAT}`,
+                    `${competitor.NCP}`
+                ]
 
                 sheetData.push(competitorSheetData);
             });

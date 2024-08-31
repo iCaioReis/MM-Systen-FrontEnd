@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 
 import { FaArrowRight } from "react-icons/fa6";
 
@@ -41,11 +41,11 @@ const header = {
     competitor_name: "Competidor",
     horse_name: "Cavalo",
     time: "tempo",
-    foul: "Faltas",
+    fouls: "Faltas",
     acress: "Acréssimo",
     totalTime: "Tempo total",
     SAT: "SAT",
-    NPC: "NPC"
+    NCP: "NCP"
 }
 
 export function EventFormm({ mode = "show" }) {
@@ -57,7 +57,6 @@ export function EventFormm({ mode = "show" }) {
     const [loading, setLoading] = useState(true);
     const [refresh, setRefresh] = useState(false);
 
-    const navigate = useNavigate();
     const params = useParams();
 
     useEffect(() => {
@@ -65,14 +64,30 @@ export function EventFormm({ mode = "show" }) {
             async function fethEvent() {
                 const eventData = await api.get(`/events/${params.id}`);
                 const results = await api.get(`/results/${params.id}`);
+    
+                // Clonamos o objeto results para evitar mutações diretas
+                const sortedResults = { ...results.data };
+    
+                // Ordenar os competidores da prova e categoria selecionadas
+                sortedResults.proofs[proof - 1].categories[categorie - 1].competitors.sort((a, b) => {
+                    const acressA = a.fouls > 0 ? a.fouls * 5 : 0;
+                    const totalTimeA = parseFloat(a.time) + acressA;
+    
+                    const acressB = b.fouls > 0 ? b.fouls * 5 : 0;
+                    const totalTimeB = parseFloat(b.time) + acressB;
+    
+                    return totalTimeA - totalTimeB;
+                });
+    
+                // Atualiza o estado com os dados ordenados
                 setEvent(eventData.data);
-                setResults(results.data);
-                setLoading(false)
+                setResults(sortedResults);
+                setLoading(false);
             }
             fethEvent();
         }
     }, [refresh]);
-
+    
     useEffect(() => {
         if (event && mode === 'show') {
             setData({ ...initialData, ...event });
@@ -177,24 +192,8 @@ export function EventFormm({ mode = "show" }) {
                 <Table
                     header={header}
                     widths={larguras}
-                   
                     rows = {
                         results.proofs[proof - 1].categories[categorie - 1].competitors
-                            .sort((a, b) => {
-                                // Remover espaços, underscores, e a unidade 's' do tempo
-                                const timeA = parseFloat(a.time.replace(/[\s_s]/g, '').replace('s', '')) || Infinity;
-                                const timeB = parseFloat(b.time.replace(/[\s_s]/g, '').replace('s', '')) || Infinity;
-                    
-                                // Encontrar o objeto de foul em cada competidor
-                                const foulA = a.fouls.find(foul => foul.name === 'foul');
-                                const foulB = b.fouls.find(foul => foul.name === 'foul');
-                    
-                                // Calcular o tempo total com acréscimo das faltas
-                                const totalTimeA = timeA + (foulA ? foulA.amount * 5 : 0);
-                                const totalTimeB = timeB + (foulB ? foulB.amount * 5 : 0);
-                    
-                                return totalTimeA - totalTimeB;
-                            })
                             .map((row, index) => {
                                 return (
                                     <tr key={index}>
@@ -206,49 +205,49 @@ export function EventFormm({ mode = "show" }) {
                                                     </td>
                                                 );
                                             }
-                    
-                                            if (field === "foul") {
-                                                const foulItem = row.fouls.find(foul => foul.name === 'foul');
+
+                                            if (field === "fouls") {
+                                                const data = row.fouls > 0 ? row.fouls : "-"
                                                 return (
                                                     <td key={subIndex}>
-                                                        {foulItem ? foulItem.amount : '-'}
+                                                       {data}
                                                     </td>
                                                 );
                                             }
                     
                                             if (field === "acress") {
-                                                const foulItem = row.fouls.find(foul => foul.name === 'foul');
+                                                const data = row.fouls > 0 ? row.fouls * 5 + ".000 s" : "-"
                                                 return (
                                                     <td key={subIndex}>
-                                                        {foulItem ? foulItem.amount * 5 + ".000 s" : '0.000 s'}
+                                                       {data}
                                                     </td>
                                                 );
                                             }
                     
                                             if (field === "totalTime") {
-                                                const foulItem = row.fouls.find(foul => foul.name === 'foul');
-                                                const totalTime = foulItem ? (parseFloat(row.time) + foulItem.amount * 5).toFixed(3) + " s" : row.time;
+                                                const acress = row.fouls > 0 ? row.fouls * 5 : 0;
+                                                const time = parseFloat(row.time) + parseInt(acress);
                                                 return (
                                                     <td key={subIndex}>
-                                                        {totalTime}
+                                                       {time}
                                                     </td>
                                                 );
                                             }
 
                                             if (field === "SAT") {
-                                                const foulItem = row.fouls.find(foul => foul.name === 'SAT');
+                                                const SAT = row.SAT ? "SAT" : ""
                                                 return (
                                                     <td key={subIndex}>
-                                                        {foulItem ? "SAT" : '-'}
+                                                        {SAT}
                                                     </td>
                                                 );
                                             }
 
-                                            if (field === "NPC") {
-                                                const foulItem = row.fouls.find(foul => foul.name === 'NPC');
+                                            if (field === "NCP") {
+                                                const NCP = row.NCP ? "NCP" : ""
                                                 return (
                                                     <td key={subIndex}>
-                                                        {foulItem ? "NPC" : '-'}
+                                                        {NCP}
                                                     </td>
                                                 );
                                             }

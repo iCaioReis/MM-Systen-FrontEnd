@@ -42,13 +42,3 @@ export function FormatDate(data) {
 
     return(formattedDate);
 }
-
-
-export function FormatFouls(foul) {
-    const Fouls = {
-        foul: "Falta",
-        SAT: "SAT (Erro de percurso)",
-        NPC: "NPC (Não compareceu)"
-    } 
-    return(Fouls[foul])
-}

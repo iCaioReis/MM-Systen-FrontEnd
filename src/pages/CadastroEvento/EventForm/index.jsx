@@ -9,6 +9,7 @@ import avatarPlaceholder from "../../../assets/user.svg";
 import { FormatStatus } from '../../../utils/formatDatas.js';
 
 import { api } from '../../../services/api.js';
+import { updateProfilePicture } from '../../../utils/updateProfilePicture.js'
 
 import { Modal } from '../../../components/Modal/index.jsx';
 import { Input } from "../../../components/Input/index.jsx";
@@ -39,13 +40,22 @@ export function EventFormm({ event, mode = "add" }) {
     const [selectedCompetitorId, setSelectedCompetitorId] = useState(null);
     const [selectedCategory, setSelectedCategory] = useState("");
     const [showModalAddUser, setShowModalAddUser] = useState(false);
+    const [avatar, setAvatar] = useState(avatarPlaceholder);
+    const [avatarFile, setAvatarFile] = useState(null);
 
     const navigate = useNavigate();
     const params = useParams();
 
     useEffect(() => {
         if (event && mode === 'show') {
-            setData({ ...initialData, ...event });
+            const avatarUrl = event.picture ? `${api.defaults.baseURL}files/${event.picture}` : avatarPlaceholder;
+
+            setData({ 
+                ...initialData, 
+                ...event 
+            });
+
+            setAvatar(avatarUrl);
         }
     }, [event, mode]);
 
@@ -79,6 +89,9 @@ export function EventFormm({ event, mode = "add" }) {
             addEvent();
 
         } else {
+            if(avatarFile){
+                updateProfilePicture({id: event.id, table: "events", avatarFile: avatarFile})
+            }
             async function updateEvent() {
                 try {
                     const res = await api.put(`/events/${event.id}`, data);
@@ -126,7 +139,7 @@ export function EventFormm({ event, mode = "add" }) {
             }
         }
         addCompetitorInAllProofs();
-    }
+    };
 
     const handleShowModalAddUser = () => {
         setShowModalAddUser(!showModalAddUser);
@@ -137,6 +150,15 @@ export function EventFormm({ event, mode = "add" }) {
 
     const refresh = () => {
         window.location.reload();
+    };
+
+    function hadleChangeAvatar(event){
+        const file = event.target.files[0]; //Pega somente o primeiro arquivo que o usuário enviar
+
+        setAvatarFile(file);
+
+        const imagePreview = URL.createObjectURL(file);
+        setAvatar(imagePreview);
     };
 
     return (
@@ -187,11 +209,16 @@ export function EventFormm({ event, mode = "add" }) {
             <Profile>
                 <div>
                     <Picture>
-                        <img src={avatarPlaceholder} alt="" />
+                        <img src={avatar} alt="" />
                         {mode != "add" && isEditing && (
                             <label htmlFor="avatar">
                                 <FiCamera /> Mudar foto
-                                <input type="file" id="avatar" disabled={!isEditing && mode !== 'add'} />
+                                <input 
+                                    type="file"
+                                    id="avatar"
+                                    onChange={hadleChangeAvatar}
+                                    disabled={!isEditing && mode !== 'add'}
+                                />
                             </label>
                         )}
                     </Picture>

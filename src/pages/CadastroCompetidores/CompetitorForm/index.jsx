@@ -8,6 +8,7 @@ import { GoPencil } from "react-icons/go";
 import avatarPlaceholder from "../../../assets/user.svg";
 
 import { api } from '../../../services/api.js';
+import { updateProfilePicture } from '../../../utils/updateProfilePicture.js'
 
 import { Input } from "../../../components/Input";
 import { Button } from "../../../components/Button";
@@ -51,16 +52,28 @@ const initialData = {
 };
 
 export function CompetitorForm({ competitor, mode = "add" }) {
+    const navigate = useNavigate();
+
     const [data, setData] = useState(initialData);
     const [age, setAge] = useState(0);
 
     const [isEditing, setIsEditing] = useState(mode === 'add');
-    const navigate = useNavigate();
+
+    const [avatar, setAvatar] = useState(avatarPlaceholder);
+    const [avatarFile, setAvatarFile] = useState(null);
 
 
     useEffect(() => {
         if (competitor && mode === 'show') {
-            setData({ ...initialData, ...competitor, age: calculateAge(competitor.born) });
+            const avatarUrl = competitor.picture ? `${api.defaults.baseURL}files/${competitor.picture}` : avatarPlaceholder;
+
+            setData({ 
+                ...initialData, 
+                ...competitor, 
+                age: calculateAge(competitor.born) 
+            });
+
+            setAvatar(avatarUrl)
         }
     }, [competitor, mode]);
 
@@ -88,7 +101,7 @@ export function CompetitorForm({ competitor, mode = "add" }) {
         }
 
         return (age)
-    }
+    };
 
     function calculateDate(data) {
         const originalString = data;
@@ -98,7 +111,7 @@ export function CompetitorForm({ competitor, mode = "add" }) {
         const formattedDate = `${day}/${month}/${year}`;
 
         return (formattedDate);
-    }
+    };
 
     useEffect(() => {
         if (competitor && mode === 'show') {
@@ -118,7 +131,6 @@ export function CompetitorForm({ competitor, mode = "add" }) {
     };
 
     const handleSave = () => {
-
         if (mode === 'add') {
             async function addCompetitor() {
                 try {
@@ -135,6 +147,9 @@ export function CompetitorForm({ competitor, mode = "add" }) {
             addCompetitor();
 
         } else if (isEditing) {
+            if(avatarFile){
+                updateProfilePicture({id: competitor.id, table: "competitors", avatarFile: avatarFile})
+            }
             async function updateCompetitor() {
                 try {
                     const res = await api.put(`/competitors/${competitor.id}`, data);
@@ -154,18 +169,32 @@ export function CompetitorForm({ competitor, mode = "add" }) {
         const newState = data.state == "active" ? "inative" : "active";
 
         setData({ ...data, state: newState });
-    }
+    };
+
+    function hadleChangeAvatar(event){
+        const file = event.target.files[0]; //Pega somente o primeiro arquivo que o usuário enviar
+
+        setAvatarFile(file);
+
+        const imagePreview = URL.createObjectURL(file);
+        setAvatar(imagePreview);
+    };
 
     return (
         <Form>
             <Profile>
                 <div>
                     <Picture>
-                        <img src={avatarPlaceholder} alt="" />
+                        <img src={avatar} alt="" />
                         {mode != "add" && isEditing && (
                             <label htmlFor="avatar">
                                 <FiCamera /> Mudar foto
-                                <input type="file" id="avatar" disabled={!isEditing && mode !== 'add'} />
+                                <input 
+                                    type="file"
+                                    id="avatar"
+                                    onChange={hadleChangeAvatar}
+                                    disabled={!isEditing && mode !== 'add'}
+                                />
                             </label>
                         )}
                     </Picture>

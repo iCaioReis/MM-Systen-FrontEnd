@@ -2,15 +2,17 @@ import { Link, useNavigate } from 'react-router-dom';
 
 import { useAuth } from "../../hooks/auth";
 
+import { api } from "../../services/api";
+
 import avatarPlaceholder from "../../assets/user.svg";
 
 import { Container, UserSection, Profile } from './styles';
 
 export function Sidebar(){
-
-    const avatarUrl = avatarPlaceholder;
-
     const { signOut, user } = useAuth();
+
+    const avatarUrl = user.picture ? `${api.defaults.baseURL}files/${user.picture}` : avatarPlaceholder;
+    
     const navigation = useNavigate();
 
     function handleSignOut(){

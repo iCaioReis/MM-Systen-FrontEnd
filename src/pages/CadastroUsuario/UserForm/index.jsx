@@ -6,6 +6,7 @@ import { FiCamera } from 'react-icons/fi';
 import avatarPlaceholder from "../../../assets/user.svg";
 
 import { api } from '../../../services/api.js';
+import { updateProfilePicture } from '../../../utils/updateProfilePicture.js'
 
 import { Input } from "../../../components/Input";
 import { Button } from "../../../components/Button";
@@ -19,7 +20,7 @@ const initialData = {
     state: "active",
     created_at: "",
 
-    picture: "",
+    picture: avatarPlaceholder,
 
     login: "",
     password: "",
@@ -43,9 +44,13 @@ const initialData = {
 };
 
 export function UserForm({ user, mode = "add" }) {
+    const navigate = useNavigate();
+
     const [data, setData] = useState(initialData);
     const [isEditing, setIsEditing] = useState(mode === 'add');
-    const navigate = useNavigate();
+
+    const [avatar, setAvatar] = useState(avatarPlaceholder);
+    const [avatarFile, setAvatarFile] = useState(null);
 
     const calculateAge = (date) => {
         const today = new Date();
@@ -63,7 +68,7 @@ export function UserForm({ user, mode = "add" }) {
         }
 
         return (age)
-    }
+    };
 
     function calculateDate(data) {
         const originalString = data;
@@ -73,11 +78,20 @@ export function UserForm({ user, mode = "add" }) {
         const formattedDate = `${day}/${month}/${year}`;
 
         return(formattedDate);
-    }
+    };
 
     useEffect(() => {
         if (user && mode === 'show') {
-            setData({ ...initialData , ...user, age: calculateAge(user.born) });
+            const avatarUrl = user.picture ? `${api.defaults.baseURL}files/${user.picture}` : avatarPlaceholder;
+
+            setData({ 
+                ...initialData , 
+                ...user, 
+                age: calculateAge(user.born),
+
+            });
+
+            setAvatar(avatarUrl)
         }
     }, [user, mode]);
 
@@ -92,7 +106,6 @@ export function UserForm({ user, mode = "add" }) {
     };
 
     const handleSave = () => {
-        
         if (mode === 'add') {
             async function addUser() {
                 try {
@@ -109,6 +122,9 @@ export function UserForm({ user, mode = "add" }) {
             addUser();
 
         } else if (isEditing) {
+            if(avatarFile){
+                updateProfilePicture({id: user.id, table: "users", avatarFile: avatarFile})
+            }
             async function updateUser() {
                 try {
                     const res = await api.put(`/users/${user.id}`, data);
@@ -127,18 +143,32 @@ export function UserForm({ user, mode = "add" }) {
         const newState = data.state == "active" ? "inative" : "active";
 
         setData({...data, state: newState});
-    }
+    };
+
+    function hadleChangeAvatar(event){
+        const file = event.target.files[0]; //Pega somente o primeiro arquivo que o usuário enviar
+
+        setAvatarFile(file);
+
+        const imagePreview = URL.createObjectURL(file);
+        setAvatar(imagePreview);
+    };
 
     return (
         <Form>
             <Profile>
                 <div>
                     <Picture>
-                        <img src={avatarPlaceholder} alt="" />
+                        <img src={avatar} alt="" />
                         {mode != "add" && isEditing && (
                         <label htmlFor="avatar">
                             <FiCamera /> Mudar foto
-                            <input type="file" id="avatar" disabled={!isEditing && mode !== 'add'} />
+                            <input 
+                                type="file"
+                                id="avatar"
+                                onChange={hadleChangeAvatar}
+                                disabled={!isEditing && mode !== 'add'}
+                            />
                         </label>
                         )}
 

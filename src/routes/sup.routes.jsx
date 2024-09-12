@@ -1,6 +1,7 @@
 import { Routes, Route } from 'react-router-dom';
 
 import { DefaultLayout } from '../layouts/DefaultLayout';
+import { Layout } from '../layouts/LayoutTest'
 
 import { Home } from '../pages/Home';
 import { Cadastro } from '../pages/Cadastro';

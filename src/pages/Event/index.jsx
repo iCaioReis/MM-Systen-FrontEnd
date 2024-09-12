@@ -7,7 +7,7 @@ import { Container } from './styles';
 
 export function Event(){
     return(
-        <Container>
+        <Container className="Main">
             <MenuButton title={"Tela Juiz"} to={"/evento/juiz"} icon={<GiWhistle size={60}/>}/>
             <MenuButton title={"Telão"} to={"/telao"} icon={<PiProjectorScreenLight size={60}/>}/>
             <MenuButton title={"Resultados"} to={"/evento/results"}  icon={<PiRankingLight size={60}/>}/>

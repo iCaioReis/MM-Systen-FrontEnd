@@ -21,7 +21,7 @@ export function Sidebar(){
     }
 
     return(
-        <Container>
+        <Container className='Sidebar'>
             <nav>
                 <Link to={"/"}>Home</Link>
                 <Link to={"/evento"}>Evento</Link>

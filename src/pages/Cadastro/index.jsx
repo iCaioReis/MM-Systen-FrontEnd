@@ -7,7 +7,7 @@ import { Container } from './styles';
 
 export function Cadastro(){
     return(
-        <Container>
+        <Container className="Main">
             <MenuButton title={"Competidor"} to={"/cadastro/competidor"} icon={<PiCowboyHatLight size={60}/>}/>
             <MenuButton title={"Cavalo"} to={"/cadastro/cavalo"} icon={<PiHorse size={60}/>}/>
             <MenuButton title={"Evento"} to={"/cadastro/evento"}  icon={<PiRankingLight size={60}/>}/>

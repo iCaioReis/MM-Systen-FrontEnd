@@ -11,7 +11,7 @@ import avatarPlaceholder from "../../../assets/user.svg";
 import { Input } from "../../../components/Input";
 import { Button } from "../../../components/Button";
 
-import { FormatCategory, FormatProof, FormatStatus } from "../../../utils/formatDatas";
+import { FormatCategory, FormatProof, FormatStatus, FormatTimer } from "../../../utils/formatDatas";
 
 import { Container, Content, JudgeArea, Profile, Actions, Main, Picture, Title, Timer, InputFouls, EliminatoryFouls, HiddenCheckbox, StyledLabel } from "./styles";
 
@@ -19,7 +19,6 @@ export function Competition() {
     const [loading, setLoading] = useState(true);
     const [refresh, setRefresh] = useState(false);
     const [hasExecuted, setHasExecuted] = useState(false);
-
     const [categoryData, setCategoryData] = useState(null);
     const [competingRegisterNumber, setCompetingRegisterNumber] = useState();
     const [competingRegisterData, setCompetingRegisterData] = useState();
@@ -64,16 +63,16 @@ export function Competition() {
 
                     const competitor = await api.get(`/registersJudge/${categoryData.competitorHorses[competingRegisterNumber].id}`);
                     setCompetingRegisterData(competitor.data.register);
+                    console.log(competitor.data.register)
                     setLoading(false);
                 } catch (error) {
                     console.error("Failed to fetch data", error);
                 }
             }
             fetchData();
-            console.log(competingRegisterData);
         }
     }, [refresh, competingRegisterNumber]);
-
+      
     const handleNextCompetitor = () => {
         if ((competingRegisterNumber + 1) == categoryData.competitorHorses.length) { return };
         setCompetingRegisterData((prevData) => ({
@@ -86,7 +85,7 @@ export function Competition() {
         const next = competingRegisterNumber + 1;
         setCompetingRegisterNumber(next);
         setRefresh(prev => !prev);
-    }
+    };
     const handlePreviousCompetitor = () => {
         if (competingRegisterNumber == 0) { return }
         setCompetingRegisterData((prevData) => ({
@@ -99,7 +98,7 @@ export function Competition() {
         const next = competingRegisterNumber - 1
         setCompetingRegisterNumber(next)
         setRefresh(prev => !prev);
-    }
+    };
     const handleFinish = () => {
         competingRegisterData.state = "finished";
         async function putTimeAndState() {
@@ -111,7 +110,7 @@ export function Competition() {
             }
         }
         putTimeAndState();
-    }
+    };
     const handleRegisterState = (state) => {
         async function handleState() {
             try {
@@ -127,12 +126,13 @@ export function Competition() {
         }
         handleState();
         setRefresh(prev => !prev);
-    }
+    };
     const setFullScreen = () => {
         screenfull.request();
-    }
+    };
     const handleInputChange = (e) => {
         let { name, value } = e.target;
+        console.log( `${parseFloat(competingRegisterData.time) + parseFloat(competingRegisterData.fouls) * 5}`)
 
         if (!value || value < 0) {
             value = 0
@@ -162,7 +162,7 @@ export function Competition() {
             fouls: 0,
             SAT: !prevData.SAT
         }));
-    }
+    };
     const handleNcpFoul = () => {
         setCompetingRegisterData((prevData) => ({
             ...prevData,
@@ -171,7 +171,7 @@ export function Competition() {
             NCP: !prevData.NCP
         }));
 
-    }
+    };
 
     if (loading) {
         return (
@@ -228,7 +228,7 @@ export function Competition() {
                         <Input
                             dataType="timer"
                             type="text"
-                            value={`${parseFloat(competingRegisterData.time) + parseFloat(competingRegisterData.fouls) * 5}`}
+                            value={FormatTimer(parseFloat(competingRegisterData.time) + parseFloat(competingRegisterData.fouls) * 5)}
                             disabled={true}
                         />
                         <span className='s'>s</span>

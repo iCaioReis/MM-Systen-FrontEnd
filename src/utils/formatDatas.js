@@ -10,7 +10,7 @@ export function FormatCategory(category) {
         open: "Aberto"
     } 
     return(Categories[category])
-}
+};
 
 export function FormatProof(proof) {
     const Proofs = {
@@ -19,7 +19,7 @@ export function FormatProof(proof) {
         maneabilidade: "Maneabilidade",
     } 
     return(Proofs[proof])
-}
+};
 
 export function FormatStatus(status) {
     const Status = {
@@ -31,7 +31,7 @@ export function FormatStatus(status) {
         finished: "Finalizada"
     } 
     return(Status[status])
-}
+};
 
 export function FormatDate(data) {
     const originalString = data;
@@ -41,4 +41,15 @@ export function FormatDate(data) {
     const formattedDate = `${day}/${month}/${year}`;
 
     return(formattedDate);
-}
+};
+
+export function FormatTimer(num) {
+
+    let formattedNum = num.toFixed(3);
+  
+    let [integerPart, decimalPart] = formattedNum.split(".");
+  
+    integerPart = integerPart.padStart(3, "0");
+  
+    return `${integerPart}.${decimalPart}`;
+};

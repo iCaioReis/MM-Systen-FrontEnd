@@ -3,9 +3,9 @@ import styled from "styled-components";
 export const Form = styled.div`
     display: grid;
     grid-template-columns: 12rem auto 12rem;
-    grid-template-rows: auto;
+    grid-template-rows: 1fr;
     
-    gap: 1rem;
+    gap: 0 1rem;
 `;
 
 export const Profile = styled.div`
@@ -17,7 +17,6 @@ export const Profile = styled.div`
         display: flex;
         flex-direction: column;
         gap: .5rem;
-
 
         img {
             width: 12rem;
@@ -31,7 +30,7 @@ export const Profile = styled.div`
 `;
 
 export const CategoriesContainer = styled.div`
-    max-height: 22rem;
+    max-height: 21rem;
     overflow-y: auto;
 
     display: flex;

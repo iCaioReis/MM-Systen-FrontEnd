@@ -3,9 +3,9 @@ import styled from "styled-components";
 export const Form = styled.div`
     display: grid;
     grid-template-columns: 15rem auto 10rem;
-    grid-template-rows: auto;
+    grid-template-rows: 1fr;
     
-    gap: 1rem;
+    gap: 0 1rem;
 `;
 
 export const MainForm = styled.div`

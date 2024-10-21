@@ -4,7 +4,6 @@ export const Container = styled.div`
     h1 {
         color: ${({ theme }) => theme.COLORS.THEME_700};
     }
-    
     .flex {
         margin-bottom: .5rem;
 
@@ -41,7 +40,6 @@ export const Container = styled.div`
             &.active {
                 background-color: ${({ theme }) => theme.COLORS.LIGHT_200};
             }
-            
         }
     }
 

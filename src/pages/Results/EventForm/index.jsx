@@ -1,3 +1,5 @@
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 import { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 
@@ -35,7 +37,7 @@ const larguras = {
     totalTime: "100px",
     SAT: "60px",
     NPC: "60px"
-}
+};
 const header = {
     index: "N",
     competitor_name: "Competidor",
@@ -46,7 +48,7 @@ const header = {
     totalTime: "Tempo total",
     SAT: "SAT",
     NCP: "NCP"
-}
+};
 
 export function EventFormm({ mode = "show" }) {
     const [data, setData] = useState(initialData);
@@ -62,32 +64,37 @@ export function EventFormm({ mode = "show" }) {
     useEffect(() => {
         if (params.id) {
             async function fethEvent() {
-                const eventData = await api.get(`/events/${params.id}`);
-                const results = await api.get(`/results/${params.id}`);
-    
-                // Clonamos o objeto results para evitar mutações diretas
-                const sortedResults = { ...results.data };
-    
-                // Ordenar os competidores da prova e categoria selecionadas
-                sortedResults.proofs[proof - 1].categories[categorie - 1].competitors.sort((a, b) => {
-                    const acressA = a.fouls > 0 ? a.fouls * 5 : 0;
-                    const totalTimeA = parseFloat(a.time) + acressA;
-    
-                    const acressB = b.fouls > 0 ? b.fouls * 5 : 0;
-                    const totalTimeB = parseFloat(b.time) + acressB;
-    
-                    return totalTimeA - totalTimeB;
-                });
-    
-                // Atualiza o estado com os dados ordenados
-                setEvent(eventData.data);
-                setResults(sortedResults);
-                setLoading(false);
+                try {
+                    const eventData = await api.get(`/events/${params.id}`);
+                    const results = await api.get(`/results/${params.id}`);
+
+                    // Clonamos o objeto results para evitar mutações diretas
+                    const sortedResults = { ...results.data };
+
+                    // Ordenar os competidores da prova e categoria selecionadas
+                    sortedResults.proofs[proof - 1].categories[categorie - 1].competitors.sort((a, b) => {
+                        const acressA = a.fouls > 0 ? a.fouls * 5 : 0;
+                        const totalTimeA = parseFloat(a.time) + acressA;
+
+                        const acressB = b.fouls > 0 ? b.fouls * 5 : 0;
+                        const totalTimeB = parseFloat(b.time) + acressB;
+
+                        return totalTimeA - totalTimeB;
+                    });
+
+                    // Atualiza o estado com os dados ordenados
+                    setEvent(eventData.data);
+                    setResults(sortedResults);
+                    setLoading(false);
+                } catch (error) {
+                    const errorMessage = error.response?.data?.message || error.message;
+                    toast.error(errorMessage);
+                }
             }
             fethEvent();
         }
     }, [refresh]);
-    
+
     useEffect(() => {
         if (event && mode === 'show') {
             setData({ ...initialData, ...event });
@@ -192,7 +199,7 @@ export function EventFormm({ mode = "show" }) {
                 <Table
                     header={header}
                     widths={larguras}
-                    rows = {
+                    rows={
                         results.proofs[proof - 1].categories[categorie - 1].competitors
                             .map((row, index) => {
                                 return (
@@ -210,26 +217,26 @@ export function EventFormm({ mode = "show" }) {
                                                 const data = row.fouls > 0 ? row.fouls : "-"
                                                 return (
                                                     <td key={subIndex}>
-                                                       {data}
+                                                        {data}
                                                     </td>
                                                 );
                                             }
-                    
+
                                             if (field === "acress") {
                                                 const data = row.fouls > 0 ? row.fouls * 5 + ".000 s" : "-"
                                                 return (
                                                     <td key={subIndex}>
-                                                       {data}
+                                                        {data}
                                                     </td>
                                                 );
                                             }
-                    
+
                                             if (field === "totalTime") {
                                                 const acress = row.fouls > 0 ? row.fouls * 5 : 0;
                                                 const time = parseFloat(row.time) + parseInt(acress);
                                                 return (
                                                     <td key={subIndex}>
-                                                       {time}
+                                                        {time}
                                                     </td>
                                                 );
                                             }
@@ -251,7 +258,7 @@ export function EventFormm({ mode = "show" }) {
                                                     </td>
                                                 );
                                             }
-                    
+
                                             return (
                                                 <td key={subIndex}>{row[field]}</td>
                                             );
@@ -259,10 +266,12 @@ export function EventFormm({ mode = "show" }) {
                                     </tr>
                                 );
                             })
-                    }                    
+                    }
                 />
 
             </MainForm>
+
+            <ToastContainer/>
         </Form>
     );
 }

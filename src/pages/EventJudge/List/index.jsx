@@ -6,7 +6,7 @@ import { Container } from './styles';
 
 import { Button } from '../../../components/Button';
 
-export function List({ title, categories, refresh }) {
+export function List({ title, categories }) {
     const [isOpen, setIsOpen] = useState(false);
 
     const toggleDropdown = () => {

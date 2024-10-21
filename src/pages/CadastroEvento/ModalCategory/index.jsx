@@ -1,6 +1,7 @@
-import { useState, useEffect } from 'react';
-
 import { FaRegTrashCan, FaPencil, FaArrowTurnDown, FaArrowTurnUp } from "react-icons/fa6";
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+import { useState, useEffect } from 'react';
 
 import { api } from '../../../services/api';
 
@@ -66,16 +67,15 @@ export function ModalCategory({ isOpen, onClose, category }) {
           "categorie_id": category.id,
           "competitor_order": competitorsWithHorses.length + 1
         });
-      alert("Registro cadastrado com sucesso!");
-
       setRefresh(prev => !prev)
       setSelectedCompetitorId(null);
       setSelectedHorseId(null);
       setClearSelection(true);
       setTimeout(() => setClearSelection(false), 0);
+      toast.success("Registro cadastrado com sucesso!");
     } catch (error) {
       const errorMessage = error.response?.data?.message || error.message;
-      alert(errorMessage)
+      toast.error(errorMessage)
     }
   };
 
@@ -97,16 +97,16 @@ export function ModalCategory({ isOpen, onClose, category }) {
 
   const handleDeleteRegister = async (id) => {
     try {
-      const res = await api.delete(`/categoryRegisters/${id}`);
-      alert("Registro excluído com sucesso!");
+      await api.delete(`/categoryRegisters/${id}`);
       setRefresh(prev => !prev)
       setSelectedCompetitorId(null);
       setSelectedHorseId(null);
       setClearSelection(true);
       setTimeout(() => setClearSelection(false), 0);
+      toast.success("Registro excluído com sucesso!");
     } catch (error) {
       const errorMessage = error.response?.data?.message || error.message;
-      alert(errorMessage)
+      toast.error(errorMessage)
     }
     handleModalConfirm()
   };
@@ -114,31 +114,30 @@ export function ModalCategory({ isOpen, onClose, category }) {
   const handleStateCategory = async (state) => {
     if (state == "finished_inscriptions") {
       try {
-        //await api.put(`categoryRegisters/${category.id}`);
         await api.put(`/categories/${category.id}`, { state });
-        alert("Status atualizado com sucesso!");
         setRefresh(prev => !prev)
         setSelectedCompetitorId(null);
         setSelectedHorseId(null);
         setClearSelection(true);
         setTimeout(() => setClearSelection(false), 0);
+        toast.success("Status atualizado com sucesso!");
       } catch (error) {
         const errorMessage = error.response?.data?.message || error.message;
-        alert(errorMessage);
+        toast.error(errorMessage);
       }
     }
     else {
       try {
         await api.put(`/categories/${category.id}`, { state });
-        alert("Status atualizado com sucesso!");
         setRefresh(prev => !prev)
         setSelectedCompetitorId(null);
         setSelectedHorseId(null);
         setClearSelection(true);
         setTimeout(() => setClearSelection(false), 0);
+        toast.success("Status atualizado com sucesso!");
       } catch (error) {
         const errorMessage = error.response?.data?.message || error.message;
-        alert(errorMessage);
+        toast.error(errorMessage);
       }
     }
   };
@@ -146,15 +145,14 @@ export function ModalCategory({ isOpen, onClose, category }) {
   const handleEditRegister = async () => {
     try {
       await api.put(`categoryRegisters/${editRegisterId}`, { "competitor_id": editCompetitorId, "horse_id": editHorseId });
-      alert("Registro salvo com sucesso!");
-
       setEditHorseId(null);
       setEditRegisterId(null);
       setEditCompetitorId(null);
       setRefresh(prev => !prev);
+      toast.success("Registro salvo com sucesso!");
     } catch (error) {
       const errorMessage = error.response?.data?.message || error.message;
-      alert(errorMessage);
+      toast.error(errorMessage);
     }
   };
 
@@ -163,11 +161,11 @@ export function ModalCategory({ isOpen, onClose, category }) {
 
     try {
       await api.put(`/sortCategoryRegisters`, orderedRecords);
-      alert("Registros ordenados com sucesso!");
-      setRefresh(prev => !prev)
+      setRefresh(prev => !prev);
+      toast.success("Registros ordenados com sucesso!");
     } catch (error) {
       const errorMessage = error.response?.data?.message || error.message;
-      alert(errorMessage);
+      toast.error(errorMessage);
     }
   };
 
@@ -199,11 +197,11 @@ export function ModalCategory({ isOpen, onClose, category }) {
   const saveNewOrder = async (order) => {
     try {
       await api.put(`/sortCategoryRegisters`, order);
-      alert("Registros ordenados com sucesso!");
-      setRefresh(prev => !prev)
+      setRefresh(prev => !prev);
+      toast.success("Registros ordenados com sucesso!");
     } catch (error) {
       const errorMessage = error.response?.data?.message || error.message;
-      alert(errorMessage);
+      toast.error(errorMessage);
     }
   }
 
@@ -366,6 +364,8 @@ export function ModalCategory({ isOpen, onClose, category }) {
 
         </Status>
       </div>
+
+      <ToastContainer/>
     </ModalOverlay>
   );
 };

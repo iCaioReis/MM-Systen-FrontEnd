@@ -1,5 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 import { FiCamera } from 'react-icons/fi';
 
@@ -51,7 +53,7 @@ const initialData = {
     account: ""
 };
 
-export function CompetitorForm({ competitor, mode = "add" }) {
+export function CompetitorForm({ competitor, mode = "add", refresh }) {
     const navigate = useNavigate();
 
     const [data, setData] = useState(initialData);
@@ -136,12 +138,14 @@ export function CompetitorForm({ competitor, mode = "add" }) {
                 try {
                     const res = await api.post(`/competitors`, data);
                     const { id } = res.data
-                    alert("Competidor cadastrado com sucesso!")
+
+                    toast.success("Competidor registrado com sucesso!");
                     navigate(`/cadastro/competidor/${id.id}`);
-                    window.location.reload();
+                    setIsEditing(false);
+                    refresh();
                 } catch (error) {
                     const errorMessage = error.response?.data?.message || error.message;
-                    alert(errorMessage)
+                    toast.error(errorMessage);
                 }
             }
             addCompetitor();
@@ -152,17 +156,17 @@ export function CompetitorForm({ competitor, mode = "add" }) {
             }
             async function updateCompetitor() {
                 try {
-                    const res = await api.put(`/competitors/${competitor.id}`, data);
-                    alert("Competidor atualizado com sucesso!")
-                    window.location.reload();
+                    await api.put(`/competitors/${competitor.id}`, data);
+                    toast.success("Competidor atualizado com sucesso!");
+                    setIsEditing(false);
+                    refresh();
                 } catch (error) {
                     const errorMessage = error.response?.data?.message || error.message;
-                    alert(errorMessage)
+                    toast.error(errorMessage);
                 }
             }
             updateCompetitor();
         }
-
     };
 
     const handleState = () => {
@@ -469,6 +473,8 @@ export function CompetitorForm({ competitor, mode = "add" }) {
                     status
                 />
             </Status>
+
+            <ToastContainer/>
         </Form>
     )
 }

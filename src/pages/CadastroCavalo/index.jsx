@@ -9,14 +9,18 @@ import { HorseListing } from './HorseListing';
 import { Container } from './styles';
 
 export function CadastroCavalo() {
-    const params = useParams();
-
     const [activePage, setActivePage] = useState('cadastro');
+    const [refresh, setRefresh] = useState(false);
+    const [horse, setHorse] = useState();
+
+    const params = useParams();
+    
     const handlePage = (page) => {
         setActivePage(page);
     };
-    
-    const [horse, setHorse] = useState();
+    const handleRefresh = () => {
+        setRefresh(prev => !prev)
+    };
 
     useEffect(() => {
         if(params.id){
@@ -26,8 +30,7 @@ export function CadastroCavalo() {
             }
             fethHorse();
         }
-    }, []);
-    
+    }, [refresh]);
 
     return (
         <Container>
@@ -37,7 +40,13 @@ export function CadastroCavalo() {
             </nav>
 
             {activePage === 'cadastro' && 
-                ( <HorseForm  mode={params.id && "show"} horse={horse}/> )
+            ( 
+                <HorseForm  
+                    mode={params.id && "show"} 
+                    horse={horse} 
+                    refresh={handleRefresh}
+                />
+            )
             }
 
             {activePage === 'listagem' && ( <HorseListing/>)}

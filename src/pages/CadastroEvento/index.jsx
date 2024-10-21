@@ -9,11 +9,15 @@ import { EventListing } from './EventListing';
 import { Container } from './styles';
 
 export function CadastroEvento() {
-    const params = useParams();
-
     const [activePage, setActivePage] = useState('cadastro');
+    const [refresh, setRefresh] = useState(false);
+    const params = useParams();
+    
     const handlePage = (page) => {
         setActivePage(page);
+    };
+    const handleRefresh = () => {
+        setRefresh(prev => !prev)
     };
     
     const [Event, setEvent] = useState();
@@ -26,7 +30,7 @@ export function CadastroEvento() {
             }
             fethEvent();
         }
-    }, []);
+    }, [refresh]);
     
 
     return (
@@ -37,7 +41,13 @@ export function CadastroEvento() {
             </nav>
 
             {activePage === 'cadastro' && 
-                ( <EventFormm  mode={params.id && "show"} event={Event}/> )
+                ( 
+                <EventFormm  
+                    mode={params.id && "show"} 
+                    event={Event} 
+                    refresh={handleRefresh}
+                /> 
+                )
             }
 
             {activePage === 'listagem' && ( <EventListing/>)}

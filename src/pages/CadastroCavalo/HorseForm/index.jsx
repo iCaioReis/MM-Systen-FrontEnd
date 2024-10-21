@@ -1,5 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 import { FiCamera } from 'react-icons/fi';
 
@@ -29,7 +31,7 @@ const initialData = {
     march: "beat"
 };
 
-export function HorseForm({ horse, mode = "add" }) {
+export function HorseForm({ horse, mode = "add", refresh }) {
     const navigate = useNavigate();
 
     const [data, setData] = useState(initialData);
@@ -107,12 +109,14 @@ export function HorseForm({ horse, mode = "add" }) {
                 try {
                     const res = await api.post(`/horses`, data);
                     const { id } = res.data
-                    alert("Cavalo cadastrado com sucesso!")
+                    toast.success("Cavalo registrado com sucesso!");
                     navigate(`/cadastro/cavalo/${id.id}`);
-                    window.location.reload();
+                    setIsEditing(false)
+                    refresh()
+                    
                 } catch (error) {
                     const errorMessage = error.response?.data?.message || error.message;
-                    alert(errorMessage)
+                    toast.error(errorMessage);
                 }
             }
             addHorse();
@@ -124,11 +128,12 @@ export function HorseForm({ horse, mode = "add" }) {
             async function updateHorse() {
                 try {
                     const res = await api.put(`/horses/${horse.id}`, data);
-                    alert("Cavalo atualizado com sucesso!")
-                    window.location.reload();
+                    toast.success("Registro do cavalo atualizado com sucesso!")
+                    setIsEditing(false)
+                    refresh()
                 } catch (error) {
                     const errorMessage = error.response?.data?.message || error.message;
-                    alert(errorMessage)
+                    toast.error(errorMessage);
                 }
             }
             updateHorse();
@@ -310,6 +315,8 @@ export function HorseForm({ horse, mode = "add" }) {
                     status
                 />
             </Status>
+
+            <ToastContainer/>
         </Form>
     );
 }

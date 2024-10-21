@@ -1,5 +1,8 @@
-import { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+import { useState, useEffect } from 'react';
+
 
 import { FaArrowRight } from "react-icons/fa6";
 import { FiCamera } from 'react-icons/fi';
@@ -31,8 +34,9 @@ const initialData = {
     end_date: "",
 };
 
-export function EventFormm({ event, mode = "add" }) {
+export function EventFormm({ event, mode = "add", refresh }) {
     const [data, setData] = useState(initialData);
+    
     const [shouldSave, setShouldSave] = useState(false);
     const [isEditing, setIsEditing] = useState(mode === 'add');
     const [clearSelection, setClearSelection] = useState(false);
@@ -50,9 +54,9 @@ export function EventFormm({ event, mode = "add" }) {
         if (event && mode === 'show') {
             const avatarUrl = event.picture ? `${api.defaults.baseURL}files/${event.picture}` : avatarPlaceholder;
 
-            setData({ 
-                ...initialData, 
-                ...event 
+            setData({
+                ...initialData,
+                ...event
             });
 
             setAvatar(avatarUrl);
@@ -77,30 +81,31 @@ export function EventFormm({ event, mode = "add" }) {
             async function addEvent() {
                 try {
                     const res = await api.post(`/events`, data);
-                    const { id } = res.data
-                    alert("Evento cadastrado com sucesso!")
+                    const { id } = res.data;
+                    toast.success("Evento cadastrado com sucesso!");
                     navigate(`/cadastro/evento/${id}`);
-                    window.location.reload();
+                    refresh();
+                    setIsEditing(false)
                 } catch (error) {
                     const errorMessage = error.response?.data?.message || error.message;
-                    alert(errorMessage)
+                    toast.error(errorMessage);
                 }
             }
             addEvent();
 
         } else {
-            if(avatarFile){
-                updateProfilePicture({id: event.id, table: "events", avatarFile: avatarFile})
+            if (avatarFile) {
+                updateProfilePicture({ id: event.id, table: "events", avatarFile: avatarFile })
             }
             async function updateEvent() {
                 try {
                     const res = await api.put(`/events/${event.id}`, data);
-                    alert("Evento atualizado com sucesso!")
-                    window.location.reload();
+                    toast.success("Evento atualizado com sucesso!")
+                    refresh();
+                    setIsEditing(false)
                 } catch (error) {
                     const errorMessage = error.response?.data?.message || error.message;
-                    alert(errorMessage)
-                    window.location.reload();
+                    toast.error(errorMessage);
                 }
             }
             updateEvent();
@@ -126,16 +131,18 @@ export function EventFormm({ event, mode = "add" }) {
                         "event_id": params.id,
                         "categoryName": selectedCategory
                     });
-                alert("Registro cadastrado com sucesso!");
 
                 setSelectedCompetitorId(null);
                 setSelectedHorseId(null);
                 setSelectedCategory("");
                 setClearSelection(true);
                 setTimeout(() => setClearSelection(false), 0);
+
+                toast.success("Registro cadastrado com sucesso!");
+
             } catch (error) {
                 const errorMessage = error.response?.data?.message || error.message;
-                alert(errorMessage)
+                toast.error(errorMessage);
             }
         }
         addCompetitorInAllProofs();
@@ -143,16 +150,16 @@ export function EventFormm({ event, mode = "add" }) {
 
     const handleShowModalAddUser = () => {
         setShowModalAddUser(!showModalAddUser);
-        if(showModalAddUser){
-            refresh()
+        if (showModalAddUser) {
+            //refresh()
         }
     };
 
-    const refresh = () => {
+    const refreshPage = () => {
         window.location.reload();
     };
 
-    function hadleChangeAvatar(event){
+    function hadleChangeAvatar(event) {
         const file = event.target.files[0]; //Pega somente o primeiro arquivo que o usuário enviar
 
         setAvatarFile(file);
@@ -213,7 +220,7 @@ export function EventFormm({ event, mode = "add" }) {
                         {mode != "add" && isEditing && (
                             <label htmlFor="avatar">
                                 <FiCamera /> Mudar foto
-                                <input 
+                                <input
                                     type="file"
                                     id="avatar"
                                     onChange={hadleChangeAvatar}
@@ -233,14 +240,14 @@ export function EventFormm({ event, mode = "add" }) {
                             Editar
                         </Button>
                     )}
-                    {params.id && 
+                    {params.id &&
                         <Button type={"button"} onClick={() => handleShowModalAddUser()}>Registrar Competidor</Button>
                     }
 
                     {//params.id && 
-                    //<Button type={"button"}>Gerar Relatório</Button>
+                        //<Button type={"button"}>Gerar Relatório</Button>
                     }
-                    
+
                 </div>
                 {mode != 'add' && isEditing && data.state == 'active' &&
                     <Button className={"danger"}
@@ -306,7 +313,7 @@ export function EventFormm({ event, mode = "add" }) {
                 <CategoriesContainer>
                     {data.proofs && data.proofs.map((proof, index) => {
                         return (
-                            <List key={index} title={proof.name} categories={proof.categories} refresh={refresh}></List>
+                            <List key={index} title={proof.name} categories={proof.categories} refresh={refreshPage}></List>
                         )
                     })}
                 </CategoriesContainer>
@@ -334,6 +341,8 @@ export function EventFormm({ event, mode = "add" }) {
                     </Button>
                 }
             </Status>
+
+            <ToastContainer />
         </Form>
     );
 }

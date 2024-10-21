@@ -1,5 +1,7 @@
-import { useState, useEffect } from 'react';
+import { ToastContainer, toast } from 'react-toastify';
 import { useNavigate } from 'react-router-dom';
+import 'react-toastify/dist/ReactToastify.css';
+import { useState, useEffect } from 'react';
 
 import { FiCamera } from 'react-icons/fi';
 
@@ -37,13 +39,13 @@ const initialData = {
 
     pix: "",
     favored: "",
-    
+
     bank: "",
     agency: "",
     account: ""
 };
 
-export function UserForm({ user, mode = "add" }) {
+export function UserForm({ user, mode = "add", refresh }) {
     const navigate = useNavigate();
 
     const [data, setData] = useState(initialData);
@@ -63,7 +65,7 @@ export function UserForm({ user, mode = "add" }) {
             age--;
         }
 
-        if(!age){
+        if (!age) {
             return ('')
         }
 
@@ -77,16 +79,16 @@ export function UserForm({ user, mode = "add" }) {
 
         const formattedDate = `${day}/${month}/${year}`;
 
-        return(formattedDate);
+        return (formattedDate);
     };
 
     useEffect(() => {
         if (user && mode === 'show') {
             const avatarUrl = user.picture ? `${api.defaults.baseURL}files/${user.picture}` : avatarPlaceholder;
 
-            setData({ 
-                ...initialData , 
-                ...user, 
+            setData({
+                ...initialData,
+                ...user,
                 age: calculateAge(user.born),
 
             });
@@ -111,28 +113,31 @@ export function UserForm({ user, mode = "add" }) {
                 try {
                     const res = await api.post(`/users`, data);
                     const { id } = res.data
-                    alert("Usuário criado com sucesso!")
                     navigate(`/cadastro/usuario/${id.id}`);
-                    window.location.reload();
+                    setIsEditing(false);
+                    refresh();
+                    toast.success("Usuário criado com sucesso!")
                 } catch (error) {
                     const errorMessage = error.response?.data?.message || error.message;
-                    alert(errorMessage)
+                    toast.error(errorMessage);
                 }
             }
             addUser();
 
         } else if (isEditing) {
-            if(avatarFile){
-                updateProfilePicture({id: user.id, table: "users", avatarFile: avatarFile})
+            if (avatarFile) {
+                updateProfilePicture({ id: user.id, table: "users", avatarFile: avatarFile })
             }
             async function updateUser() {
                 try {
+                    console.log(data)
                     const res = await api.put(`/users/${user.id}`, data);
-                    alert("Usuário atualizado com sucesso!")
-                    window.location.reload();
+                    setIsEditing(false);
+                    refresh();
+                    toast.success("Usuário atualizado com sucesso!");
                 } catch (error) {
                     const errorMessage = error.response?.data?.message || error.message;
-                    alert(errorMessage)
+                    toast.error(errorMessage);
                 }
             }
             updateUser();
@@ -142,10 +147,10 @@ export function UserForm({ user, mode = "add" }) {
     const handleState = () => {
         const newState = data.state == "active" ? "inative" : "active";
 
-        setData({...data, state: newState});
+        setData({ ...data, state: newState });
     };
 
-    function hadleChangeAvatar(event){
+    function hadleChangeAvatar(event) {
         const file = event.target.files[0]; //Pega somente o primeiro arquivo que o usuário enviar
 
         setAvatarFile(file);
@@ -161,15 +166,15 @@ export function UserForm({ user, mode = "add" }) {
                     <Picture>
                         <img src={avatar} alt="" />
                         {mode != "add" && isEditing && (
-                        <label htmlFor="avatar">
-                            <FiCamera /> Mudar foto
-                            <input 
-                                type="file"
-                                id="avatar"
-                                onChange={hadleChangeAvatar}
-                                disabled={!isEditing && mode !== 'add'}
-                            />
-                        </label>
+                            <label htmlFor="avatar">
+                                <FiCamera /> Mudar foto
+                                <input
+                                    type="file"
+                                    id="avatar"
+                                    onChange={hadleChangeAvatar}
+                                    disabled={!isEditing && mode !== 'add'}
+                                />
+                            </label>
                         )}
 
                     </Picture>
@@ -186,14 +191,14 @@ export function UserForm({ user, mode = "add" }) {
                     )}
                 </div>
 
-                {mode != 'add' && isEditing && data.state == 'active' && 
+                {mode != 'add' && isEditing && data.state == 'active' &&
                     <Button className={"danger"}
                         onClick={handleState}
                     >
                         Desativar
                     </Button>
                 }
-                {mode != 'add' && isEditing && data.state == 'inative' && 
+                {mode != 'add' && isEditing && data.state == 'inative' &&
                     <Button
                         onClick={handleState}
                     >
@@ -364,25 +369,30 @@ export function UserForm({ user, mode = "add" }) {
             </MainForm>
 
             <Status>
-                <Input
-                    title={"Número único"}
-                    value={data.id}
-                    disabled
-                    status
-                />
-                <Input
-                    title={"Situação do cadastro"}
-                    value={data.state == "active" ? "Ativo" : "Inativo"}
-                    disabled
-                    status
-                />
-                <Input
-                    title={"Data Cadastro"}
-                    value={calculateDate(data.created_at)}
-                    disabled
-                    status
-                />
+                <div>
+                    <Input
+                        title={"Número único"}
+                        value={data.id}
+                        disabled
+                        status
+                    />
+                    <Input
+                        title={"Situação do cadastro"}
+                        value={data.state == "active" ? "Ativo" : "Inativo"}
+                        disabled
+                        status
+                    />
+                    <Input
+                        title={"Data Cadastro"}
+                        value={calculateDate(data.created_at)}
+                        disabled
+                        status
+                    />
+                </div>
+
             </Status>
+
+            <ToastContainer/>
         </Form>
     );
 }

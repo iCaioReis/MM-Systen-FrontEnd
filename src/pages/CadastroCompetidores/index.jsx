@@ -9,15 +9,19 @@ import { CompetitorForm } from "./CompetitorForm"
 import { Container } from "./styles";
 
 export function CadastroCompetidor() {
+    const [activePage, setActivePage] = useState('cadastro');
+    const [competitor, setCompetitor] = useState();
+    const [refresh, setRefresh] = useState(false);
+
     const params = useParams();
 
-    const [activePage, setActivePage] = useState('cadastro');
     const handlePage = (page) => {
         setActivePage(page);
     };
+    const handleRefresh = () => {
+        setRefresh(prev => !prev)
+    };
     
-    const [competitor, setCompetitor] = useState();
-
     useEffect(() => {
         if(params.id){
             async function fethCompetitor() {
@@ -26,7 +30,7 @@ export function CadastroCompetidor() {
             }
             fethCompetitor();
         }
-    }, []);
+    }, [refresh]);
 
     return (
         <Container>
@@ -35,9 +39,16 @@ export function CadastroCompetidor() {
                 <button onClick={() => handlePage('listagem')} className={activePage === 'listagem' ? 'active' : ''}>Listagem</button>
             </nav>
 
-            {activePage === 'cadastro' && ( <CompetitorForm mode={params.id && "show"} competitor={competitor}/>)}
+            {activePage === 'cadastro' && ( 
+                <CompetitorForm 
+                    mode={params.id && "show"}
+                    competitor={competitor}
+                    refresh={handleRefresh}
+                    
+                />
+            )}
 
-            {activePage === 'listagem' && ( <CompetitorListing/>)}
+            {activePage === 'listagem' && ( <CompetitorListing/> )}
         </Container>
     );
 }

@@ -1,5 +1,8 @@
-import { useState, useEffect } from 'react';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 import { useParams } from 'react-router-dom';
+import { useState, useEffect } from 'react';
+
 import screenfull from 'screenfull';
 
 import { FaArrowLeft, FaArrowRight } from "react-icons/fa";
@@ -45,7 +48,7 @@ export function Competition() {
                     setRefresh(prev => !prev);
                 }
             } catch (error) {
-                console.error("Failed to fetch data", error);
+                toast.error(`Failed to fetch data: ${error.message}`);
             }
         }
         fetchData();
@@ -66,7 +69,7 @@ export function Competition() {
                     console.log(competitor.data.register)
                     setLoading(false);
                 } catch (error) {
-                    console.error("Failed to fetch data", error);
+                    toast.error(`Failed to fetch data: ${error.message}`);
                 }
             }
             fetchData();
@@ -106,7 +109,7 @@ export function Competition() {
                 await api.put(`/registersJudge/${competingRegisterData.id}`, competingRegisterData)
                 setRefresh(prev => !prev)
             } catch (error) {
-                alert(`Erro ao tentar salvar: ${error}`);
+                toast.error(`Erro ao tentar salvar: ${error}`);
             }
         }
         putTimeAndState();
@@ -121,7 +124,7 @@ export function Competition() {
 
             } catch (error) {
                 const errorMessage = error.response?.data?.message || error.message;
-                alert(errorMessage);
+                toast.error(errorMessage);
             }
         }
         handleState();
@@ -177,21 +180,13 @@ export function Competition() {
         return (
             <Container>
                 <h1>Carregando...</h1>
+                <ToastContainer/>
             </Container>
         )
     }
 
     return (
         <Container>
-            {/* 
-            <ModalConfirm
-                title={"Você têm certeza que deseja excluir a falta? "}
-                subTitle={`Falta:`}
-                visible={isModalConfirmVisible}
-                onClose={handleModalConfirm}
-                onConfirm={deleteFoul}
-            />
-            */}
             <div className="zone"></div>
             <Content>
                 <Profile>
@@ -335,6 +330,8 @@ export function Competition() {
                     }
                 </Actions>
             </Content>
+
+            <ToastContainer/>
         </Container>
     )
 }

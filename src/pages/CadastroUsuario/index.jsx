@@ -12,10 +12,14 @@ export function CadastroUsuario() {
     const params = useParams();
 
     const [activePage, setActivePage] = useState('cadastro');
+    const [refresh, setRefresh] = useState(false);
     const [user, setUser] = useState();
-
+    
     const handlePage = (page) => {
-        setActivePage(page); // Atualiza a página ativa com base no botão clicado
+        setActivePage(page);
+    };
+    const handleRefresh = () => {
+        setRefresh(prev => !prev)
     };
 
     useEffect(() => {
@@ -26,7 +30,7 @@ export function CadastroUsuario() {
             }
             fethUser();
         }
-    }, []);
+    }, [refresh]);
 
     return (
         <Container>
@@ -35,8 +39,12 @@ export function CadastroUsuario() {
                 <button onClick={() => handlePage('listagem')} className={activePage === 'listagem' ? 'active' : ''}>Listagem</button>
             </nav>
 
-            {activePage === 'cadastro' &&
-                (<UserForm mode={params.id && "show"} user={user} />)
+            {activePage === 'cadastro' && (
+                <UserForm 
+                    mode={params.id && "show"} 
+                    user={user} 
+                    refresh={handleRefresh}
+                />)
             }
 
             {activePage === 'listagem' && (<UserListing/>)}

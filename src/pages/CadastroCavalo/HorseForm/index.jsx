@@ -112,8 +112,7 @@ export function HorseForm({ horse, mode = "add", refresh }) {
                     toast.success("Cavalo registrado com sucesso!");
                     navigate(`/cadastro/cavalo/${id.id}`);
                     setIsEditing(false)
-                    refresh()
-                    
+                    refresh();
                 } catch (error) {
                     const errorMessage = error.response?.data?.message || error.message;
                     toast.error(errorMessage);
@@ -128,9 +127,9 @@ export function HorseForm({ horse, mode = "add", refresh }) {
             async function updateHorse() {
                 try {
                     const res = await api.put(`/horses/${horse.id}`, data);
+                    setIsEditing(false);
+                    refresh();
                     toast.success("Registro do cavalo atualizado com sucesso!")
-                    setIsEditing(false)
-                    refresh()
                 } catch (error) {
                     const errorMessage = error.response?.data?.message || error.message;
                     toast.error(errorMessage);

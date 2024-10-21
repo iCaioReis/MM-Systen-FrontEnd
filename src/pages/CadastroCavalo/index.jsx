@@ -43,7 +43,7 @@ export function CadastroCavalo() {
             ( 
                 <HorseForm  
                     mode={params.id && "show"} 
-                    horse={horse} 
+                    horse={horse}
                     refresh={handleRefresh}
                 />
             )

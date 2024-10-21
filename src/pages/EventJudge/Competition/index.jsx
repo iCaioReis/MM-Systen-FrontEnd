@@ -25,6 +25,8 @@ export function Competition() {
     const [categoryData, setCategoryData] = useState(null);
     const [competingRegisterNumber, setCompetingRegisterNumber] = useState();
     const [competingRegisterData, setCompetingRegisterData] = useState();
+    const [competitorPicture, setCompetitorPicture] = useState(avatarPlaceholder);
+    const [horsePicture, setHorsePicture] = useState(avatarPlaceholder);
 
     const params = useParams();
 
@@ -66,7 +68,13 @@ export function Competition() {
 
                     const competitor = await api.get(`/registersJudge/${categoryData.competitorHorses[competingRegisterNumber].id}`);
                     setCompetingRegisterData(competitor.data.register);
-                    console.log(competitor.data.register)
+
+                    const competitorAvatarUrl = competitor.data.register.competitor_picture  ? `${api.defaults.baseURL}files/${competitor.data.register.competitor_picture }` : avatarPlaceholder;
+                    setCompetitorPicture(competitorAvatarUrl);
+
+                    const horseAvatarUrl = competitor.data.register.horse_picture  ? `${api.defaults.baseURL}files/${competitor.data.register.horse_picture }` : avatarPlaceholder;
+                    setHorsePicture(horseAvatarUrl);
+
                     setLoading(false);
                 } catch (error) {
                     toast.error(`Failed to fetch data: ${error.message}`);
@@ -135,7 +143,6 @@ export function Competition() {
     };
     const handleInputChange = (e) => {
         let { name, value } = e.target;
-        console.log( `${parseFloat(competingRegisterData.time) + parseFloat(competingRegisterData.fouls) * 5}`)
 
         if (!value || value < 0) {
             value = 0
@@ -191,12 +198,12 @@ export function Competition() {
             <Content>
                 <Profile>
                     <Picture>
-                        <img src={avatarPlaceholder} alt="" />
+                        <img src={horsePicture} alt="" />
 
                         <label htmlFor="avatar">{competingRegisterData.horse_surname}</label>
                     </Picture>
                     <Picture>
-                        <img src={avatarPlaceholder} alt="" />
+                        <img src={competitorPicture} alt="" />
 
                         <label htmlFor="avatar">{competingRegisterData.competitor_surname || ""}</label>
                     </Picture>
@@ -208,6 +215,10 @@ export function Competition() {
                         <span>{FormatProof(categoryData.status.proof_name)}</span>
                         <span> - </span>
                         <span>{FormatCategory(categoryData.status.categorie_name)}</span>
+                        <br /> <br />
+                        <span>{competingRegisterData.competitor_surname}</span>
+                        <span> - </span>
+                        <span> {competingRegisterData.horse_surname} </span>
                     </Title>
 
                     <Timer className="timer">

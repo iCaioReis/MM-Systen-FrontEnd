@@ -116,7 +116,3 @@ export const Status = styled.div`
       gap: 1rem;
     }
 `;
-
-  
-  
-  

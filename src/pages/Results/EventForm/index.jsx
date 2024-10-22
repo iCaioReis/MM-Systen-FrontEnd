@@ -76,19 +76,19 @@ export function EventFormm({ mode = "show" }) {
                         // Verifica se o valor de fouls existe, caso contrário, define como 0
                         const foulsA = a.fouls ? a.fouls : 0;
                         const foulsB = b.fouls ? b.fouls : 0;
-                
+
                         // Calcula o acréscimo no tempo com base nas faltas
                         const acressA = foulsA > 0 ? foulsA * 5 : 0;
                         const acressB = foulsB > 0 ? foulsB * 5 : 0;
-                
+
                         // Converte o tempo para número, garantindo que seja um valor válido
                         const timeA = parseFloat(a.time) || 0;  // Garante que a.time seja numérico
                         const timeB = parseFloat(b.time) || 0;
-                
+
                         // Calcula o tempo total com o acréscimo das faltas
                         const totalTimeA = timeA + acressA;
                         const totalTimeB = timeB + acressB;
-                
+
                         // Compara os tempos totais
                         return totalTimeA - totalTimeB;
                     });
@@ -209,82 +209,85 @@ export function EventFormm({ mode = "show" }) {
                     </Select>
                 </div>
 
-                <Table
-                    header={header}
-                    widths={larguras}
-                    rows={
-                        results.proofs[proof - 1].categories[categorie - 1].competitors
-                            .map((row, index) => {
-                                return (
-                                    <tr key={index}>
-                                        {Object.keys(header).map((field, subIndex) => {
-                                            if (field === "index") {
-                                                return (
-                                                    <td key={subIndex}>
-                                                        {index + 1}
-                                                    </td>
-                                                );
-                                            }
+                <div className="table">
+                    <Table
+                        header={header}
+                        widths={larguras}
+                        rows={
+                            results.proofs[proof - 1].categories[categorie - 1].competitors
+                                .map((row, index) => {
+                                    return (
+                                        <tr key={index}>
+                                            {Object.keys(header).map((field, subIndex) => {
+                                                if (field === "index") {
+                                                    return (
+                                                        <td key={subIndex}>
+                                                            {index + 1}
+                                                        </td>
+                                                    );
+                                                }
 
-                                            if (field === "fouls") {
-                                                const data = row.fouls > 0 ? row.fouls : "-"
-                                                return (
-                                                    <td key={subIndex}>
-                                                        {data}
-                                                    </td>
-                                                );
-                                            }
+                                                if (field === "fouls") {
+                                                    const data = row.fouls > 0 ? row.fouls : "-"
+                                                    return (
+                                                        <td key={subIndex}>
+                                                            {data}
+                                                        </td>
+                                                    );
+                                                }
 
-                                            if (field === "acress") {
-                                                const data = row.fouls > 0 ? row.fouls * 5 + ".000 s" : "-"
-                                                return (
-                                                    <td key={subIndex}>
-                                                        {data}
-                                                    </td>
-                                                );
-                                            }
+                                                if (field === "acress") {
+                                                    const data = row.fouls > 0 ? row.fouls * 5 + ".000 s" : "-"
+                                                    return (
+                                                        <td key={subIndex}>
+                                                            {data}
+                                                        </td>
+                                                    );
+                                                }
 
-                                            if (field === "totalTime") {
-                                                const acress = row.fouls > 0 ? row.fouls * 5 : 0;
-                                                const time = parseFloat(row.time) + parseInt(acress);
-                                                return (
-                                                    <td key={subIndex}>
-                                                        {time}
-                                                    </td>
-                                                );
-                                            }
+                                                if (field === "totalTime") {
+                                                    const acress = row.fouls > 0 ? row.fouls * 5 : 0;
+                                                    const time = parseFloat(row.time) + parseInt(acress);
+                                                    return (
+                                                        <td key={subIndex}>
+                                                            {time}
+                                                        </td>
+                                                    );
+                                                }
 
-                                            if (field === "SAT") {
-                                                const SAT = row.SAT ? "SAT" : ""
-                                                return (
-                                                    <td key={subIndex}>
-                                                        {SAT}
-                                                    </td>
-                                                );
-                                            }
+                                                if (field === "SAT") {
+                                                    const SAT = row.SAT ? "SAT" : ""
+                                                    return (
+                                                        <td key={subIndex}>
+                                                            {SAT}
+                                                        </td>
+                                                    );
+                                                }
 
-                                            if (field === "NCP") {
-                                                const NCP = row.NCP ? "NCP" : ""
-                                                return (
-                                                    <td key={subIndex}>
-                                                        {NCP}
-                                                    </td>
-                                                );
-                                            }
+                                                if (field === "NCP") {
+                                                    const NCP = row.NCP ? "NCP" : ""
+                                                    return (
+                                                        <td key={subIndex}>
+                                                            {NCP}
+                                                        </td>
+                                                    );
+                                                }
 
-                                            return (
-                                                <td key={subIndex}>{row[field]}</td>
-                                            );
-                                        })}
-                                    </tr>
-                                );
-                            })
-                    }
-                />
+                                                return (
+                                                    <td key={subIndex}>{row[field]}</td>
+                                                );
+                                            })}
+                                        </tr>
+                                    );
+                                })
+                        }
+                    />
+                </div>
+
 
             </MainForm>
 
-            <ToastContainer/>
+            <ToastContainer />
         </Form>
     );
 }

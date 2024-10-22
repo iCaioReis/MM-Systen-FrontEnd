@@ -54,8 +54,11 @@ export const Picture = styled.div`
 `;
 
 export const MainForm = styled.div`
+    .table {
+        max-height: 400px;
+        overflow-y: auto;
+    }
 `;
-
 export const DateContainer = styled.div`
     display: flex;
     align-items: end;

@@ -55,9 +55,8 @@ export const Title = styled.div`
 export const MainForm = styled.div`
   svg{
     color: ${({ theme }) => theme.COLORS.THEME_700};
-    }
+  }
   
-
   .registers {
     max-height: 426px;
 
@@ -65,6 +64,9 @@ export const MainForm = styled.div`
     overflow-y: scroll;
     
     border-radius: 8px;
+  }
+  .active {
+    max-height: 370px;
   }
   .flex-buttons {
     display: flex;

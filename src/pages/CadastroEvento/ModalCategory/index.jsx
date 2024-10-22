@@ -34,19 +34,18 @@ export function ModalCategory({ isOpen, onClose, category }) {
   const [editHorseId, setEditHorseId] = useState(null);
   const [editRegisterId, setEditRegisterId] = useState(null);
 
-
   const larguras = {
     competitor_order: "50px",
     competitor: "",
     horse: "",
     button: "30px"
-  }
+  };
   const header = {
     competitor_order: "Ordem",
     competitor_name: "Competidor",
     horse_name: "Cavalo",
     button: ""
-  }
+  };
 
   useEffect(() => {
     async function fethCompetitors() {
@@ -82,8 +81,7 @@ export function ModalCategory({ isOpen, onClose, category }) {
   const handleModalConfirm = (competitor) => {
     setIsModalConfirmVisible(!isModalConfirmVisible);
     { competitor && setRegisterToDelete(competitor) }
-  }
-
+  };
   const handleModalEditRegister = (register) => {
     setEditRegisterId(register.id);
     setEditCompetitorId(register.competitor_id);
@@ -93,8 +91,7 @@ export function ModalCategory({ isOpen, onClose, category }) {
       { id: register.horse_id, name: register.horse_name }]);
 
     setShowModalEditRegister(!showModalEditRegister);
-  }
-
+  };
   const handleDeleteRegister = async (id) => {
     try {
       await api.delete(`/categoryRegisters/${id}`);
@@ -110,7 +107,6 @@ export function ModalCategory({ isOpen, onClose, category }) {
     }
     handleModalConfirm()
   };
-
   const handleStateCategory = async (state) => {
     if (state == "finished_inscriptions") {
       try {
@@ -141,7 +137,6 @@ export function ModalCategory({ isOpen, onClose, category }) {
       }
     }
   };
-
   const handleEditRegister = async () => {
     try {
       await api.put(`categoryRegisters/${editRegisterId}`, { "competitor_id": editCompetitorId, "horse_id": editHorseId });
@@ -155,7 +150,6 @@ export function ModalCategory({ isOpen, onClose, category }) {
       toast.error(errorMessage);
     }
   };
-
   const handleAutoSortCategory = async () => {
     const orderedRecords = sortCategoryRegisters(competitorsWithHorses);
 
@@ -168,7 +162,6 @@ export function ModalCategory({ isOpen, onClose, category }) {
       toast.error(errorMessage);
     }
   };
-
   const handleOrderRegister = ({ direction, order }) => {
     if (direction == "up") {
       if (order == 1) {
@@ -192,7 +185,7 @@ export function ModalCategory({ isOpen, onClose, category }) {
       saveNewOrder(newOrder);
     }
 
-  }
+  };
 
   const saveNewOrder = async (order) => {
     try {
@@ -203,8 +196,7 @@ export function ModalCategory({ isOpen, onClose, category }) {
       const errorMessage = error.response?.data?.message || error.message;
       toast.error(errorMessage);
     }
-  }
-
+  };
 
   return (
     <ModalOverlay>
@@ -243,7 +235,6 @@ export function ModalCategory({ isOpen, onClose, category }) {
       />
 
       <div className="modalCategory">
-
         <MainForm>
           <Title>
             <div>
@@ -279,7 +270,7 @@ export function ModalCategory({ isOpen, onClose, category }) {
             </div>
           }
 
-          <div className="registers">
+          <div className={`registers ${status.categorie_state}`}>
             <Table
               header={header}
               widths={larguras}
@@ -364,7 +355,6 @@ export function ModalCategory({ isOpen, onClose, category }) {
 
         </Status>
       </div>
-
       <ToastContainer/>
     </ModalOverlay>
   );

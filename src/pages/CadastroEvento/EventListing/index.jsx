@@ -39,12 +39,11 @@ export function EventListing() {
     function handleDetails(id) {
         navigate(`/cadastro/evento/${id}`);
         window.location.reload();
-    }
-
+    };
     function handleAdd() {
         navigate(`/cadastro/evento`);
         window.location.reload();
-    }
+    };
 
     useEffect(() => {
         async function fethEvents() {
@@ -52,8 +51,7 @@ export function EventListing() {
             setEvents(res.data.events);
         }
         fethEvents();
-    }, [search])
-
+    }, [search]);
 
     return (
         <Listing>

@@ -3,7 +3,6 @@ import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { useState, useEffect } from 'react';
 
-
 import { FaArrowRight } from "react-icons/fa6";
 import { FiCamera } from 'react-icons/fi';
 
@@ -179,10 +178,6 @@ export function EventFormm({ event, mode = "add", refresh }) {
     };
     function navigateToPrintPage(id) {
         window.open(`/evento/impressao/${id}`, '_blank');
-    }
-
-    const refreshPage = () => {
-        window.location.reload();
     };
 
     return (
@@ -366,7 +361,7 @@ export function EventFormm({ event, mode = "add", refresh }) {
                 <CategoriesContainer>
                     {data.proofs && data.proofs.map((proof, index) => {
                         return (
-                            <List key={index} title={proof.name} categories={proof.categories} refresh={refreshPage}></List>
+                            <List key={index} title={proof.name} categories={proof.categories} refresh={refresh}></List>
                         )
                     })}
                 </CategoriesContainer>

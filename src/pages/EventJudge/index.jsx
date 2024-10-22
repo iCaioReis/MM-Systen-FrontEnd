@@ -9,14 +9,18 @@ import { EventListing } from './EventListing';
 import { Container } from './styles';
 
 export function EventJudge() {
-    const params = useParams();
-
     const [activePage, setActivePage] = useState('evento');
+    const [refresh, setRefresh] = useState();
+    const [Event, setEvent] = useState();
+
+    const params = useParams();
+    
     const handlePage = (page) => {
         setActivePage(page);
     };
-    
-    const [Event, setEvent] = useState();
+    const handleRefresh = () => {
+        setRefresh(prev => !prev)
+    };
 
     useEffect(() => {
         if(params.id){
@@ -26,7 +30,7 @@ export function EventJudge() {
             }
             fethEvent();
         }
-    }, []);
+    }, [refresh]);
 
     return (
         <Container>
@@ -36,7 +40,7 @@ export function EventJudge() {
             </nav>
 
             {activePage === 'evento' && 
-                ( <EventFormm  mode={params.id && "show"} event={Event}/> )
+                ( <EventFormm  mode={params.id && "show"} event={Event} refresh={handleRefresh}/> )
             }
 
             {activePage === 'listagem' && ( <EventListing/>)}

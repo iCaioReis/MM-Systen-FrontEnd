@@ -27,13 +27,9 @@ const initialData = {
     end_date: "",
 };
 
-export function EventFormm({ event, mode = "add" }) {
+export function EventFormm({ event, mode = "add", refresh }) {
     const [data, setData] = useState(initialData);
     const navigate = useNavigate();
-
-    const refresh = () => {
-        window.location.reload();
-    }
 
     useEffect(() => {
         if (event && mode === 'show') {

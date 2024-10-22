@@ -206,12 +206,17 @@ export const JudgeArea = styled.div`
 `;
 
 export const Actions = styled.div`
-    margin-bottom: 1rem;
-
     display: flex;
     flex-direction: column;
-    justify-content: end;
-    gap: .5rem;
+    justify-content: space-between;
+    
+    >.buttons{
+        margin-bottom: 1rem;
+
+        display: flex;
+        flex-direction: column;
+        gap: .5rem;
+    }
 `;
 
 export const InputFouls = styled.div`
@@ -292,4 +297,43 @@ export const StyledLabel = styled.label`
         background-color: none;
     }
 
+`;
+
+export const UpcomingCompetitorsTable = styled.div`
+   text-align: center;
+   display: flex;
+   flex-direction: column;
+   gap: 1rem;
+
+   color: ${({ theme }) => theme.COLORS.THEME_600};
+
+   > h3 {
+    font-weight: 600;
+    color: ${({ theme }) => theme.COLORS.THEME_700};
+   }
+
+   > table {
+      width: 100%;
+      border-collapse: separate;
+      border-spacing: 0 .2rem;
+
+      tbody {
+         tr {
+            th {
+               font-weight: 400;
+               font-size: .9rem;
+               padding: .2rem;
+               border: 1px dashed ${({ theme }) => theme.COLORS.THEME_600};
+               border-radius: 8px;
+            }
+
+            :nth-child(1){
+                border-radius: 8px 0 0 8px;
+            }
+            :nth-child(2){
+                border-radius: 0 8px 8px 0;
+            }
+         }
+      }
+   }
 `;

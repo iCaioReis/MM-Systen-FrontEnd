@@ -16,7 +16,7 @@ import { Button } from "../../../components/Button";
 
 import { FormatCategory, FormatProof, FormatStatus, FormatTimer } from "../../../utils/formatDatas";
 
-import { Container, Content, JudgeArea, Profile, Actions, Main, Picture, Title, Timer, InputFouls, EliminatoryFouls, HiddenCheckbox, StyledLabel } from "./styles";
+import { Container, Content, JudgeArea, Profile, Actions, Main, Picture, Title, Timer, InputFouls, EliminatoryFouls, HiddenCheckbox, StyledLabel, UpcomingCompetitorsTable } from "./styles";
 
 export function Competition() {
     const [loading, setLoading] = useState(true);
@@ -27,6 +27,7 @@ export function Competition() {
     const [competingRegisterData, setCompetingRegisterData] = useState();
     const [competitorPicture, setCompetitorPicture] = useState(avatarPlaceholder);
     const [horsePicture, setHorsePicture] = useState(avatarPlaceholder);
+    const [upcomingCompetitors, setUpcomingCompetitors] = useState([]);
 
     const params = useParams();
 
@@ -69,10 +70,10 @@ export function Competition() {
                     const competitor = await api.get(`/registersJudge/${categoryData.competitorHorses[competingRegisterNumber].id}`);
                     setCompetingRegisterData(competitor.data.register);
 
-                    const competitorAvatarUrl = competitor.data.register.competitor_picture  ? `${api.defaults.baseURL}files/${competitor.data.register.competitor_picture }` : avatarPlaceholder;
+                    const competitorAvatarUrl = competitor.data.register.competitor_picture ? `${api.defaults.baseURL}files/${competitor.data.register.competitor_picture}` : avatarPlaceholder;
                     setCompetitorPicture(competitorAvatarUrl);
 
-                    const horseAvatarUrl = competitor.data.register.horse_picture  ? `${api.defaults.baseURL}files/${competitor.data.register.horse_picture }` : avatarPlaceholder;
+                    const horseAvatarUrl = competitor.data.register.horse_picture ? `${api.defaults.baseURL}files/${competitor.data.register.horse_picture}` : avatarPlaceholder;
                     setHorsePicture(horseAvatarUrl);
 
                     setLoading(false);
@@ -81,9 +82,11 @@ export function Competition() {
                 }
             }
             fetchData();
+            handleUpcomingCompetitors();
         }
+        console.log();
     }, [refresh, competingRegisterNumber]);
-      
+
     const handleNextCompetitor = () => {
         if ((competingRegisterNumber + 1) == categoryData.competitorHorses.length) { return };
         setCompetingRegisterData((prevData) => ({
@@ -138,9 +141,6 @@ export function Competition() {
         handleState();
         setRefresh(prev => !prev);
     };
-    const setFullScreen = () => {
-        screenfull.request();
-    };
     const handleInputChange = (e) => {
         let { name, value } = e.target;
 
@@ -182,12 +182,20 @@ export function Competition() {
         }));
 
     };
+    const handleUpcomingCompetitors = () => {
+        const competitors = categoryData.competitorHorses.slice(competingRegisterNumber + 1, competingRegisterNumber + 4)
+        setUpcomingCompetitors(competitors);
+        console.log(competitors)
+    };
+    const setFullScreen = () => {
+        screenfull.request();
+    };
 
     if (loading) {
         return (
             <Container>
                 <h1>Carregando...</h1>
-                <ToastContainer/>
+                <ToastContainer />
             </Container>
         )
     }
@@ -241,108 +249,133 @@ export function Competition() {
                     </Timer>
 
                     <JudgeArea>
-                        
-                            <div className="header">
-                                <div className="flex timeAndFoul">
-                                    <span>Tempo: </span>
-                                    <Input
+
+                        <div className="header">
+                            <div className="flex timeAndFoul">
+                                <span>Tempo: </span>
+                                <Input
+                                    onChange={handleInputChange}
+                                    name="time"
+                                    dataType="timer"
+                                    type="text"
+                                    className="inputTimer"
+                                    value={competingRegisterData.time}
+                                    disabled={competingRegisterData.state != "running" || competingRegisterData.SAT || competingRegisterData.NCP ? true : false}
+                                />
+                                <span>Faltas: </span>
+
+                                <InputFouls>
+                                    <button
+                                        className='decrement'
+                                        onClick={() => handleButtonDecrementFoul()}
+                                        disabled={competingRegisterData.state != "running" || competingRegisterData.SAT || competingRegisterData.NCP ? true : false}
+                                    >-</button>
+                                    <input
+                                        type='number'
+                                        min="0"
+                                        minLength="0"
                                         onChange={handleInputChange}
-                                        name="time"
-                                        dataType="timer"
-                                        type="text"
-                                        className="inputTimer"
-                                        value={competingRegisterData.time}
-                                        disabled = {competingRegisterData.state != "running" || competingRegisterData.SAT || competingRegisterData.NCP ? true : false}
+                                        value={competingRegisterData.fouls}
+                                        name="fouls"
+                                        disabled={competingRegisterData.state != "running" || competingRegisterData.SAT || competingRegisterData.NCP ? true : false}
                                     />
-                                    <span>Faltas: </span>
-
-                                    <InputFouls>
-                                        <button
-                                            className='decrement'
-                                            onClick={() => handleButtonDecrementFoul()}
-                                            disabled = {competingRegisterData.state != "running" || competingRegisterData.SAT || competingRegisterData.NCP ? true : false}
-                                        >-</button>
-                                        <input
-                                            type='number'
-                                            min="0"
-                                            minLength="0"
-                                            onChange={handleInputChange}
-                                            value={competingRegisterData.fouls}
-                                            name="fouls"
-                                            disabled = {competingRegisterData.state != "running" || competingRegisterData.SAT || competingRegisterData.NCP ? true : false}
-                                        />
-                                        <button 
-                                            className='add'
-                                            onClick={() => handleButtonAddFoul(1)}
-                                            disabled = {competingRegisterData.state != "running" || competingRegisterData.SAT || competingRegisterData.NCP ? true : false}
-                                        >+</button>
-                                    </InputFouls>
-
-                                </div>
-                                <EliminatoryFouls>
-                                    <HiddenCheckbox
-                                        onChange={() => handleSatFoul()}
-                                        id="SAT" 
-                                        name="SAT"
-                                        checked={competingRegisterData.SAT}
-                                        disabled = {competingRegisterData.time == "___.___" ? false : competingRegisterData.NCP || competingRegisterData.fouls !=0 || competingRegisterData.time > "000.000" || competingRegisterData.state != "running"  ? true : false}                                     />
-                                    <StyledLabel 
-                                        htmlFor="SAT"
-                                        disabled = {competingRegisterData.time == "___.___" ? false : competingRegisterData.NCP || competingRegisterData.fouls !=0 || competingRegisterData.time > "000.000" || competingRegisterData.state != "running"  ? true : false}                                    >SAT</StyledLabel>
-
-                                    <HiddenCheckbox
-                                        onChange={() => handleNcpFoul()}
-                                        id="NCP"
-                                        name="NCP"
-                                        checked={competingRegisterData.NCP}
-                                        disabled = {competingRegisterData.time == "___.___" ? false : competingRegisterData.SAT || competingRegisterData.fouls !=0 || competingRegisterData.time > "000.000" || competingRegisterData.state != "running"  ? true : false}
-                                    />
-                                    <StyledLabel
-                                        htmlFor="NCP"
-                                        disabled = { competingRegisterData.time == "___.___" ? false : competingRegisterData.SAT || competingRegisterData.fouls !=0 || competingRegisterData.time > "000.000" || competingRegisterData.state != "running" ? true : false}
-                                    >NCP</StyledLabel>
-                                </EliminatoryFouls>
+                                    <button
+                                        className='add'
+                                        onClick={() => handleButtonAddFoul(1)}
+                                        disabled={competingRegisterData.state != "running" || competingRegisterData.SAT || competingRegisterData.NCP ? true : false}
+                                    >+</button>
+                                </InputFouls>
 
                             </div>
-                        
+                            <EliminatoryFouls>
+                                <HiddenCheckbox
+                                    onChange={() => handleSatFoul()}
+                                    id="SAT"
+                                    name="SAT"
+                                    checked={competingRegisterData.SAT}
+                                    disabled={competingRegisterData.time == "___.___" ? false : competingRegisterData.NCP || competingRegisterData.fouls != 0 || competingRegisterData.time > "000.000" || competingRegisterData.state != "running" ? true : false} />
+                                <StyledLabel
+                                    htmlFor="SAT"
+                                    disabled={competingRegisterData.time == "___.___" ? false : competingRegisterData.NCP || competingRegisterData.fouls != 0 || competingRegisterData.time > "000.000" || competingRegisterData.state != "running" ? true : false}                                    >SAT</StyledLabel>
+
+                                <HiddenCheckbox
+                                    onChange={() => handleNcpFoul()}
+                                    id="NCP"
+                                    name="NCP"
+                                    checked={competingRegisterData.NCP}
+                                    disabled={competingRegisterData.time == "___.___" ? false : competingRegisterData.SAT || competingRegisterData.fouls != 0 || competingRegisterData.time > "000.000" || competingRegisterData.state != "running" ? true : false}
+                                />
+                                <StyledLabel
+                                    htmlFor="NCP"
+                                    disabled={competingRegisterData.time == "___.___" ? false : competingRegisterData.SAT || competingRegisterData.fouls != 0 || competingRegisterData.time > "000.000" || competingRegisterData.state != "running" ? true : false}
+                                >NCP</StyledLabel>
+                            </EliminatoryFouls>
+
+                        </div>
+
                     </JudgeArea>
 
                 </Main>
 
                 <Actions>
-                    <Input
-                        disabled
-                        status
-                        title={"Competidor"}
-                        value={`${(competingRegisterNumber + 1)} de ${categoryData.competitorHorses.length}`}
-                    />
-                    <Input
-                        disabled
-                        status
-                        title={"Status"}
-                        value={FormatStatus(competingRegisterData.state)}
-                    />
-                    {competingRegisterNumber != 0 &&
-                        competingRegisterData.state != "running" &&
-                        <Button onClick={() => handlePreviousCompetitor()}><FaArrowLeft />Anterior</Button>
+                    {
+                        competingRegisterNumber + 1 != categoryData.competitorHorses.length ?
+                        <UpcomingCompetitorsTable>
+                        <h3>Próximas chamadas</h3>
+
+                        <table>
+                            <tbody>
+                                {
+                                    upcomingCompetitors.map(register => {
+                                        return (
+                                            <tr>
+                                                <th>{register.competitor_surname}</th>
+                                                <th>{register.horse_surname}</th>
+                                            </tr>
+                                        )
+                                    })}
+                            </tbody>
+                        </table>
+                    </UpcomingCompetitorsTable>
+                    :
+                    <div/>
                     }
-                    {competingRegisterNumber != (categoryData.competitorHorses.length - 1) &&
-                        competingRegisterData.state != "running" &&
-                        <Button onClick={() => handleNextCompetitor()}>Próximo<FaArrowRight /></Button>
-                    }
-                    {competingRegisterData.state == "running" &&
-                        <Button onClick={handleFinish}>Finalizar</Button>
-                    }
-                    {competingRegisterData.state == "active" &&
-                        <Button onClick={() => [handleRegisterState("running"), setFullScreen()]}>Iniciar</Button>
-                    }
-                    {competingRegisterData.state == "finished" &&
-                        <Button className={"danger"} onClick={() => handleRegisterState("running")}>Reativar</Button>
-                    }
+
+                    <div className="buttons">
+                        <Input
+                            disabled
+                            status
+                            title={"Competidor"}
+                            value={`${(competingRegisterNumber + 1)} de ${categoryData.competitorHorses.length}`}
+                        />
+                        <Input
+                            disabled
+                            status
+                            title={"Status"}
+                            value={FormatStatus(competingRegisterData.state)}
+                        />
+                        {competingRegisterNumber != 0 &&
+                            competingRegisterData.state != "running" &&
+                            <Button onClick={() => handlePreviousCompetitor()}><FaArrowLeft />Anterior</Button>
+                        }
+                        {competingRegisterNumber != (categoryData.competitorHorses.length - 1) &&
+                            competingRegisterData.state != "running" &&
+                            <Button onClick={() => handleNextCompetitor()}>Próximo<FaArrowRight /></Button>
+                        }
+                        {competingRegisterData.state == "running" &&
+                            <Button onClick={handleFinish}>Finalizar</Button>
+                        }
+                        {competingRegisterData.state == "active" &&
+                            <Button onClick={() => [handleRegisterState("running"), setFullScreen()]}>Iniciar</Button>
+                        }
+                        {competingRegisterData.state == "finished" &&
+                            <Button className={"danger"} onClick={() => handleRegisterState("running")}>Reativar</Button>
+                        }
+                    </div>
                 </Actions>
             </Content>
 
-            <ToastContainer/>
+            <ToastContainer />
         </Container>
     )
 }

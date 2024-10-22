@@ -73,7 +73,7 @@ export function SearchDropdown({ table, onItemSelected, clearSelection, initialD
         setSearch(result.name);
         setSelectedItemId(result.id);
         setShowDropdown(false);
-        onItemSelected(result.id);
+        onItemSelected(result);
     };
 
     return (

@@ -33,7 +33,6 @@ export default createGlobalStyle`
     border: 5px solid transparent;
   }
 
-
   body {
     background-color: ${({ theme }) => theme.COLORS.LIGHT_300};
     color: ${({ theme }) => theme.COLORS.LIGHT_100};

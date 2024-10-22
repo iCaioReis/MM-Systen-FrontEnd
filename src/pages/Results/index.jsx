@@ -16,10 +16,6 @@ export function Results() {
         setActivePage(page);
     };
     
-    const [Event, setEvent] = useState();
-
-    
-
     return (
         <Container>
             <nav>

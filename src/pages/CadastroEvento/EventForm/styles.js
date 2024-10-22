@@ -6,6 +6,29 @@ export const Form = styled.div`
     grid-template-rows: 1fr;
     
     gap: 0 1rem;
+
+    .lastRegisters{
+        width: 100%;
+        color: ${({ theme }) => theme.COLORS.THEME_700};
+
+        table {
+            td {
+                border-bottom: 1px solid ${({ theme }) => theme.COLORS.THEME_700};
+            }
+        }
+
+        .col1{
+            width: 300px;
+        }
+        .col2{
+            width: 155px;
+            text-align: center;
+        }
+        .lastRegistersTable{
+            max-height: 150px;
+            overflow-y: auto;
+        }
+    }
 `;
 
 export const Profile = styled.div`

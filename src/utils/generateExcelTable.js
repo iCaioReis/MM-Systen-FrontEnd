@@ -6,7 +6,7 @@ import Logo from '/logo.png'
 
 import { generateExcel } from "mr-excel";
 
-export function generateExcelTable1(data) {
+export function generateExcelTable(data) {
     const workbook = XLSX.utils.book_new();
 
     data.proofs.map((proof) => {
@@ -62,7 +62,7 @@ export function generateExcelTable1(data) {
     saveAs(new Blob([s2ab(wbout)], { type: 'application/octet-stream' }), `${data.name}.xlsx`);
 };
 
-export function generateExcelTable(data) {
+export function generateExcelTable1(data) {
     console.log(data)
 
     const rowStyle = {

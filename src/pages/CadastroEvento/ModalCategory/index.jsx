@@ -62,8 +62,8 @@ export function ModalCategory({ isOpen, onClose, category }) {
     try {
       const res = await api.post('/categoryRegisters',
         {
-          "competitor_id": selectedCompetitorId,
-          "horse_id": selectedHorseId,
+          "competitor_id": selectedCompetitorId.id, //Ajustar posteriormente
+          "horse_id": selectedHorseId.id, //Ajustar posteriormente
           "categorie_id": category.id,
           "competitor_order": competitorsWithHorses.length + 1
         });

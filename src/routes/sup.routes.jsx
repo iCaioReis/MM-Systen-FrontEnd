@@ -15,6 +15,7 @@ import { Event } from '../pages/Event';
 import { EventJudge } from '../pages/EventJudge';
 import { Competition } from '../pages/EventJudge/Competition';
 import { Results } from '../pages/Results';
+import { PrintEvent } from '../pages/CadastroEvento/PintEvent';
 
 
 export function SupRoutes() {
@@ -38,6 +39,8 @@ export function SupRoutes() {
                 <Route path='/evento/results/' element={<Results/>}></Route> 
                 <Route path='/evento/results/:id' element={<Results/>}></Route>
             </Route>
+
+            <Route path='/evento/impressao/:id' element={<PrintEvent/>}></Route>
 
             <Route path='/evento/juiz/competition/:id' element={<Competition/>}/>
             <Route path="*" exact={true} element={<NotFound />} />

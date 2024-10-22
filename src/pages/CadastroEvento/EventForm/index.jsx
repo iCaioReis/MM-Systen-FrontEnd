@@ -9,7 +9,7 @@ import { FiCamera } from 'react-icons/fi';
 
 import avatarPlaceholder from "../../../assets/user.svg";
 
-import { FormatStatus } from '../../../utils/formatDatas.js';
+import { FormatStatus, FormatCategory } from '../../../utils/formatDatas.js';
 
 import { api } from '../../../services/api.js';
 import { updateProfilePicture } from '../../../utils/updateProfilePicture.js'
@@ -36,7 +36,7 @@ const initialData = {
 
 export function EventFormm({ event, mode = "add", refresh }) {
     const [data, setData] = useState(initialData);
-    
+
     const [shouldSave, setShouldSave] = useState(false);
     const [isEditing, setIsEditing] = useState(mode === 'add');
     const [clearSelection, setClearSelection] = useState(false);
@@ -46,6 +46,9 @@ export function EventFormm({ event, mode = "add", refresh }) {
     const [showModalAddUser, setShowModalAddUser] = useState(false);
     const [avatar, setAvatar] = useState(avatarPlaceholder);
     const [avatarFile, setAvatarFile] = useState(null);
+    const [selectedHorse, setSelectedHorse] = useState(null);
+    const [selectedCompetitor, setSelectedCompetitor] = useState(null);
+    const [lastRegisters, setLastRegisters] = useState([]);
 
     const navigate = useNavigate();
     const params = useParams();
@@ -70,12 +73,24 @@ export function EventFormm({ event, mode = "add", refresh }) {
         }
     }, [shouldSave, data]);
 
+    useEffect(() => {
+        if (selectedCompetitor) {
+            setSelectedCompetitorId(selectedCompetitor.id)
+            setSelectedCategory(selectedCompetitor.category)
+        }
+    }, [selectedCompetitor]);
+
+    useEffect(() => {
+        if (selectedHorse) {
+            setSelectedHorseId(selectedHorse.id)
+        }
+    }, [selectedHorse]);
+
     const handleInputChange = (e) => {
         const { name, value } = e.target;
         let updatedData = { ...data, [name]: value };
         setData(updatedData);
     };
-
     const handleSave = () => {
         if (mode === 'add') {
             async function addEvent() {
@@ -111,7 +126,6 @@ export function EventFormm({ event, mode = "add", refresh }) {
             updateEvent();
         }
     };
-
     const handleState = (state) => {
         const newState = state;
 
@@ -119,7 +133,6 @@ export function EventFormm({ event, mode = "add", refresh }) {
 
         setShouldSave(true);
     };
-
     const handleSaveCompetitor = () => {
 
         async function addCompetitorInAllProofs() {
@@ -132,13 +145,16 @@ export function EventFormm({ event, mode = "add", refresh }) {
                         "categoryName": selectedCategory
                     });
 
+                setLastRegisters([...lastRegisters, { competitor: selectedCompetitor.name, horse: selectedHorse.name, category: selectedCategory }]);
+
                 setSelectedCompetitorId(null);
                 setSelectedHorseId(null);
                 setSelectedCategory("");
                 setClearSelection(true);
-                setTimeout(() => setClearSelection(false), 0);
 
                 toast.success("Registro cadastrado com sucesso!");
+
+                setTimeout(() => setClearSelection(false), 0);
 
             } catch (error) {
                 const errorMessage = error.response?.data?.message || error.message;
@@ -147,18 +163,12 @@ export function EventFormm({ event, mode = "add", refresh }) {
         }
         addCompetitorInAllProofs();
     };
-
     const handleShowModalAddUser = () => {
         setShowModalAddUser(!showModalAddUser);
         if (showModalAddUser) {
-            //refresh()
+            refresh();
         }
     };
-
-    const refreshPage = () => {
-        window.location.reload();
-    };
-
     function hadleChangeAvatar(event) {
         const file = event.target.files[0]; //Pega somente o primeiro arquivo que o usuário enviar
 
@@ -166,6 +176,13 @@ export function EventFormm({ event, mode = "add", refresh }) {
 
         const imagePreview = URL.createObjectURL(file);
         setAvatar(imagePreview);
+    };
+    function navigateToPrintPage(id) {
+        window.open(`/evento/impressao/${id}`, '_blank');
+    }
+
+    const refreshPage = () => {
+        window.location.reload();
     };
 
     return (
@@ -180,13 +197,13 @@ export function EventFormm({ event, mode = "add", refresh }) {
                             <SearchDropdown
                                 tabindex="0"
                                 table="competitors"
-                                onItemSelected={(id) => setSelectedCompetitorId(id)}
+                                onItemSelected={(id) => setSelectedCompetitor(id)}
                                 clearSelection={clearSelection}
                             />
                             <SearchDropdown
                                 tabindex="1"
                                 table="horses"
-                                onItemSelected={(id) => setSelectedHorseId(id)}
+                                onItemSelected={(id) => setSelectedHorse(id)}
                                 clearSelection={clearSelection}
                             />
                             <Select
@@ -209,6 +226,40 @@ export function EventFormm({ event, mode = "add", refresh }) {
 
                             <Button onClick={handleSaveCompetitor}>Adicionar</Button>
                         </div>
+
+                        {
+                            lastRegisters &&
+
+                            <div className='lastRegisters'>
+                                <Section title={"Últimos registros"} />
+
+                                <div className="lastRegistersTable">
+                                    <table>
+                                        <thead>
+                                            <tr>
+                                                <th className='col1'>Competidor</th>
+                                                <th className='col1'>Cavalo</th>
+                                                <th className='col2'>Categoria</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {lastRegisters.slice().reverse().map((register) => {
+                                                return (
+                                                    <tr className='register'>
+                                                        <td>{register.competitor}</td>
+                                                        <td>{register.horse}</td>
+                                                        <td className='col2'>{FormatCategory(register.category)}</td>
+                                                    </tr>
+                                                )
+                                            }
+                                            )}
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        }
+
+
                     </div>
                 }
             />
@@ -243,26 +294,28 @@ export function EventFormm({ event, mode = "add", refresh }) {
                     {params.id &&
                         <Button type={"button"} onClick={() => handleShowModalAddUser()}>Registrar Competidor</Button>
                     }
-
-                    {//params.id && 
-                        //<Button type={"button"}>Gerar Relatório</Button>
+                </div>
+                <div>
+                    {params.id &&
+                        <Button type={"button"} onClick={() => navigateToPrintPage(params.id)}>Imprimir</Button>
                     }
 
+                    {mode != 'add' && isEditing && data.state == 'active' &&
+                        <Button className={"danger"}
+                            onClick={() => handleState("inative")}
+                        >
+                            Desativar
+                        </Button>
+                    }
+                    {mode != 'add' && isEditing && (data.state == 'inative' || data.state == 'finished_inscriptions') &&
+                        <Button
+                            onClick={() => handleState("active")}
+                        >
+                            Reativar
+                        </Button>
+                    }
                 </div>
-                {mode != 'add' && isEditing && data.state == 'active' &&
-                    <Button className={"danger"}
-                        onClick={() => handleState("inative")}
-                    >
-                        Desativar
-                    </Button>
-                }
-                {mode != 'add' && isEditing && (data.state == 'inative' || data.state == 'finished_inscriptions') &&
-                    <Button
-                        onClick={() => handleState("active")}
-                    >
-                        Reativar
-                    </Button>
-                }
+
             </Profile>
 
             <MainForm>

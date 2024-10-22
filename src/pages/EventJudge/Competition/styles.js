@@ -67,6 +67,8 @@ export const Picture = styled.div`
     justify-content: center;
     gap: 1rem;
 
+    text-align: center;
+
     border-radius: 0 0 8px 8px;
 
     background-color: ${({ theme }) => theme.COLORS.THEME_700};

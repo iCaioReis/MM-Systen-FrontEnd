@@ -9,7 +9,9 @@ export const Form = styled.div`
 `;
 
 export const MainForm = styled.div`
-`;
+    max-height: 590px;
+    overflow-y: scroll;
+`; 
 
 export const Profile = styled.div`
     display: flex;

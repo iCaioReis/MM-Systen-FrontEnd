@@ -85,14 +85,15 @@ export const Main = styled.div`
     display: flex;
     flex-direction: column;
     justify-content: space-between;
+
 `;
 
 export const Title = styled.div`
     > h1 {
         font-family: 'poppins', serif;
-        font-weight: 500;
-        font-size: 2.5rem;
-        line-height: 140%;
+        font-weight: 400;
+        font-size: 1rem;
+        line-height: 300%;
     }
 
     > span {
@@ -116,7 +117,7 @@ export const Timer = styled.div`
         padding: 0 2rem;
 
         letter-spacing: .5rem;
-        font-size: 80px;
+        font-size: 5rem;
         color: ${({ theme }) => theme.COLORS.LIGHT_100};
 
         border-radius: 1rem;
@@ -150,7 +151,7 @@ export const Timer = styled.div`
         right: 3rem;
         bottom: .7rem;
 
-        font-size: 80px;
+        font-size: 5rem;
         color: ${({ theme }) => theme.COLORS.LIGHT_100};
     }
 `;

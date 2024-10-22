@@ -73,15 +73,27 @@ export function EventFormm({ mode = "show" }) {
 
                     // Ordenar os competidores da prova e categoria selecionadas
                     sortedResults.proofs[proof - 1].categories[categorie - 1].competitors.sort((a, b) => {
-                        const acressA = a.fouls > 0 ? a.fouls * 5 : 0;
-                        const totalTimeA = parseFloat(a.time) + acressA;
-
-                        const acressB = b.fouls > 0 ? b.fouls * 5 : 0;
-                        const totalTimeB = parseFloat(b.time) + acressB;
-
+                        // Verifica se o valor de fouls existe, caso contrário, define como 0
+                        const foulsA = a.fouls ? a.fouls : 0;
+                        const foulsB = b.fouls ? b.fouls : 0;
+                
+                        // Calcula o acréscimo no tempo com base nas faltas
+                        const acressA = foulsA > 0 ? foulsA * 5 : 0;
+                        const acressB = foulsB > 0 ? foulsB * 5 : 0;
+                
+                        // Converte o tempo para número, garantindo que seja um valor válido
+                        const timeA = parseFloat(a.time) || 0;  // Garante que a.time seja numérico
+                        const timeB = parseFloat(b.time) || 0;
+                
+                        // Calcula o tempo total com o acréscimo das faltas
+                        const totalTimeA = timeA + acressA;
+                        const totalTimeB = timeB + acressB;
+                
+                        // Compara os tempos totais
                         return totalTimeA - totalTimeB;
                     });
 
+                    console.log(sortedResults)
                     // Atualiza o estado com os dados ordenados
                     setEvent(eventData.data);
                     setResults(sortedResults);
@@ -98,6 +110,7 @@ export function EventFormm({ mode = "show" }) {
     useEffect(() => {
         if (event && mode === 'show') {
             setData({ ...initialData, ...event });
+            setRefresh(prev => !prev)
         }
     }, [event]);
 

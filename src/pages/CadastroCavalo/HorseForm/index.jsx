@@ -96,12 +96,18 @@ export function HorseForm({ horse, mode = "add", refresh }) {
     const handleInputChange = (e) => {
         const { name, value } = e.target;
         let updatedData = { ...data, [name]: value };
-
+    
         if (name === 'born') {
             updatedData.age = calculateAge(value);
         }
+
+        if (name === 'name') {
+            updatedData.surname = value;
+        }
+    
         setData(updatedData);
     };
+    
 
     const handleSave = () => {
         if (mode === 'add') {

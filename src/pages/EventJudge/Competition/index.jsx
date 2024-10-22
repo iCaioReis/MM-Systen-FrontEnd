@@ -225,7 +225,7 @@ export function Competition() {
                         <span>{FormatCategory(categoryData.status.categorie_name)}</span>
                         <br /> <br />
                         <span>{competingRegisterData.competitor_surname}</span>
-                        <span> - </span>
+                        <br />
                         <span> {competingRegisterData.horse_surname} </span>
                     </Title>
 

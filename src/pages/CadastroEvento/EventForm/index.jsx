@@ -214,13 +214,13 @@ export function EventFormm({ event, mode = "add", refresh }) {
                                 mandatory
                             >
                                 <option value="">Selecione</option>
-                                <option value="kids">Kids</option>
-                                <option value="little">Mirim</option>
-                                <option value="juvenile">Juvenil</option>
+                                <option value="kids">Kids (04 - 07 anos)</option>
+                                <option value="little">Mirim (08 - 12 anos)</option>
+                                <option value="juvenile">Juvenil (13 - 17 anos)</option>
                                 <option value="beginner">Iniciante</option>
                                 <option value="female">Feminino</option>
-                                <option value="adult">Adulto</option>
-                                <option value="master">Master</option>
+                                <option value="adult">Adulto (18 - 49 anos)</option>
+                                <option value="master">Master ( &gt; de 50 anos )</option>
                                 <option value="open">Aberta</option>
                             </Select>
 

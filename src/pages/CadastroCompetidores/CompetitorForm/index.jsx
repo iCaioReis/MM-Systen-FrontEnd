@@ -64,7 +64,6 @@ export function CompetitorForm({ competitor, mode = "add", refresh }) {
     const [avatar, setAvatar] = useState(avatarPlaceholder);
     const [avatarFile, setAvatarFile] = useState(null);
 
-
     useEffect(() => {
         if (competitor && mode === 'show') {
             const avatarUrl = competitor.picture ? `${api.defaults.baseURL}files/${competitor.picture}` : avatarPlaceholder;
@@ -80,12 +79,25 @@ export function CompetitorForm({ competitor, mode = "add", refresh }) {
     }, [competitor, mode]);
 
     const handleChange = (e, formattedValue) => {
-        const { name } = e.target;
-        setData((prevData) => ({
-            ...prevData,
-            [name]: formattedValue !== undefined ? formattedValue : e.target.value,
-        }));
+        const { name, value } = e.target;
+        
+        setData((prevData) => {
+            const newValue = formattedValue !== undefined ? formattedValue : value;
+    
+            if (name === 'name') {
+                return {
+                    ...prevData,
+                    [name]: newValue,
+                    surname: newValue, // Atualizando o campo surname com o mesmo valor do campo name
+                };
+            }
+            return {
+                ...prevData,
+                [name]: newValue,
+            };
+        });
     };
+    
 
     const calculateAge = (date) => {
         const today = new Date();
@@ -125,12 +137,18 @@ export function CompetitorForm({ competitor, mode = "add", refresh }) {
     const handleInputChange = (e) => {
         const { name, value } = e.target;
         let updatedData = { ...data, [name]: value };
-
+    
         if (name === 'born') {
             setAge(calculateAge(value));
         }
+    
+        if (name === "name") {
+            updatedData = { ...updatedData, surname: value };
+        }
+    
         setData(updatedData);
     };
+    
 
     const handleSave = () => {
         if (mode === 'add') {
@@ -309,13 +327,13 @@ export function CompetitorForm({ competitor, mode = "add", refresh }) {
                         className={"medium-width"}
                         disabled={!isEditing && mode !== 'add'}
                     >
-                        <option value="kids">Kids</option>
-                        <option value="little">Mirim</option>
-                        <option value="juvenile">Juvenil</option>
+                        <option value="kids">Kids (04 - 07 anos)</option>
+                        <option value="little">Mirim (08 - 12 anos)</option>
+                        <option value="juvenile">Juvenil (13 - 17 anos)</option>
                         <option value="beginner">Iniciante</option>
                         <option value="female">Feminino</option>
-                        <option value="adult">Adulto</option>
-                        <option value="master">Master</option>
+                        <option value="adult">Adulto (18 - 49 anos)</option>
+                        <option value="master">Master ( &gt; de 50 anos )</option>
                         <option value="open">Aberta</option>
                     </Select>
 

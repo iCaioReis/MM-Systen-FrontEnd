@@ -340,3 +340,46 @@ export const UpcomingCompetitorsTable = styled.div`
       }
    }
 `;
+
+export const RankingCompetitorsTable = styled.div`
+   text-align: center;
+   display: flex;
+   flex-direction: column;
+   gap: 1rem;
+
+   color: ${({ theme }) => theme.COLORS.THEME_600};
+
+   > h3 {
+    font-weight: 600;
+    color: ${({ theme }) => theme.COLORS.THEME_700};
+   }
+
+   > table {
+      width: 100%;
+      border-collapse: separate;
+      border-spacing: 0 .2rem;
+
+      tbody {
+         tr {
+            th {
+               font-weight: 400;
+               font-size: .9rem;
+               padding: .2rem;
+               border: 1px dashed ${({ theme }) => theme.COLORS.THEME_600};
+               border-radius: 8px;
+            }
+
+            :nth-child(1){
+                border-radius: 8px 0 0 8px;
+            }
+            :nth-child(2){
+                border-radius: 0 8px 8px 0;
+            }
+         }
+      }
+
+      .bg_yellow {
+        background-color: #ffff00;
+    }
+   }
+`;

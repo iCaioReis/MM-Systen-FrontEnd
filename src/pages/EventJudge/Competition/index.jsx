@@ -2,6 +2,7 @@ import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { useParams } from 'react-router-dom';
 import { useState, useEffect } from 'react';
+import Swal from 'sweetalert2'
 
 import screenfull from 'screenfull';
 
@@ -16,7 +17,7 @@ import { Button } from "../../../components/Button";
 
 import { FormatCategory, FormatProof, FormatStatus, FormatTimer } from "../../../utils/formatDatas";
 
-import { Container, Content, JudgeArea, Profile, Actions, Main, Picture, Title, Timer, InputFouls, EliminatoryFouls, HiddenCheckbox, StyledLabel, UpcomingCompetitorsTable } from "./styles";
+import { Container, Content, JudgeArea, Profile, Actions, Main, Picture, Title, Timer, InputFouls, EliminatoryFouls, HiddenCheckbox, StyledLabel, UpcomingCompetitorsTable, RankingCompetitorsTable } from "./styles";
 
 export function Competition() {
     const [loading, setLoading] = useState(true);
@@ -28,6 +29,7 @@ export function Competition() {
     const [competitorPicture, setCompetitorPicture] = useState(avatarPlaceholder);
     const [horsePicture, setHorsePicture] = useState(avatarPlaceholder);
     const [upcomingCompetitors, setUpcomingCompetitors] = useState([]);
+    const [ranking, setRanking] = useState();
 
     const params = useParams();
 
@@ -78,10 +80,38 @@ export function Competition() {
 
                     const finishedCompetitions = result.data.competitorHorses.filter(horse => horse.state === 'finished');
 
+                    const withTotalTimee = finishedCompetitions.forEach(item => {
+                        const totalTime = Number(item.time) + (Number(item.fouls) * 5); // Garante que seja um número
+                        // Converte o totalTime para string e formata com 3 casas decimais
+                        const totalTimeString = totalTime.toFixed(3);
+                        const [integerPart, decimalPart] = totalTimeString.split('.');
+
+                        // Preenche com zeros à esquerda o número inteiro
+                        const formattedIntegerPart = integerPart.padStart(3, '0');
+                        // Preenche com zeros à direita o número decimal, se necessário
+                        const formattedDecimalPart = decimalPart.padEnd(3, '0');
+
+                        // Junta as partes formatadas
+                        item.total_time = `${formattedIntegerPart}.${formattedDecimalPart}`;
+
+                    });
+
                     const withTotalTime = finishedCompetitions
                         .map(horse => {
                             const totalTime = parseFloat(horse.time) + (horse.fouls * 5); // Calcula o tempo total
-                            return { ...horse, total_time: totalTime };
+
+                            const totalTimeString = totalTime.toFixed(3);
+                            const [integerPart, decimalPart] = totalTimeString.split('.');
+
+                            // Preenche com zeros à esquerda o número inteiro
+                            const formattedIntegerPart = integerPart.padStart(3, '0');
+                            // Preenche com zeros à direita o número decimal, se necessário
+                            const formattedDecimalPart = decimalPart.padEnd(3, '0');
+
+                            // Junta as partes formatadas
+                            const formatedTime = `${formattedIntegerPart}.${formattedDecimalPart}`;
+
+                            return { ...horse, total_time: formatedTime };
                         })
                         .filter(horse => horse.total_time > 0); // Filtra os registros com total_time > 0
 
@@ -96,10 +126,7 @@ export function Competition() {
 
                     topRanking.sort((a, b) => a.total_time - b.total_time);
 
-                    console.log(topRanking);
-                    console.log(competitor)
-                    const TotalTimeCompetitor = competitor.data.register.fouls * 5 
-                   // const existCompetitorWithSameTime = withTotalTime.filter(item => item.total_time === );
+                    setRanking(topRanking.slice(0, 4))
 
                     setLoading(false);
                 } catch (error) {
@@ -336,7 +363,7 @@ export function Competition() {
                         </div>
                     </JudgeArea>
                 </Main>
-                
+
                 <Actions>
                     {
                         competingRegisterNumber + 1 != categoryData.competitorHorses.length ?
@@ -358,7 +385,45 @@ export function Competition() {
                                 </table>
                             </UpcomingCompetitorsTable>
                             :
-                            <div />
+                            <RankingCompetitorsTable>
+                                <h3>Ranking</h3>
+
+                                <table>
+                                    <thead>
+                                        <tr>
+                                            <th>N</th>
+                                            <th>Competidor</th>
+                                            <th>Tempo</th>
+                                        </tr>
+                                    </thead>
+
+                                    <tbody>
+                                        {
+                                            ranking.map((register, index) => {
+                                                const isDuplicateTime = ranking.some(
+                                                    (item, i) => i !== index && item.total_time === register.total_time
+                                                );
+
+                                                {isDuplicateTime && competingRegisterData.state == "finished" &&
+                                                    Swal.fire({
+                                                        title: 'Atenção!',
+                                                        text: 'Existem competidores com os mesmos tempos entre os primeiros colocados',
+                                                        icon: 'warning',
+                                                        confirmButtonText: 'Ok'
+                                                      })
+                                                }
+
+                                                return (
+                                                    <tr key={index}>
+                                                        <th>{index + 1 + "º"}</th>
+                                                        <th>{register.competitor_surname}</th>
+                                                        <th className={isDuplicateTime ? "bg_yellow" : ""}>{register.total_time}</th>
+                                                    </tr>
+                                                )
+                                            })}
+                                    </tbody>
+                                </table>
+                            </RankingCompetitorsTable>
                     }
 
                     <div className="buttons">

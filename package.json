@@ -23,6 +23,7 @@
     "react-toastify": "^10.0.6",
     "screenfull": "^6.0.2",
     "styled-components": "^6.1.11",
+    "sweetalert2": "^11.14.4",
     "vite": "^5.4.9",
     "xlsx": "^0.18.5"
   },

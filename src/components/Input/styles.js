@@ -34,6 +34,9 @@ export const Container = styled.div`
     &.input-larger-width {
         max-width: 11rem;
     }
+    &.input-biglarger-width {
+        max-width: 13rem;
+    }
 
     > input {
         width: 100%;

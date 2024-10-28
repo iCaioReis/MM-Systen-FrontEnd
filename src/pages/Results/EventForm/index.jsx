@@ -8,6 +8,7 @@ import { FaArrowRight } from "react-icons/fa6";
 import avatarPlaceholder from "../../../assets/user.svg";
 
 import { FormatStatus } from '../../../utils/formatDatas.js';
+import { orderResults } from '../../../utils/orderResults.js';
 import { generateExcelTable } from '../../../utils/generateExcelTable.js';
 
 import { api } from '../../../services/api.js';
@@ -31,12 +32,11 @@ const larguras = {
     index: "40px",
     competitor: "",
     horse: "",
-    time: "",
-    foul: "75px",
-    acress: "100px",
-    totalTime: "100px",
-    SAT: "60px",
-    NPC: "60px"
+    time: "105px",
+    foul: "70px",
+    acress: "105px",
+    totalTime: "105px",
+    obs: ""
 };
 const header = {
     index: "N",
@@ -46,8 +46,7 @@ const header = {
     fouls: "Faltas",
     acress: "Acréssimo",
     totalTime: "Tempo total",
-    SAT: "SAT",
-    NCP: "NCP"
+    obs: "Observação"
 };
 
 export function EventFormm({ mode = "show" }) {
@@ -57,7 +56,6 @@ export function EventFormm({ mode = "show" }) {
     const [proof, setProof] = useState(1);
     const [categorie, setCategorie] = useState(1);
     const [loading, setLoading] = useState(true);
-    const [refresh, setRefresh] = useState(false);
 
     const params = useParams();
 
@@ -70,30 +68,9 @@ export function EventFormm({ mode = "show" }) {
 
                     // Clonamos o objeto results para evitar mutações diretas
                     const sortedResults = { ...results.data };
-
-                    // Ordenar os competidores da prova e categoria selecionadas
-                    sortedResults.proofs[proof - 1].categories[categorie - 1].competitors.sort((a, b) => {
-                        // Verifica se o valor de fouls existe, caso contrário, define como 0
-                        const foulsA = a.fouls ? a.fouls : 0;
-                        const foulsB = b.fouls ? b.fouls : 0;
-
-                        // Calcula o acréscimo no tempo com base nas faltas
-                        const acressA = foulsA > 0 ? foulsA * 5 : 0;
-                        const acressB = foulsB > 0 ? foulsB * 5 : 0;
-
-                        // Converte o tempo para número, garantindo que seja um valor válido
-                        const timeA = parseFloat(a.time) || 0;  // Garante que a.time seja numérico
-                        const timeB = parseFloat(b.time) || 0;
-
-                        // Calcula o tempo total com o acréscimo das faltas
-                        const totalTimeA = timeA + acressA;
-                        const totalTimeB = timeB + acressB;
-
-                        // Compara os tempos totais
-                        return totalTimeA - totalTimeB;
-                    });
-
-                    console.log(sortedResults)
+    
+                    orderResults(sortedResults)
+                
                     // Atualiza o estado com os dados ordenados
                     setEvent(eventData.data);
                     setResults(sortedResults);
@@ -105,12 +82,11 @@ export function EventFormm({ mode = "show" }) {
             }
             fethEvent();
         }
-    }, [refresh]);
+    }, []);
 
     useEffect(() => {
         if (event && mode === 'show') {
             setData({ ...initialData, ...event });
-            setRefresh(prev => !prev)
         }
     }, [event]);
 
@@ -120,7 +96,7 @@ export function EventFormm({ mode = "show" }) {
                 <h1>Carregando...</h1>
             </div>
         )
-    }
+    };
 
     return (
         <Form>
@@ -244,31 +220,27 @@ export function EventFormm({ mode = "show" }) {
                                                         </td>
                                                     );
                                                 }
+                                                if (field === "time") {
+                                                    return (
+                                                        <td key={subIndex}>
+                                                            {row.time + " s"}
+                                                        </td>
+                                                    );
+                                                }
 
                                                 if (field === "totalTime") {
-                                                    const acress = row.fouls > 0 ? row.fouls * 5 : 0;
-                                                    const time = parseFloat(row.time) + parseInt(acress);
                                                     return (
                                                         <td key={subIndex}>
-                                                            {time}
+                                                            {row.total_time + " s"}
                                                         </td>
                                                     );
                                                 }
 
-                                                if (field === "SAT") {
-                                                    const SAT = row.SAT ? "SAT" : ""
+                                                if (field === "obs") {
+                                                    const obs = row.SAT ? "SAT" : row.NCP ? "NCP" : row.valid == false ? "Descartado" : "" ;
                                                     return (
                                                         <td key={subIndex}>
-                                                            {SAT}
-                                                        </td>
-                                                    );
-                                                }
-
-                                                if (field === "NCP") {
-                                                    const NCP = row.NCP ? "NCP" : ""
-                                                    return (
-                                                        <td key={subIndex}>
-                                                            {NCP}
+                                                            {obs}
                                                         </td>
                                                     );
                                                 }

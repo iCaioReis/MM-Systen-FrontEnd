@@ -76,6 +76,31 @@ export function Competition() {
                     const horseAvatarUrl = competitor.data.register.horse_picture ? `${api.defaults.baseURL}files/${competitor.data.register.horse_picture}` : avatarPlaceholder;
                     setHorsePicture(horseAvatarUrl);
 
+                    const finishedCompetitions = result.data.competitorHorses.filter(horse => horse.state === 'finished');
+
+                    const withTotalTime = finishedCompetitions
+                        .map(horse => {
+                            const totalTime = parseFloat(horse.time) + (horse.fouls * 5); // Calcula o tempo total
+                            return { ...horse, total_time: totalTime };
+                        })
+                        .filter(horse => horse.total_time > 0); // Filtra os registros com total_time > 0
+
+                    // Passo 3: Filtrar os menores tempos por competidor
+                    const topRanking = withTotalTime.reduce((acc, curr) => {
+                        const existing = acc.find(item => item.competitor_id === curr.competitor_id);
+                        if (!existing || curr.total_time < existing.total_time) {
+                            return acc.filter(item => item.competitor_id !== curr.competitor_id).concat(curr);
+                        }
+                        return acc;
+                    }, []);
+
+                    topRanking.sort((a, b) => a.total_time - b.total_time);
+
+                    console.log(topRanking);
+                    console.log(competitor)
+                    const TotalTimeCompetitor = competitor.data.register.fouls * 5 
+                   // const existCompetitorWithSameTime = withTotalTime.filter(item => item.total_time === );
+
                     setLoading(false);
                 } catch (error) {
                     toast.error(`Failed to fetch data: ${error.message}`);
@@ -84,7 +109,6 @@ export function Competition() {
             fetchData();
             handleUpcomingCompetitors();
         }
-        console.log();
     }, [refresh, competingRegisterNumber]);
 
     const handleNextCompetitor = () => {
@@ -115,6 +139,7 @@ export function Competition() {
     };
     const handleFinish = () => {
         competingRegisterData.state = "finished";
+        competingRegisterData.time = competingRegisterData.time.replace(/_/g, '0');
         async function putTimeAndState() {
             try {
                 await api.put(`/registersJudge/${competingRegisterData.id}`, competingRegisterData)
@@ -185,7 +210,6 @@ export function Competition() {
     const handleUpcomingCompetitors = () => {
         const competitors = categoryData.competitorHorses.slice(competingRegisterNumber + 1, competingRegisterNumber + 4)
         setUpcomingCompetitors(competitors);
-        console.log(competitors)
     };
     const setFullScreen = () => {
         screenfull.request();
@@ -249,7 +273,6 @@ export function Competition() {
                     </Timer>
 
                     <JudgeArea>
-
                         <div className="header">
                             <div className="flex timeAndFoul">
                                 <span>Tempo: </span>
@@ -285,7 +308,6 @@ export function Competition() {
                                         disabled={competingRegisterData.state != "running" || competingRegisterData.SAT || competingRegisterData.NCP ? true : false}
                                     >+</button>
                                 </InputFouls>
-
                             </div>
                             <EliminatoryFouls>
                                 <HiddenCheckbox
@@ -312,33 +334,31 @@ export function Competition() {
                             </EliminatoryFouls>
 
                         </div>
-
                     </JudgeArea>
-
                 </Main>
-
+                
                 <Actions>
                     {
                         competingRegisterNumber + 1 != categoryData.competitorHorses.length ?
-                        <UpcomingCompetitorsTable>
-                        <h3>Próximas chamadas</h3>
+                            <UpcomingCompetitorsTable>
+                                <h3>Próximas chamadas</h3>
 
-                        <table>
-                            <tbody>
-                                {
-                                    upcomingCompetitors.map(register => {
-                                        return (
-                                            <tr>
-                                                <th>{register.competitor_surname}</th>
-                                                <th>{register.horse_surname}</th>
-                                            </tr>
-                                        )
-                                    })}
-                            </tbody>
-                        </table>
-                    </UpcomingCompetitorsTable>
-                    :
-                    <div/>
+                                <table>
+                                    <tbody>
+                                        {
+                                            upcomingCompetitors.map(register => {
+                                                return (
+                                                    <tr>
+                                                        <th>{register.competitor_surname}</th>
+                                                        <th>{register.horse_surname}</th>
+                                                    </tr>
+                                                )
+                                            })}
+                                    </tbody>
+                                </table>
+                            </UpcomingCompetitorsTable>
+                            :
+                            <div />
                     }
 
                     <div className="buttons">

@@ -12,7 +12,7 @@ export const Container = styled.button`
     display: flex;
     justify-content: center;
     align-items: center;
-    gap: 1rem;
+    gap: .5rem;
 
     color: ${({ theme }) => theme.COLORS.LIGHT_100};
     background-color: ${({ theme }) => theme.COLORS.THEME_900};
@@ -52,6 +52,17 @@ export const Container = styled.button`
             color: ${({ theme }) => theme.COLORS.LIGHT_100};
             background-color: ${({ theme }) => theme.COLORS.RED};
         }
+
+        &.inverted{
+            color: ${({ theme }) => theme.COLORS.LIGHT_100};
+
+            background-color: ${({ theme }) => theme.COLORS.RED};
+
+            &:hover {
+            filter: brightness(0.7);
+            }
+        }
+
     }
     &:focus{
         border: 3px solid  ${({ theme }) => theme.COLORS.LIGHT_100};

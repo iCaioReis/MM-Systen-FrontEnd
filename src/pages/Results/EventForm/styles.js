@@ -7,7 +7,6 @@ export const Form = styled.div`
     
     gap: 1rem;
 `;
-
 export const Profile = styled.div`
     display: flex;
     flex-direction: column;
@@ -29,7 +28,6 @@ export const Profile = styled.div`
         }
     }
 `;
-
 export const Picture = styled.div`
     position: relative;
 
@@ -52,10 +50,9 @@ export const Picture = styled.div`
     }
 }
 `;
-
 export const MainForm = styled.div`
     .table {
-        max-height: 400px;
+        max-height: 380px;
         overflow-y: auto;
     }
 `;

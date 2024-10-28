@@ -28,7 +28,8 @@ const initialData = {
     born: "",
     age: "",
     owner: "",
-    march: "beat"
+    march: "beat",
+    chip: ""
 };
 
 export function HorseForm({ horse, mode = "add", refresh }) {
@@ -39,36 +40,36 @@ export function HorseForm({ horse, mode = "add", refresh }) {
 
     const [avatar, setAvatar] = useState(avatarPlaceholder);
     const [avatarFile, setAvatarFile] = useState(null);
-    
+
     const calculateAge = (date) => {
         const today = new Date();
         const born = new Date(date);
-    
+
         let years = today.getFullYear() - born.getFullYear();
         let months = today.getMonth() - born.getMonth();
         let days = today.getDate() - born.getDate();
-    
+
         if (months < 0) {
             years--;
             months += 12;
         }
-    
+
         if (days < 0) {
             months--;
             const lastDayOfPreviousMonth = new Date(today.getFullYear(), today.getMonth(), 0).getDate();
             days += lastDayOfPreviousMonth;
         }
-    
+
         const totalMonths = (years * 12) + months;
         const totalDays = days;
-    
+
         if (totalMonths === 0 && totalDays === 0) {
             return '';
         }
-    
+
         return `${totalMonths} meses e ${totalDays} dias`;
     };
-    
+
     function calculateDate(data) {
         const originalString = data;
         const [datePart] = originalString.split(' ');
@@ -83,9 +84,9 @@ export function HorseForm({ horse, mode = "add", refresh }) {
         if (horse && mode === 'show') {
             const avatarUrl = horse.picture ? `${api.defaults.baseURL}files/${horse.picture}` : avatarPlaceholder;
 
-            setData({ 
-                ...initialData, 
-                ...horse, 
+            setData({
+                ...initialData,
+                ...horse,
                 age: calculateAge(horse.born)
             });
 
@@ -96,7 +97,7 @@ export function HorseForm({ horse, mode = "add", refresh }) {
     const handleInputChange = (e) => {
         const { name, value } = e.target;
         let updatedData = { ...data, [name]: value };
-    
+
         if (name === 'born') {
             updatedData.age = calculateAge(value);
         }
@@ -104,10 +105,10 @@ export function HorseForm({ horse, mode = "add", refresh }) {
         if (name === 'name') {
             updatedData.surname = value;
         }
-    
+
         setData(updatedData);
     };
-    
+
 
     const handleSave = () => {
         if (mode === 'add') {
@@ -127,8 +128,8 @@ export function HorseForm({ horse, mode = "add", refresh }) {
             addHorse();
 
         } else if (isEditing) {
-            if(avatarFile){
-                updateProfilePicture({id: horse.id, table: "horses", avatarFile: avatarFile})
+            if (avatarFile) {
+                updateProfilePicture({ id: horse.id, table: "horses", avatarFile: avatarFile })
             }
             async function updateHorse() {
                 try {
@@ -143,7 +144,7 @@ export function HorseForm({ horse, mode = "add", refresh }) {
             }
             updateHorse();
         }
-        
+
     };
 
     const handleState = () => {
@@ -170,11 +171,11 @@ export function HorseForm({ horse, mode = "add", refresh }) {
                         {mode != "add" && isEditing && (
                             <label htmlFor="avatar">
                                 <FiCamera /> Mudar foto
-                                <input 
-                                    type="file" 
+                                <input
+                                    type="file"
                                     id="avatar"
                                     onChange={hadleChangeAvatar}
-                                    disabled={!isEditing && mode !== 'add'} 
+                                    disabled={!isEditing && mode !== 'add'}
                                 />
                             </label>
                         )}
@@ -245,15 +246,26 @@ export function HorseForm({ horse, mode = "add", refresh }) {
                     </Select>
                 </div>
                 <div className="flex">
-                    <Input
-                        title={"Registro"}
-                        name="record"
-                        value={data.record}
-                        onChange={handleInputChange}
-                        placeholder="Digite aqui o número de registro"
-                        disabled={!isEditing && mode !== 'add'}
-                    />
+                        <Input
+                            title={"Registro"}
+                            name="record"
+                            value={data.record}
+                            onChange={handleInputChange}
+                            placeholder="Número de registro"
+                            disabled={!isEditing && mode !== 'add'}
+                            className={"input-larger-width"}
+                        />
 
+                        <Input
+                            title={"Chip"}
+                            name="chip"
+                            value={data.chip}
+                            onChange={handleInputChange}
+                            placeholder="Número do chip"
+                            className={"input-biglarger-width"}
+                            disabled={!isEditing && mode !== 'add'}
+                        />
+                    
                     <DateContainer className="date">
                         <Input
                             title={"Nascimento"}
@@ -270,7 +282,7 @@ export function HorseForm({ horse, mode = "add", refresh }) {
                             name="age"
                             value={data.age}
                             onChange={handleInputChange}
-                           
+
                             disabled
                         />
                     </DateContainer>
@@ -321,7 +333,7 @@ export function HorseForm({ horse, mode = "add", refresh }) {
                 />
             </Status>
 
-            <ToastContainer/>
+            <ToastContainer />
         </Form>
     );
 }

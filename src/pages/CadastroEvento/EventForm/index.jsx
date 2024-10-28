@@ -179,6 +179,9 @@ export function EventFormm({ event, mode = "add", refresh }) {
     function navigateToPrintPage(id) {
         window.open(`/evento/impressao/${id}`, '_blank');
     };
+    function navigateToPrintHorsePage(id) {
+        window.open(`/evento/impressaoCavalos/${id}`, '_blank');
+    };
 
     return (
         <Form>
@@ -292,7 +295,10 @@ export function EventFormm({ event, mode = "add", refresh }) {
                 </div>
                 <div>
                     {params.id &&
-                        <Button type={"button"} onClick={() => navigateToPrintPage(params.id)}>Imprimir</Button>
+                        <Button type={"button"} onClick={() => navigateToPrintPage(params.id)}>Imprimir Evento</Button>
+                    }
+                    {params.id &&
+                        <Button type={"button"} onClick={() => navigateToPrintHorsePage(params.id)}>Imprimir Cavalos</Button>
                     }
 
                     {mode != 'add' && isEditing && data.state == 'active' &&
@@ -310,7 +316,6 @@ export function EventFormm({ event, mode = "add", refresh }) {
                         </Button>
                     }
                 </div>
-
             </Profile>
 
             <MainForm>

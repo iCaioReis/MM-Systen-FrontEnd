@@ -15,7 +15,7 @@ export function generateExcelTable(data) {
             const categorieName = FormatCategory(categorie.name);
             //console.log(`Prova: ${proofName}   Categoria: ${categorieName}`)
 
-            const sheetData = [["N", "Competidor", "Cavalo", "Tempo", "Faltas", "Acréssimo", "Tempo total", "SAT", "NCP"]];
+            const sheetData = [["N", "Competidor", "Cavalo", "Tempo", "Faltas", "Acréssimo", "Tempo total", "Observação"]];
 
             categorie.competitors.map((competitor, index) => {
                 console.log(competitor)
@@ -26,9 +26,8 @@ export function generateExcelTable(data) {
                     `${competitor.time} s`,
                     `${competitor.fouls}`,
                     `${competitor.fouls * 5}.000 s`,
-                    `${parseFloat(competitor.time) + parseInt(competitor.fouls) * 5}`,
-                    `${competitor.SAT}`,
-                    `${competitor.NCP}`
+                    `${(parseFloat(competitor.time) + parseInt(competitor.fouls) * 5).toFixed(3)}`,
+                    `${competitor.SAT ? "SAT" : competitor.NCP ? "NCP" : competitor.valid == false ? "Descartado" : "" }`,
                 ]
 
                 sheetData.push(competitorSheetData);
@@ -39,11 +38,9 @@ export function generateExcelTable(data) {
             const textStyle = { font: { bold: true, color: { rgb: "FF0000" } } }; // Texto vermelho
 
             worksheet['A1'].s = textStyle;
-
-
+            
             // Cria o workbook com as diferentes abas
             XLSX.utils.book_append_sheet(workbook, worksheet, `${proofName} ${categorieName}`);
-            console.log(sheetData)
         })
     })
 
@@ -65,7 +62,7 @@ export function generateExcelTable(data) {
 export function generateExcelTable1(data) {
     console.log(data)
 
-    const rowStyle = {
+    const competitorStyle = {
         backgroundColor: colorPalette.c2,
         fontFamily: "Times New Roman",
         color: colorPalette.c4,

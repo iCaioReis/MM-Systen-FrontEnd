@@ -3,9 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
-import { FiCamera } from 'react-icons/fi';
-
-import { GoPencil } from "react-icons/go";
+import { FiCamera , FiTrash2} from 'react-icons/fi';
 
 import avatarPlaceholder from "../../../assets/user.svg";
 
@@ -68,22 +66,22 @@ export function CompetitorForm({ competitor, mode = "add", refresh }) {
         if (competitor && mode === 'show') {
             const avatarUrl = competitor.picture ? `${api.defaults.baseURL}files/${competitor.picture}` : avatarPlaceholder;
 
-            setData({ 
-                ...initialData, 
-                ...competitor, 
-                age: calculateAge(competitor.born) 
+            setData({
+                ...initialData,
+                ...competitor,
+                age: calculateAge(competitor.born)
             });
-
+            setAge(calculateAge(competitor.born));
             setAvatar(avatarUrl)
         }
     }, [competitor, mode]);
 
     const handleChange = (e, formattedValue) => {
         const { name, value } = e.target;
-        
+
         setData((prevData) => {
             const newValue = formattedValue !== undefined ? formattedValue : value;
-    
+
             if (name === 'name') {
                 return {
                     ...prevData,
@@ -97,8 +95,6 @@ export function CompetitorForm({ competitor, mode = "add", refresh }) {
             };
         });
     };
-    
-
     const calculateAge = (date) => {
         const today = new Date();
         const born = new Date(date);
@@ -116,7 +112,6 @@ export function CompetitorForm({ competitor, mode = "add", refresh }) {
 
         return (age)
     };
-
     function calculateDate(data) {
         const originalString = data;
         const [datePart] = originalString.split(' ');
@@ -126,30 +121,20 @@ export function CompetitorForm({ competitor, mode = "add", refresh }) {
 
         return (formattedDate);
     };
-
-    useEffect(() => {
-        if (competitor && mode === 'show') {
-            setData({ ...initialData, ...competitor });
-            setAge(calculateAge(competitor.born));
-        }
-    }, [competitor, mode]);
-
     const handleInputChange = (e) => {
         const { name, value } = e.target;
         let updatedData = { ...data, [name]: value };
-    
+
         if (name === 'born') {
             setAge(calculateAge(value));
         }
-    
+
         if (name === "name") {
             updatedData = { ...updatedData, surname: value };
         }
-    
+
         setData(updatedData);
     };
-    
-
     const handleSave = () => {
         if (mode === 'add') {
             async function addCompetitor() {
@@ -169,8 +154,8 @@ export function CompetitorForm({ competitor, mode = "add", refresh }) {
             addCompetitor();
 
         } else if (isEditing) {
-            if(avatarFile){
-                updateProfilePicture({id: competitor.id, table: "competitors", avatarFile: avatarFile})
+            if (avatarFile) {
+                updateProfilePicture({ id: competitor.id, table: "competitors", avatarFile: avatarFile })
             }
             async function updateCompetitor() {
                 try {
@@ -186,14 +171,12 @@ export function CompetitorForm({ competitor, mode = "add", refresh }) {
             updateCompetitor();
         }
     };
-
     const handleState = () => {
         const newState = data.state == "active" ? "inative" : "active";
 
         setData({ ...data, state: newState });
     };
-
-    function hadleChangeAvatar(event){
+    function hadleChangeAvatar(event) {
         const file = event.target.files[0]; //Pega somente o primeiro arquivo que o usuário enviar
 
         setAvatarFile(file);
@@ -211,7 +194,7 @@ export function CompetitorForm({ competitor, mode = "add", refresh }) {
                         {mode != "add" && isEditing && (
                             <label htmlFor="avatar">
                                 <FiCamera /> Mudar foto
-                                <input 
+                                <input
                                     type="file"
                                     id="avatar"
                                     onChange={hadleChangeAvatar}
@@ -394,7 +377,7 @@ export function CompetitorForm({ competitor, mode = "add", refresh }) {
                         disabled={!isEditing && mode !== 'add'}
                     />
                 </div>
-                
+
                 <div className="flex">
                     <Input
                         title={"Cidade"}
@@ -472,27 +455,38 @@ export function CompetitorForm({ competitor, mode = "add", refresh }) {
             </MainForm>
 
             <Status>
-                <Input
-                    title={"Número único"}
-                    value={data.id}
-                    disabled
-                    status
-                />
-                <Input
-                    title={"Situação do cadastro"}
-                    value={data.state == "active" ? "Ativo" : "Inativo"}
-                    disabled
-                    status
-                />
-                <Input
-                    title={"Data Cadastro"}
-                    value={calculateDate(data.created_at)}
-                    disabled
-                    status
-                />
+                <div>
+                    <Input
+                        title={"Número único"}
+                        value={data.id}
+                        disabled
+                        status
+                    />
+                    <Input
+                        title={"Situação do cadastro"}
+                        value={data.state == "active" ? "Ativo" : "Inativo"}
+                        disabled
+                        status
+                    />
+                    <Input
+                        title={"Data Cadastro"}
+                        value={calculateDate(data.created_at)}
+                        disabled
+                        status
+                    />
+                </div>
+
+                {mode != 'add' && isEditing &&
+                    <Button className={"danger inverted"}
+                        onClick={handleState}
+                    >
+                        <FiTrash2/>
+                        Excluir
+                    </Button>
+                }
             </Status>
 
-            <ToastContainer/>
+            <ToastContainer />
         </Form>
     )
 }

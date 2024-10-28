@@ -7,7 +7,8 @@ export const Container = styled.div`
 
     color: ${({ theme }) => theme.COLORS.THEME_900};
 
-    > header {
+    
+     header {
         width: 100%;
         display: flex;
         background-color: ${({ theme }) => theme.COLORS.THEME_900};
@@ -67,4 +68,18 @@ export const Container = styled.div`
         border-top: 1px solid ${({ theme }) => theme.COLORS.THEME_900};
         margin-bottom: 2rem;
     }
+    
+
+    @media print {
+    .page-break {
+        display: block;
+        page-break-before: always;
+  }
+}
+
+    /* Para evitar quebras dentro de um elemento */
+.no-break {
+    page-break-inside: avoid; /* Não quebrar dentro do elemento */
+    break-inside: avoid;       /* Usando o CSS moderno */
+}
 `;

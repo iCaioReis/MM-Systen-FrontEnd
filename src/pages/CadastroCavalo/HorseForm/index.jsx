@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
-import { FiCamera } from 'react-icons/fi';
+import { FiCamera, FiTrash2 } from 'react-icons/fi';
 
 import avatarPlaceholder from "../../../assets/user.svg";
 
@@ -12,10 +12,13 @@ import { updateProfilePicture } from '../../../utils/updateProfilePicture.js'
 
 import { Input } from "../../../components/Input";
 import { Button } from "../../../components/Button";
-import { Section } from "../../../components/Section";
 import { Select } from "../../../components/Select";
+import { Section } from "../../../components/Section";
+import { ModalConfirm } from "../../../components/ModalConfirm";
 
 import { DateContainer, Form, MainForm, Picture, Profile, Status } from './styles';
+
+import { FormatDate, calculateHorseAge } from "../../../utils/formatDatas.js"
 
 const initialData = {
     id: "",
@@ -40,45 +43,7 @@ export function HorseForm({ horse, mode = "add", refresh }) {
 
     const [avatar, setAvatar] = useState(avatarPlaceholder);
     const [avatarFile, setAvatarFile] = useState(null);
-
-    const calculateAge = (date) => {
-        const today = new Date();
-        const born = new Date(date);
-
-        let years = today.getFullYear() - born.getFullYear();
-        let months = today.getMonth() - born.getMonth();
-        let days = today.getDate() - born.getDate();
-
-        if (months < 0) {
-            years--;
-            months += 12;
-        }
-
-        if (days < 0) {
-            months--;
-            const lastDayOfPreviousMonth = new Date(today.getFullYear(), today.getMonth(), 0).getDate();
-            days += lastDayOfPreviousMonth;
-        }
-
-        const totalMonths = (years * 12) + months;
-        const totalDays = days;
-
-        if (totalMonths === 0 && totalDays === 0) {
-            return '';
-        }
-
-        return `${totalMonths} meses e ${totalDays} dias`;
-    };
-
-    function calculateDate(data) {
-        const originalString = data;
-        const [datePart] = originalString.split(' ');
-        const [year, month, day] = datePart.split('-');
-
-        const formattedDate = `${day}/${month}/${year}`;
-
-        return (formattedDate);
-    };
+    const [isModalConfirmVisible, setIsModalConfirmVisible] = useState(false);
 
     useEffect(() => {
         if (horse && mode === 'show') {
@@ -87,7 +52,7 @@ export function HorseForm({ horse, mode = "add", refresh }) {
             setData({
                 ...initialData,
                 ...horse,
-                age: calculateAge(horse.born)
+                age: calculateHorseAge(horse.born)
             });
 
             setAvatar(avatarUrl)
@@ -99,7 +64,7 @@ export function HorseForm({ horse, mode = "add", refresh }) {
         let updatedData = { ...data, [name]: value };
 
         if (name === 'born') {
-            updatedData.age = calculateAge(value);
+            updatedData.age = calculateHorseAge(value);
         }
 
         if (name === 'name') {
@@ -108,8 +73,6 @@ export function HorseForm({ horse, mode = "add", refresh }) {
 
         setData(updatedData);
     };
-
-
     const handleSave = () => {
         if (mode === 'add') {
             async function addHorse() {
@@ -146,14 +109,12 @@ export function HorseForm({ horse, mode = "add", refresh }) {
         }
 
     };
-
     const handleState = () => {
         const newState = data.state == "active" ? "inative" : "active";
 
         setData({ ...data, state: newState });
     };
-
-    function hadleChangeAvatar(event){
+    function hadleChangeAvatar(event) {
         const file = event.target.files[0]; //Pega somente o primeiro arquivo que o usuário enviar
 
         setAvatarFile(file);
@@ -161,9 +122,32 @@ export function HorseForm({ horse, mode = "add", refresh }) {
         const imagePreview = URL.createObjectURL(file);
         setAvatar(imagePreview);
     };
+    const handleModalConfirm = () => {
+        setIsModalConfirmVisible(!isModalConfirmVisible);
+    };
+    const handleDeleteRegister = async (id) => {
+        try {
+            await api.delete(`/horses/${id}`);
+            navigate(`/cadastro/cavalo`);
+            toast.success("Registro excluído com sucesso!");
+            setData(initialData);
+            refresh();
+        } catch (error) {
+            const errorMessage = error.response?.data?.message || error.message;
+            toast.error(errorMessage)
+        }
+        handleModalConfirm();
+    };
 
     return (
         <Form>
+            <ModalConfirm
+                title={"Você têm certeza que deseja excluir o registro? "}
+                subTitle={`Cavalo: ${data.name}`}
+                visible={isModalConfirmVisible}
+                onClose={handleModalConfirm}
+                onConfirm={() => handleDeleteRegister(data.id)}
+            />
             <Profile>
                 <div>
                     <Picture>
@@ -246,26 +230,26 @@ export function HorseForm({ horse, mode = "add", refresh }) {
                     </Select>
                 </div>
                 <div className="flex">
-                        <Input
-                            title={"Registro"}
-                            name="record"
-                            value={data.record}
-                            onChange={handleInputChange}
-                            placeholder="Número de registro"
-                            disabled={!isEditing && mode !== 'add'}
-                            className={"input-larger-width"}
-                        />
+                    <Input
+                        title={"Registro"}
+                        name="record"
+                        value={data.record}
+                        onChange={handleInputChange}
+                        placeholder="Número de registro"
+                        disabled={!isEditing && mode !== 'add'}
+                        className={"input-larger-width"}
+                    />
 
-                        <Input
-                            title={"Chip"}
-                            name="chip"
-                            value={data.chip}
-                            onChange={handleInputChange}
-                            placeholder="Número do chip"
-                            className={"input-biglarger-width"}
-                            disabled={!isEditing && mode !== 'add'}
-                        />
-                    
+                    <Input
+                        title={"Chip"}
+                        name="chip"
+                        value={data.chip}
+                        onChange={handleInputChange}
+                        placeholder="Número do chip"
+                        className={"input-biglarger-width"}
+                        disabled={!isEditing && mode !== 'add'}
+                    />
+
                     <DateContainer className="date">
                         <Input
                             title={"Nascimento"}
@@ -313,24 +297,36 @@ export function HorseForm({ horse, mode = "add", refresh }) {
             </MainForm>
 
             <Status>
-                <Input
-                    title={"Número único"}
-                    value={data.id}
-                    disabled
-                    status
-                />
-                <Input
-                    title={"Situação do cadastro"}
-                    value={data.state == "active" ? "Ativo" : "Inativo"}
-                    disabled
-                    status
-                />
-                <Input
-                    title={"Data Cadastro"}
-                    value={calculateDate(data.created_at)}
-                    disabled
-                    status
-                />
+                <div>
+                    <Input
+                        title={"Número único"}
+                        value={data.id}
+                        disabled
+                        status
+                    />
+                    <Input
+                        title={"Situação do cadastro"}
+                        value={data.state == "active" ? "Ativo" : "Inativo"}
+                        disabled
+                        status
+                    />
+                    <Input
+                        title={"Data Cadastro"}
+                        value={FormatDate(data.created_at)}
+                        disabled
+                        status
+                    />
+                </div>
+
+                {mode != 'add' && isEditing &&
+                    <Button className={"danger inverted"}
+                        onClick={handleModalConfirm}
+                    >
+                        <FiTrash2 />
+                        Excluir
+                    </Button>
+                }
+
             </Status>
 
             <ToastContainer />

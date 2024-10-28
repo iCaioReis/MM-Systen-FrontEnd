@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
-import { FiCamera , FiTrash2} from 'react-icons/fi';
+import { FiCamera, FiTrash2 } from 'react-icons/fi';
 
 import avatarPlaceholder from "../../../assets/user.svg";
 
@@ -14,8 +14,11 @@ import { Input } from "../../../components/Input";
 import { Button } from "../../../components/Button";
 import { Section } from "../../../components/Section";
 import { Select } from "../../../components/Select";
+import { ModalConfirm } from "../../../components/ModalConfirm";
 
 import { DateContainer, Form, MainForm, Picture, Profile, Status } from './styles';
+
+import { FormatDate, calculateAge } from "../../../utils/formatDatas.js"
 
 const initialData = {
     id: "",
@@ -61,6 +64,7 @@ export function CompetitorForm({ competitor, mode = "add", refresh }) {
 
     const [avatar, setAvatar] = useState(avatarPlaceholder);
     const [avatarFile, setAvatarFile] = useState(null);
+    const [isModalConfirmVisible, setIsModalConfirmVisible] = useState(false);
 
     useEffect(() => {
         if (competitor && mode === 'show') {
@@ -94,32 +98,6 @@ export function CompetitorForm({ competitor, mode = "add", refresh }) {
                 [name]: newValue,
             };
         });
-    };
-    const calculateAge = (date) => {
-        const today = new Date();
-        const born = new Date(date);
-
-        let age = today.getFullYear() - born.getFullYear();
-        const month = today.getMonth() - born.getMonth();
-
-        if (month < 0 || (month === 0 && today.getDate() < born.getDate())) {
-            age--;
-        }
-
-        if (!age) {
-            return ('')
-        }
-
-        return (age)
-    };
-    function calculateDate(data) {
-        const originalString = data;
-        const [datePart] = originalString.split(' ');
-        const [year, month, day] = datePart.split('-');
-
-        const formattedDate = `${day}/${month}/${year}`;
-
-        return (formattedDate);
     };
     const handleInputChange = (e) => {
         const { name, value } = e.target;
@@ -176,7 +154,7 @@ export function CompetitorForm({ competitor, mode = "add", refresh }) {
 
         setData({ ...data, state: newState });
     };
-    function hadleChangeAvatar(event) {
+    const hadleChangeAvatar = (event) => {
         const file = event.target.files[0]; //Pega somente o primeiro arquivo que o usuário enviar
 
         setAvatarFile(file);
@@ -184,9 +162,33 @@ export function CompetitorForm({ competitor, mode = "add", refresh }) {
         const imagePreview = URL.createObjectURL(file);
         setAvatar(imagePreview);
     };
+    const handleModalConfirm = () => {
+        setIsModalConfirmVisible(!isModalConfirmVisible);
+    };
+    const handleDeleteRegister = async (id) => {
+        try {
+            await api.delete(`/competitors/${id}`);
+            navigate(`/cadastro/competidor`);
+            toast.success("Registro excluído com sucesso!");
+            setData(initialData);
+            setAge(0);
+            refresh();
+        } catch (error) {
+            const errorMessage = error.response?.data?.message || error.message;
+            toast.error(errorMessage)
+        }
+        handleModalConfirm();
+    };
 
     return (
         <Form>
+            <ModalConfirm
+                title={"Você têm certeza que deseja excluir o registro? "}
+                subTitle={`Competidor: ${data.name}`}
+                visible={isModalConfirmVisible}
+                onClose={handleModalConfirm}
+                onConfirm={() => handleDeleteRegister(data.id)}
+            />
             <Profile>
                 <div>
                     <Picture>
@@ -470,7 +472,7 @@ export function CompetitorForm({ competitor, mode = "add", refresh }) {
                     />
                     <Input
                         title={"Data Cadastro"}
-                        value={calculateDate(data.created_at)}
+                        value={FormatDate(data.created_at)}
                         disabled
                         status
                     />
@@ -478,9 +480,9 @@ export function CompetitorForm({ competitor, mode = "add", refresh }) {
 
                 {mode != 'add' && isEditing &&
                     <Button className={"danger inverted"}
-                        onClick={handleState}
+                        onClick={handleModalConfirm}
                     >
-                        <FiTrash2/>
+                        <FiTrash2 />
                         Excluir
                     </Button>
                 }

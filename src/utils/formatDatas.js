@@ -53,3 +53,21 @@ export function FormatTimer(num) {
   
     return `${integerPart}.${decimalPart}`;
 };
+
+export function calculateAge(date){
+    const today = new Date();
+    const born = new Date(date);
+
+    let age = today.getFullYear() - born.getFullYear();
+    const month = today.getMonth() - born.getMonth();
+
+    if (month < 0 || (month === 0 && today.getDate() < born.getDate())) {
+        age--;
+    }
+
+    if (!age) {
+        return ('')
+    }
+
+    return (age)
+};

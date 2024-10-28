@@ -17,7 +17,8 @@ import { Competition } from '../pages/EventJudge/Competition';
 import { Results } from '../pages/Results';
 import { PrintEvent } from '../pages/CadastroEvento/PrintEvent';
 import { PrintEventHorsesWithChip } from '../pages/CadastroEvento/PrintEventHorsesWithChip';
-
+import { PrintAllResults } from '../pages/Results/PrintAllResults'
+import { PrintWinners } from '../pages/Results/PrintWinners'
 
 export function SupRoutes() {
     return (
@@ -43,6 +44,9 @@ export function SupRoutes() {
 
             <Route path='/evento/impressao/:id' element={<PrintEvent/>}></Route>
             <Route path='/evento/impressaoCavalos/:id' element={<PrintEventHorsesWithChip/>}></Route>
+
+            <Route path='/resultados/impressao/:id' element={<PrintAllResults/>}></Route>
+            <Route path='/resultados/impressao/vencedores/:id' element={<PrintWinners/>}></Route>
 
             <Route path='/evento/juiz/competition/:id' element={<Competition/>}/>
 

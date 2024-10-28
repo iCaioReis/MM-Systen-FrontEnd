@@ -65,7 +65,7 @@ export function orderResults(data) {
             ncpItems.sort((a, b) => a.competitor_name.localeCompare(b.competitor_name));
 
             // Combina todos os grupos na ordem desejada
-            const finalSortedData = [...validItems, ...satItems, ...invalidItems, ...ncpItems];
+            const finalSortedData = [...validItems, ...invalidItems, ...satItems, ...ncpItems];
 
             categorie.competitors = finalSortedData;
         });

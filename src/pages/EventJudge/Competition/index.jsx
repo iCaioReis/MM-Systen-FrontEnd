@@ -30,7 +30,6 @@ export function Competition() {
     const [horsePicture, setHorsePicture] = useState(avatarPlaceholder);
     const [upcomingCompetitors, setUpcomingCompetitors] = useState([]);
     const [ranking, setRanking] = useState();
-
     const params = useParams();
 
     useEffect(() => {
@@ -84,13 +83,13 @@ export function Competition() {
                         const totalTime = Number(item.time) + (Number(item.fouls) * 5); // Garante que seja um número
                         // Converte o totalTime para string e formata com 3 casas decimais
                         const totalTimeString = totalTime.toFixed(3);
+                        
                         const [integerPart, decimalPart] = totalTimeString.split('.');
 
                         // Preenche com zeros à esquerda o número inteiro
                         const formattedIntegerPart = integerPart.padStart(3, '0');
                         // Preenche com zeros à direita o número decimal, se necessário
                         const formattedDecimalPart = decimalPart.padEnd(3, '0');
-
                         // Junta as partes formatadas
                         item.total_time = `${formattedIntegerPart}.${formattedDecimalPart}`;
 
@@ -130,6 +129,7 @@ export function Competition() {
 
                     setLoading(false);
                 } catch (error) {
+                    console.log(error)
                     toast.error(`Failed to fetch data: ${error.message}`);
                 }
             }
@@ -165,6 +165,27 @@ export function Competition() {
         setRefresh(prev => !prev);
     };
     const handleFinish = () => {
+        console.log(competingRegisterNumber)
+        console.log(!competingRegisterData.NCP)
+        if(!competingRegisterData.time && !competingRegisterData.SAT && !competingRegisterData.NCP){
+            return (Swal.fire({
+                title: 'Erro!',
+                text: 'Você não digitou nenhum tempo e nem registrou nenhuma falta!',
+                icon: 'error',
+                confirmButtonText: 'Ok'
+              }))
+        }
+
+        if(competingRegisterData.time == "000.000" && !competingRegisterData.SAT && !competingRegisterData.NCP){
+            return (Swal.fire({
+                title: 'Erro!',
+                text: 'Você não digitou nenhum tempo e nem registrou nenhuma faltaaaaaa!',
+                icon: 'error',
+                confirmButtonText: 'Ok'
+              }))
+        }
+
+
         competingRegisterData.state = "finished";
         competingRegisterData.time = competingRegisterData.time.replace(/_/g, '0');
         async function putTimeAndState() {
@@ -406,12 +427,11 @@ export function Competition() {
 
                                                 {isDuplicateTime && competingRegisterData.state == "finished" &&
                                                     Swal.fire({
-                                                        title: 'Atenção!',
-                                                        text: 'Existem competidores com os mesmos tempos entre os primeiros colocados',
-                                                        icon: 'warning',
-                                                        confirmButtonText: 'Ok'
-                                                      })
-                                                }
+                                                    title: 'Atenção!',
+                                                    text: 'Existem competidores com os mesmos tempos entre os primeiros colocados',
+                                                    icon: 'warning',
+                                                    confirmButtonText: 'Ok'
+                                                  })}
 
                                                 return (
                                                     <tr key={index}>

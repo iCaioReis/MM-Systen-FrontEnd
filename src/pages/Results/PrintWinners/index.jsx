@@ -3,6 +3,9 @@ import 'react-toastify/dist/ReactToastify.css';
 import { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 
+import { FormatStatus } from '../../../utils/formatDatas.js';
+import { orderResults } from '../../../utils/orderResults.js';
+
 import logo from "/logo.png";
 
 import { FormatCategory, FormatProof } from '../../../utils/formatDatas.js';
@@ -20,22 +23,39 @@ const initialData = {
     end_date: "",
 };
 const header = {
-    competitor_order: "",
+    N: "",
     competitor_name: "",
     horse_name: "",
-    horse_chip: "",
-    campNull1: "",
-    campNull2: "",
-    campNull3: ""
+    time: "",
+    fouls: "",
+    total_time: "",
+    points: ""
 };
 
-export function PrintEvent() {
+export function PrintWinners() {
     const [data, setData] = useState(initialData);
     const [event, setEvent] = useState();
     const [results, setResults] = useState();
     const [loading, setLoading] = useState(true);
 
     const params = useParams();
+
+    const calculatePoints = (index) => {
+        const tablePontis = [
+            17,
+             13,
+             10,
+             8,
+             7,
+             6,
+             5,
+             4,
+             3,
+             2
+        ]
+        const points = tablePontis[index] || 1
+        return(points )
+    }
 
     useEffect(() => {
         document.body.style.backgroundColor = "#ffffff";
@@ -46,8 +66,15 @@ export function PrintEvent() {
                     const eventData = await api.get(`/events/${params.id}`);
                     const results = await api.get(`/results/${params.id}`);
 
+                    // Clonamos o objeto results para evitar mutações diretas
+                    const sortedResults = { ...results.data };
+
+                    orderResults(sortedResults)
+                    console.log(sortedResults)
+
+                    // Atualiza o estado com os dados ordenados
                     setEvent(eventData.data);
-                    setResults(results.data);
+                    setResults(sortedResults);
                     setLoading(false);
                 } catch (error) {
                     const errorMessage = error.response?.data?.message || error.message;
@@ -75,7 +102,6 @@ export function PrintEvent() {
     return (
         <Container className='content'>
 
-
             {results && results.proofs.map((prooff, prooffIndex) => {
                 return (
                     <div className='data page-break' key={prooffIndex}>
@@ -83,7 +109,7 @@ export function PrintEvent() {
                             <div><img src={logo} alt="" /></div>
                             <div><h1>{data.name}</h1></div>
                         </header>
-                      
+
                         {prooff.categories.map((categoriee, categoryIndex) => {
                             return (
                                 <div className='ProofCategoryContainer' key={categoryIndex}>
@@ -97,27 +123,43 @@ export function PrintEvent() {
                                                 <td>N</td>
                                                 <td className='col1'>Nome do Cavaleiro</td>
                                                 <td className='col1'>Nome do Animal</td>
-                                                <td className='col2'>CHIP</td>
                                                 <td className='col2'>Tempo Apurado</td>
                                                 <td>Penalidades</td>
                                                 <td className='col2'>Tempo total</td>
-                                                <td className='col1'>Observação</td>
+                                                <td className='col2'>Pontos</td>
                                             </tr>
                                         </thead>
                                         <tbody>
                                             {categoriee.competitors &&
                                                 categoriee.competitors
-                                                    .sort((a, b) => a.competitor_order - b.competitor_order)
                                                     .map((row, index) => {
-                                                        return (
-                                                            <tr key={index}>
-                                                                {Object.keys(header).map((field, subIndex) => {
-                                                                    return (
-                                                                        <td key={subIndex}>{row[field]}</td>
-                                                                    );
-                                                                })}
-                                                            </tr>
-                                                        );
+
+                                                        if(index <= 2 && row.valid != false) {
+                                                            return (
+                                                                <tr key={index}>
+                                                                    {Object.keys(header).map((field, subIndex) => {
+                                                                        if(field == "N"){
+                                                                            return (
+                                                                                <td key={subIndex}>
+                                                                                    {index + 1 }
+                                                                                </td>
+                                                                            );
+                                                                        }
+                                                                        if (field === "points") {
+                                                                            const obs = row.SAT ? "SAT" : row.NCP ? "NCP" : row.valid == false ? "Descartado" : calculatePoints(index);
+                                                                            return (
+                                                                                <td key={subIndex}>
+                                                                                    {obs}
+                                                                                </td>
+                                                                            );
+                                                                        }
+                                                                        return (
+                                                                            <td key={subIndex}>{row[field]}</td>
+                                                                        );
+                                                                    })}
+                                                                </tr>
+                                                            );
+                                                        }
                                                     })}
                                         </tbody>
                                     </table>
@@ -128,9 +170,6 @@ export function PrintEvent() {
                     </div>
                 )
             })}
-
-
-
 
             <ToastContainer />
         </Container>

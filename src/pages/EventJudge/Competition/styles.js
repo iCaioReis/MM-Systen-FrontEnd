@@ -379,7 +379,7 @@ export const RankingCompetitorsTable = styled.div`
       }
 
       .bg_yellow {
-        background-color: #ffff00;
+        background-color: #ffd700;
     }
    }
 `;

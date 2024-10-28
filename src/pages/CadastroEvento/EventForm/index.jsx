@@ -145,7 +145,6 @@ export function EventFormm({ event, mode = "add", refresh }) {
                     });
 
                 setLastRegisters([...lastRegisters, { competitor: selectedCompetitor.name, horse: selectedHorse.name, category: selectedCategory }]);
-
                 setSelectedCompetitorId(null);
                 setSelectedHorseId(null);
                 setSelectedCategory("");
@@ -223,6 +222,7 @@ export function EventFormm({ event, mode = "add", refresh }) {
                             </Select>
 
                             <Button onClick={handleSaveCompetitor}>Adicionar</Button>
+                            <ToastContainer />
                         </div>
 
                         {

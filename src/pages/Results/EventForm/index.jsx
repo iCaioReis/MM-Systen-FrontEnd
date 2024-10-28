@@ -46,7 +46,7 @@ const header = {
     fouls: "Faltas",
     acress: "Acréssimo",
     totalTime: "Tempo total",
-    obs: "Observação"
+    obs: "Pontos"
 };
 
 export function EventFormm({ mode = "show" }) {
@@ -58,6 +58,13 @@ export function EventFormm({ mode = "show" }) {
     const [loading, setLoading] = useState(true);
 
     const params = useParams();
+
+    function handleResultsDatails(id) {
+        window.open(`/resultados/impressao/${id}`, '_blank');
+    }
+    function handleWinnersDatails(id) {
+        window.open(`/resultados/impressao/vencedores/${id}`, '_blank');
+    }
 
     useEffect(() => {
         if (params.id) {
@@ -98,6 +105,23 @@ export function EventFormm({ mode = "show" }) {
         )
     };
 
+    const calculatePoints = (index) => {
+        const tablePontis = [
+            17,
+             13,
+             10,
+             8,
+             7,
+             6,
+             5,
+             4,
+             3,
+             2
+        ]
+        const points = tablePontis[index] || 1
+        return(points )
+    }
+
     return (
         <Form>
             <Profile>
@@ -116,7 +140,10 @@ export function EventFormm({ mode = "show" }) {
                     disabled
                     status
                 />
+                <Button onClick={() => handleResultsDatails(data.id)}>Imprimir Resultados</Button>
+                <Button onClick={() => handleWinnersDatails(data.id)}>Imprimir Ganhadores</Button>
                 <Button onClick={() => generateExcelTable(results)}>Exportar Excel</Button>
+                
             </Profile>
 
             <MainForm>
@@ -237,7 +264,7 @@ export function EventFormm({ mode = "show" }) {
                                                 }
 
                                                 if (field === "obs") {
-                                                    const obs = row.SAT ? "SAT" : row.NCP ? "NCP" : row.valid == false ? "Descartado" : "" ;
+                                                    const obs = row.SAT ? "SAT" : row.NCP ? "NCP" : row.valid == false ? "Descartado" : calculatePoints(index);
                                                     return (
                                                         <td key={subIndex}>
                                                             {obs}

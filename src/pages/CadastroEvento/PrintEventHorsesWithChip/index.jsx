@@ -2,11 +2,10 @@ import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
-import ReactLoading from 'react-loading';
 
 import logo from "/logo.png";
 
-import { FormatCategory, FormatProof } from '../../../utils/formatDatas.js';
+import { FormatCategory, FormatProof, FormatDate, calculateHorseAge } from '../../../utils/formatDatas.js';
 
 import { api } from '../../../services/api.js';
 
@@ -15,8 +14,12 @@ import { Container } from "./styles";
 const header = {
     ID: "",
     horse_name: "",
+    horse_record: "",
     horse_chip: "",
-    campNull1: "",
+    horse_gender: "",
+    horse_march: "",
+    horse_born: "",
+    horse_age: ""
 };
 
 export function PrintEventHorsesWithChip() {
@@ -36,6 +39,7 @@ export function PrintEventHorsesWithChip() {
                     setResults(results.data);
                     setLoading(false);
                     returnEventHorses(results.data.proofs);
+                    console.log(results);
                 } catch (error) {
                     const errorMessage = error.response?.data?.message || error.message;
                     toast.error(errorMessage);
@@ -87,8 +91,12 @@ export function PrintEventHorsesWithChip() {
                         <tr>
                             <td>ID</td>
                             <td className='col1'>Nome do Animal</td>
-                            <td className='col1'>Chip</td>
-                            <td className='col1'>Observação</td>
+                            <td className='col2'>Registro</td>
+                            <td className='col3'>Chip</td>
+                            <td className='col2'>Sexo</td>
+                            <td className='col2'>Marcha</td>
+                            <td className='col3'>Nascimento</td>
+                            <td className='col3'>Idade</td>
                         </tr>
                     </thead>
                     <tbody>
@@ -103,6 +111,29 @@ export function PrintEventHorsesWithChip() {
                                                     <td key={subIndex}>{row.horse_id}</td>
                                                 );
                                             }
+                                            if (field == "horse_gender") {
+                                                return (
+                                                    <td key={subIndex}>{row.horse_gender == "stallion" ? "Castrado" : row.horse_gender == "mare" ? "Égua" : "Garanhão"}</td>
+                                                );
+                                            }
+                                            if (field == "horse_march") {
+                                                return (
+                                                    <td key={subIndex}>{row.horse_march == "beat" ? "Batida" : "Picada"}</td>
+                                                );
+                                            }
+
+                                            if (field == "horse_born") {
+                                                return (
+                                                    <td key={subIndex}>{FormatDate(row.horse_born)}</td>
+                                                );
+                                            }
+
+                                            if (field == "horse_age") {
+                                                return (
+                                                    <td key={subIndex}>{calculateHorseAge(row.horse_born)}</td>
+                                                );
+                                            }
+                                            
                                             return (
                                                 <td key={subIndex}>{row[field]}</td>
                                             );

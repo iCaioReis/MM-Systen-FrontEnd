@@ -23,7 +23,7 @@ const initialData = {
     end_date: "",
 };
 const header = {
-    competitor_order: "",
+    classification: "",
     competitor_name: "",
     horse_name: "",
     time: "",
@@ -120,7 +120,7 @@ export function PrintAllResults() {
                                     <table>
                                         <thead>
                                             <tr>
-                                                <td>N</td>
+                                                <td>Classificação</td>
                                                 <td className='col1'>Nome do Cavaleiro</td>
                                                 <td className='col1'>Nome do Animal</td>
                                                 <td className='col2'>Tempo Apurado</td>
@@ -143,6 +143,19 @@ export function PrintAllResults() {
                                                                                 {obs}
                                                                             </td>
                                                                         );
+                                                                    }
+                                                                    if (field == "classification"){
+                                                                    const obs = row.SAT ? "SAT" : row.NCP ? "NCP" : "Descartado"
+
+                                                                       if(row.valid){
+                                                                        return (
+                                                                            <td key={subIndex}>{index + 1 + " º"}</td>
+                                                                        )
+                                                                       }
+                                                                    
+                                                                        return (
+                                                                            <td key={subIndex}>{obs}</td>
+                                                                        )
                                                                     }
                                                                     return (
                                                                         <td key={subIndex}>{row[field]}</td>

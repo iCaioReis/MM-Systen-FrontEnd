@@ -181,6 +181,9 @@ export function EventFormm({ event, mode = "add", refresh }) {
     function navigateToPrintHorsePage(id) {
         window.open(`/evento/impressaoCavalos/${id}`, '_blank');
     };
+    function navigateToPrintCompetitors(id) {
+        window.open(`/evento/impressaoCompetidores/${id}`, '_blank');
+    };
 
     return (
         <Form>
@@ -300,6 +303,10 @@ export function EventFormm({ event, mode = "add", refresh }) {
                     {params.id &&
                         <Button type={"button"} onClick={() => navigateToPrintHorsePage(params.id)}>Imprimir Cavalos</Button>
                     }
+                    {params.id &&
+                        <Button type={"button"} onClick={() => navigateToPrintHorsePage(params.id)}>Imprimir Competidores</Button>
+                    }
+
 
                     {mode != 'add' && isEditing && data.state == 'active' &&
                         <Button className={"danger"}

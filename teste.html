@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<style>
+    table {
+        border-collapse: collapse;
+        width: 100%;
+        background-color: #fff;
+
+        border-collapse: separate;
+        border-spacing: 0 3px;
+    }
+
+    td {
+        padding: 10px;
+    }
+
+    tr {
+        position: relative;
+        transition: transform .5s ease;
+
+    }
+
+    tr.moving {
+        z-index: 10;
+        margin: 0;
+
+        animation: mymove .7s ease-out;
+
+        /* Eleva a linha para o topo durante a animação */
+    }
+
+    .abaixo {
+        border: 5px solid #0A2006;
+        transition: transform 0.5s ease;
+    }
+
+    @keyframes mymove {
+        25% {
+            -webkit-box-shadow: 0px 0px 5px 0px rgba(23, 74, 10, 0.16);
+            -moz-box-shadow: 0px 0px 5px 0px rgba(23, 74, 10, 0.16);
+            box-shadow: 0px 0px 5px 0px rgba(23, 74, 10, 0.16);
+        }
+    }
+
+    th {
+        padding: .5rem 1rem;
+    }
+
+
+    td {
+        padding: 0 1rem;
+
+        background: #0A2006;
+
+        border-left: 1px solid #99ba91;
+
+        background-color: #D6E7B4;
+    }
+
+    td:nth-child(1) {
+        border-left: none;
+    }
+</style>
+
+<body>
+    <table id="competitorTable">
+        <tr>
+            <td>Competidor 1</td>
+            <td>
+                <button onclick="moveRow(this, -1)">⬆️</button>
+                <button onclick="moveRow(this, 1)">⬇️</button>
+            </td>
+        </tr>
+        <tr>
+            <td>Competidor 2</td>
+            <td>
+                <button onclick="moveRow(this, -1)">⬆️</button>
+                <button onclick="moveRow(this, 1)">⬇️</button>
+            </td>
+        </tr>
+        <tr>
+            <td>Competidor 3</td>
+            <td>
+                <button onclick="moveRow(this, -1)">⬆️</button>
+                <button onclick="moveRow(this, 1)">⬇️</button>
+            </td>
+        </tr>
+    </table>
+
+</body>
+<script>
+    function moveRow1(button, direction) {
+        const row = button.parentNode.parentNode; // Encontra a linha atual
+        const table = row.parentNode;
+        const rows = Array.from(table.children); // Todas as linhas
+
+        // Determina o próximo índice da linha, dependendo da direção
+        const newIndex = Array.from(table.children).indexOf(row) + direction;
+
+        // Verifica se o próximo índice está dentro dos limites da tabela
+        if (newIndex < 0 || newIndex >= table.children.length) return;
+
+        // Adiciona a classe para elevar a linha
+        row.classList.add('moving');
+        rows[newIndex].classList.add('abaixo');
+        
+        // Animação de transição
+        row.style.transform = `translateY(${direction * -100}%)`;
+        rows[newIndex].style.transform = 'translateY(0)';
+
+        // Insere a linha na nova posição
+        table.insertBefore(row, table.children[newIndex + (direction === 1 ? 1 : 0)]);
+
+        setTimeout(() => {
+            row.style.transform = 'translateY(0)';
+            rows[newIndex].style.transform = 'translateY(0)';
+        }, 0);
+
+        setTimeout(() => {
+            row.classList.remove('moving');
+            rows[newIndex].classList.remove('shifted');
+        }, 500); // Tempo para a animação terminar (corresponde ao transition definido em CSS)
+    }
+
+    function moveRow(button, direction) {
+        const row = button.parentNode.parentNode; // Encontra a linha atual
+        const table = row.parentNode;
+        const rows = Array.from(table.children); // Todas as linhas
+
+        // Determina o próximo índice da linha, dependendo da direção
+        const newIndex = Array.from(table.children).indexOf(row) + direction;
+
+        // Verifica se o próximo índice está dentro dos limites da tabela
+        if (newIndex < 0 || newIndex >= table.children.length) return;
+
+        // Adiciona a classe para elevar a linha
+        row.classList.add('moving');
+        rows[newIndex].classList.add('abaixo');
+        
+        // Animação de transição
+        row.style.transform = `translateY(${direction * -100}%)`;
+        rows[newIndex].style.transform = `translateY(${direction * 100}%)`;
+
+        // Insere a linha na nova posição
+        table.insertBefore(row, table.children[newIndex + (direction === 1 ? 1 : 0)]);
+
+        setTimeout(() => {
+            row.style.transform = 'translateY(0)';
+            rows[newIndex].style.transform = 'translateY(0)';
+        }, 0);
+
+        setTimeout(() => {
+            row.classList.remove('moving');
+            rows[newIndex].classList.remove('abaixo');
+        }, 500); // Tempo para a animação terminar (corresponde ao transition definido em CSS)
+    }
+
+</script>
+
+</html>

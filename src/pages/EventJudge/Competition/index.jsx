@@ -32,6 +32,8 @@ export function Competition() {
     const [ranking, setRanking] = useState();
     const params = useParams();
 
+    const broadcast = new BroadcastChannel('placar-channel');
+
     useEffect(() => {
         async function fetchData() {
             try {
@@ -126,7 +128,6 @@ export function Competition() {
                     topRanking.sort((a, b) => a.total_time - b.total_time);
 
                     setRanking(topRanking.slice(0, 4))
-
                     setLoading(false);
                 } catch (error) {
                     console.log(error)
@@ -137,6 +138,12 @@ export function Competition() {
             handleUpcomingCompetitors();
         }
     }, [refresh, competingRegisterNumber]);
+
+    useEffect(() => {
+        if(competingRegisterData){
+            broadcast.postMessage(competingRegisterData);
+        }
+    }, [competingRegisterData]);
 
     const handleNextCompetitor = () => {
         if ((competingRegisterNumber + 1) == categoryData.competitorHorses.length) { return };
@@ -165,8 +172,6 @@ export function Competition() {
         setRefresh(prev => !prev);
     };
     const handleFinish = () => {
-        console.log(competingRegisterNumber)
-        console.log(!competingRegisterData.NCP)
         if(!competingRegisterData.time && !competingRegisterData.SAT && !competingRegisterData.NCP){
             return (Swal.fire({
                 title: 'Erro!',
@@ -179,7 +184,7 @@ export function Competition() {
         if(competingRegisterData.time == "000.000" && !competingRegisterData.SAT && !competingRegisterData.NCP){
             return (Swal.fire({
                 title: 'Erro!',
-                text: 'Você não digitou nenhum tempo e nem registrou nenhuma faltaaaaaa!',
+                text: 'Você não digitou nenhum tempo e nem registrou nenhuma falta!',
                 icon: 'error',
                 confirmButtonText: 'Ok'
               }))

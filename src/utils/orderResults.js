@@ -56,7 +56,7 @@ export function orderResults(data) {
             const ncpItems = categorie.competitors.filter(item => item.NCP === 1);
 
             // Ordena os itens válidos pelo tempo, do menor para o maior
-            validItems.sort((a, b) => a.time - b.time);
+            validItems.sort((a, b) => a.total_time - b.total_time);
 
 
             // Ordena os outros itens em ordem alfabética por competitor_name

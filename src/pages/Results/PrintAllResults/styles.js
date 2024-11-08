@@ -82,4 +82,8 @@ export const Container = styled.div`
     page-break-inside: avoid; /* Não quebrar dentro do elemento */
     break-inside: avoid;       /* Usando o CSS moderno */
 }
+
+.red {
+    color: ${({ theme }) => theme.COLORS.RED};
+}
 `;

@@ -37,24 +37,27 @@ export function PrintAllResults() {
     const [event, setEvent] = useState();
     const [results, setResults] = useState();
     const [loading, setLoading] = useState(true);
+    const [totalPassadas3t, setTotalPassadas3t] = useState(0);
+    const [totalPassadas6b, setTotalPassadas6b] = useState(0);
+    const [totalPassadasManeabilidade, setTotalPassadasManeabilidade] = useState(0);
 
     const params = useParams();
 
     const calculatePoints = (index) => {
         const tablePontis = [
             17,
-             13,
-             10,
-             8,
-             7,
-             6,
-             5,
-             4,
-             3,
-             2
+            13,
+            10,
+            8,
+            7,
+            6,
+            5,
+            4,
+            3,
+            2
         ]
         const points = tablePontis[index] || 1
-        return(points )
+        return (points)
     }
 
     useEffect(() => {
@@ -66,11 +69,40 @@ export function PrintAllResults() {
                     const eventData = await api.get(`/events/${params.id}`);
                     const results = await api.get(`/results/${params.id}`);
 
+                    let TotalPassadasManeabilidade = 0;
+                    let TotalPassadas6b = 0;
+                    let TotalPassadas3t = 0;
+
+                    results.data.proofs.map((proof) => {
+                        proof.categories.map((categorie) => {
+                            categorie.competitors.map((competitor) => {
+                                if (competitor.NCP == 0) {
+                                    if (proof.name == "seis_balizas") {
+                                        TotalPassadas6b++
+                                        return
+                                    }
+                                    if (proof.name == "tres_tambores") {
+                                        TotalPassadas3t++
+                                        return
+                                    }
+                                    if (proof.name == "maneabilidade") {
+                                        TotalPassadasManeabilidade++
+                                        return
+                                    }
+                                }
+                            })
+                        })
+                    })
+
+                    setTotalPassadasManeabilidade(TotalPassadasManeabilidade);
+                    setTotalPassadas6b(TotalPassadas6b);
+                    setTotalPassadas3t(TotalPassadas3t);
+
+
                     // Clonamos o objeto results para evitar mutações diretas
                     const sortedResults = { ...results.data };
 
                     orderResults(sortedResults)
-                    console.log(sortedResults)
 
                     // Atualiza o estado com os dados ordenados
                     setEvent(eventData.data);
@@ -144,15 +176,15 @@ export function PrintAllResults() {
                                                                             </td>
                                                                         );
                                                                     }
-                                                                    if (field == "classification"){
-                                                                    const obs = row.SAT ? "SAT" : row.NCP ? "NCP" : "Descartado"
+                                                                    if (field == "classification") {
+                                                                        const obs = row.SAT ? "SAT" : row.NCP ? "NCP" : "Descartado"
 
-                                                                       if(row.valid){
-                                                                        return (
-                                                                            <td key={subIndex}>{index + 1 + " º"}</td>
-                                                                        )
-                                                                       }
-                                                                    
+                                                                        if (row.valid) {
+                                                                            return (
+                                                                                <td key={subIndex}>{index + 1 + " º"}</td>
+                                                                            )
+                                                                        }
+
                                                                         return (
                                                                             <td key={subIndex}>{obs}</td>
                                                                         )
@@ -173,6 +205,36 @@ export function PrintAllResults() {
                     </div>
                 )
             })}
+
+            {results &&
+                <table>
+                    <thead>
+                        <tr>
+                            <td width={200}>Prova</td>
+                            <td width={400}>Total de passadas válidas</td>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Seis Balizas</td>
+                            <td>{totalPassadas6b + " Passadas válidas"}</td>
+                        </tr>
+                        <tr>
+                            <td>Três tambores</td>
+                            <td>{totalPassadas3t + " Passadas válidas"}</td>
+                        </tr>
+                        <tr>
+                            <td>Maneabilidade</td>
+                            <td>{totalPassadasManeabilidade + " Passadas válidas"}</td>
+                        </tr>
+
+                        <tr>
+                            <td colSpan={2} className='red'>TODAS AS PASSADAS, EXCETO AS NPC</td>
+                        </tr>
+                    </tbody>
+
+                </table>
+            }
 
             <ToastContainer />
         </Container>

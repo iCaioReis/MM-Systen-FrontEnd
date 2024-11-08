@@ -52,7 +52,6 @@ export function ModalCategory({ isOpen, onClose, category }) {
       const res = await api.get(`/categoryRegisters/${category.id}`);
       setStatus(res.data.status)
       setCompetitorsWithHorses(res.data.competitorHorses);
-      console.log(res.data.competitorHorses)
     }
     fethCompetitors();
   }, [refresh]);
@@ -77,7 +76,6 @@ export function ModalCategory({ isOpen, onClose, category }) {
       toast.error(errorMessage)
     }
   };
-
   const handleModalConfirm = (competitor) => {
     setIsModalConfirmVisible(!isModalConfirmVisible);
     { competitor && setRegisterToDelete(competitor) }
@@ -90,15 +88,33 @@ export function ModalCategory({ isOpen, onClose, category }) {
       { id: register.competitor_id, name: register.competitor_name },
       { id: register.horse_id, name: register.horse_name }]);
 
+    if (showModalEditRegister) {
+      setEditHorseId(null);
+      setEditRegisterId(null);
+      setEditCompetitorId(null);
+    }
+
     setShowModalEditRegister(!showModalEditRegister);
   };
   const handleDeleteRegister = async (id) => {
     try {
+      const registerToDelete = competitorsWithHorses.find(register => register.id == id);
+
+      const newOrder = competitorsWithHorses.map((competitor) => {
+
+        if(competitor.competitor_order > registerToDelete.competitor_order){
+          competitor.competitor_order--
+        }
+
+        return competitor
+      })
       await api.delete(`/categoryRegisters/${id}`);
       setRefresh(prev => !prev)
       setSelectedCompetitorId(null);
       setSelectedHorseId(null);
       setClearSelection(true);
+      saveNewOrder(newOrder);
+
       setTimeout(() => setClearSelection(false), 0);
       toast.success("Registro excluído com sucesso!");
     } catch (error) {
@@ -140,9 +156,7 @@ export function ModalCategory({ isOpen, onClose, category }) {
   const handleEditRegister = async () => {
     try {
       await api.put(`categoryRegisters/${editRegisterId}`, { "competitor_id": editCompetitorId, "horse_id": editHorseId });
-      setEditHorseId(null);
-      setEditRegisterId(null);
-      setEditCompetitorId(null);
+
       setRefresh(prev => !prev);
       toast.success("Registro salvo com sucesso!");
     } catch (error) {
@@ -184,9 +198,7 @@ export function ModalCategory({ isOpen, onClose, category }) {
       newOrder[order].competitor_order -= 1;
       saveNewOrder(newOrder);
     }
-
   };
-
   const saveNewOrder = async (order) => {
     try {
       await api.put(`/sortCategoryRegisters`, order);
@@ -212,13 +224,13 @@ export function ModalCategory({ isOpen, onClose, category }) {
                 table="competitors"
                 initialId={2}
                 initialData={registerToEdit[0]}
-                onItemSelected={(id) => setEditCompetitorId(id)}
+                onItemSelected={(item) => setEditCompetitorId(item.id)}
               />
               <SearchDropdown
                 tabindex="1"
                 table="horses"
                 initialData={registerToEdit[1]}
-                onItemSelected={(id) => setEditHorseId(id)}
+                onItemSelected={(item) => setEditHorseId(item.id)}
               />
               <Button onClick={() => handleEditRegister()}>Salvar</Button>
             </div>
@@ -283,7 +295,7 @@ export function ModalCategory({ isOpen, onClose, category }) {
                           <div className="flex-buttons">
                             <button className='up' onClick={() => handleOrderRegister({ direction: "up", order: row.competitor_order })}><FaArrowTurnUp /></button>
 
-                            {index + 1}
+                            {row.competitor_order}
 
                             <button className='down' onClick={() => handleOrderRegister({ direction: "down", order: row.competitor_order })}><FaArrowTurnDown /></button>
                           </div>
@@ -355,7 +367,7 @@ export function ModalCategory({ isOpen, onClose, category }) {
 
         </Status>
       </div>
-      <ToastContainer/>
+      <ToastContainer />
     </ModalOverlay>
   );
 };

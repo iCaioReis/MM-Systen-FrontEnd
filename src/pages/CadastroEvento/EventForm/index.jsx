@@ -304,7 +304,7 @@ export function EventFormm({ event, mode = "add", refresh }) {
                         <Button type={"button"} onClick={() => navigateToPrintHorsePage(params.id)}>Imprimir Cavalos</Button>
                     }
                     {params.id &&
-                        <Button type={"button"} onClick={() => navigateToPrintHorsePage(params.id)}>Imprimir Competidores</Button>
+                        <Button type={"button"} onClick={() => navigateToPrintCompetitors(params.id)}>Imprimir Competidores</Button>
                     }
 
 

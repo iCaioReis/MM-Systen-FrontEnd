@@ -13,7 +13,7 @@ export const Container = styled.div`
         flex-direction: column;
         align-items: center;
         justify-content: center;
-        gap: 2rem;
+        gap: .5rem;
 
         a {
             color: #ffffff;
@@ -34,6 +34,14 @@ export const UserSection = styled.div`
 
     > a {
         color: ${({ theme }) => theme.COLORS.LIGHT_100};
+
+        &:hover {
+            background-color: ${({ theme }) => theme.COLORS.THEME_700};
+        }
+
+        &.selected {
+            background-color: ${({ theme }) => theme.COLORS.THEME_900};
+        }
     }
     
 `;
@@ -57,5 +65,82 @@ export const Profile = styled(Link)`
     > div {
         display: flex;
         flex-direction: column;
+    }
+`;
+
+export const SubMenu = styled.div`
+    button {
+        background-color: transparent;
+        width: 16rem;
+        position: relative;
+        z-index: 100 !important;
+
+        border-style: none;
+        border-radius: 8px;
+
+        padding: .7rem 1.5rem;
+        font-size: 1.3rem;
+        color: #ffffff;
+
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+
+        > div {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+        }
+
+        &:hover {
+            background-color: ${({ theme }) => theme.COLORS.THEME_700};
+        }
+
+        &.selected {
+            background-color: ${({ theme }) => theme.COLORS.THEME_900};
+
+            > svg {
+                transform: rotate(90deg);
+                transition: transform 0.5s ease;
+            }
+        }
+    }
+
+    @keyframes showMenu {
+        from {top: -50px;}
+        to {top: 0}
+    }
+            
+     nav {
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+        position: relative;
+     
+     
+        animation-name: showMenu;
+        animation-duration: .5s;
+
+        margin-top: .5rem;
+
+        > a {
+            margin-left: 3rem;
+            white-space: nowrap;
+            width: min-content;
+            padding: .2rem 0 ;
+            
+            font-size: 1rem;
+            border-bottom: 1px solid transparent;
+
+            &:hover {
+                background-color: transparent;
+                border-bottom: 1px solid ${({ theme }) => theme.COLORS.LIGHT_100};
+            }
+
+            &.selected {
+                background-color: transparent;
+                border-bottom: 1px solid ${({ theme }) => theme.COLORS.LIGHT_100};
+            }
+       }
     }
 `;

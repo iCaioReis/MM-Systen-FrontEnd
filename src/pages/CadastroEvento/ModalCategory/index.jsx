@@ -102,7 +102,7 @@ export function ModalCategory({ isOpen, onClose, category }) {
 
       const newOrder = competitorsWithHorses.map((competitor) => {
 
-        if(competitor.competitor_order > registerToDelete.competitor_order){
+        if (competitor.competitor_order > registerToDelete.competitor_order) {
           competitor.competitor_order--
         }
 
@@ -304,21 +304,24 @@ export function ModalCategory({ isOpen, onClose, category }) {
                       if (field === 'button') {
                         return (
                           <td key={subIndex}>
-                            <div className="flex-buttons">
-                              <button
-                                className='edit'
-                                onClick={() => handleModalEditRegister(row)}
-                              ><FaPencil /></button>
-                              <button
-                                className={"delete"}
-                                onClick={() => handleModalConfirm({
-                                  id: row.id,
-                                  competitor: row.competitor_name,
-                                  horse: row.horse_name
-                                })}>
-                                <FaRegTrashCan />
-                              </button>
-                            </div>
+                            {status.categorie_state == 'active' &&
+                              <div className="flex-buttons">
+                                <button
+                                  className='edit'
+                                  onClick={() => handleModalEditRegister(row)}
+                                ><FaPencil /></button>
+
+                                <button
+                                  className={"delete"}
+                                  onClick={() => handleModalConfirm({
+                                    id: row.id,
+                                    competitor: row.competitor_name,
+                                    horse: row.horse_name
+                                  })}>
+                                  <FaRegTrashCan />
+                                </button>
+                              </div>
+                            }
                           </td>
                         );
                       }
@@ -361,13 +364,13 @@ export function ModalCategory({ isOpen, onClose, category }) {
             <Button className={"danger"} onClick={() => handleStateCategory("inative")}>Inativar</Button>
           }
 
-          {(status.categorie_state === "inative" || status.categorie_state === "finished_inscriptions") &&
+          {(status.categorie_state != "active") &&
             <Button onClick={() => handleStateCategory("active")}>Reativar</Button>
           }
 
         </Status>
       </div>
-      <ToastContainer />
+      <ToastContainer position="top-left" />
     </ModalOverlay>
   );
 };

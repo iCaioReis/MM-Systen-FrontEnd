@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 
 import { FaArrowRight } from "react-icons/fa6";
+import { PiPrinter } from "react-icons/pi";
 
 import avatarPlaceholder from "../../../assets/user.svg";
 
@@ -65,6 +66,9 @@ export function EventFormm({ mode = "show" }) {
     function handleWinnersDatails(id) {
         window.open(`/resultados/impressao/vencedores/${id}`, '_blank');
     }
+    function handleOverallRating(id) {
+        window.open(`/resultados/impressao/classificacao-geral/${id}`, '_blank');
+    }
 
     useEffect(() => {
         if (params.id) {
@@ -75,9 +79,9 @@ export function EventFormm({ mode = "show" }) {
 
                     // Clonamos o objeto results para evitar mutações diretas
                     const sortedResults = { ...results.data };
-    
+
                     orderResults(sortedResults)
-                
+
                     // Atualiza o estado com os dados ordenados
                     setEvent(eventData.data);
                     setResults(sortedResults);
@@ -108,18 +112,18 @@ export function EventFormm({ mode = "show" }) {
     const calculatePoints = (index) => {
         const tablePontis = [
             17,
-             13,
-             10,
-             8,
-             7,
-             6,
-             5,
-             4,
-             3,
-             2
+            13,
+            10,
+            8,
+            7,
+            6,
+            5,
+            4,
+            3,
+            2
         ]
         const points = tablePontis[index] || 1
-        return(points )
+        return (points)
     }
 
     return (
@@ -140,10 +144,12 @@ export function EventFormm({ mode = "show" }) {
                     disabled
                     status
                 />
-                <Button onClick={() => handleResultsDatails(data.id)}>Imprimir Resultados</Button>
-                <Button onClick={() => handleWinnersDatails(data.id)}>Imprimir Ganhadores</Button>
-                <Button onClick={() => generateExcelTable(results)}>Exportar Excel</Button>
-                
+                <div>
+                    <Button onClick={() => handleResultsDatails(data.id)}><PiPrinter />Resultados</Button>
+                    <Button onClick={() => handleWinnersDatails(data.id)}><PiPrinter /> Ganhadores</Button>
+                    <Button onClick={() => handleOverallRating(data.id)}><PiPrinter /> Class. geral</Button>
+                    <Button onClick={() => generateExcelTable(results)}>Exportar Excel</Button>
+                </div>
             </Profile>
 
             <MainForm>

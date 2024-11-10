@@ -62,9 +62,6 @@ export const Container = styled.div`
         .col2{
             width: 150px;
         }
-        .col3{
-            width: 40px;
-        }
     }
 
     .ProofCategoryContainer {
@@ -84,5 +81,9 @@ export const Container = styled.div`
 .no-break {
     page-break-inside: avoid; /* Não quebrar dentro do elemento */
     break-inside: avoid;       /* Usando o CSS moderno */
+}
+
+.red {
+    color: ${({ theme }) => theme.COLORS.RED};
 }
 `;

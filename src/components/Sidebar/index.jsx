@@ -62,7 +62,7 @@ export function Sidebar() {
                             Evento
                         </div>
 
-                        <IoIosArrowForward/>
+                        <IoIosArrowForward />
                     </button>
                     {
                         subMenuActive == "evento" &&
@@ -75,6 +75,7 @@ export function Sidebar() {
                                     Tela Juiz
                                 </Link>
                                 <Link to={"/evento/telao"}
+                                    target='_blank'
                                     className={selectedPath === 'evento/telao' ? 'selected' : ''}
                                 >
                                     Telão
@@ -99,7 +100,7 @@ export function Sidebar() {
                             <PiNotePencilLight />
                             Cadastro
                         </div>
-                        <IoIosArrowForward/>
+                        <IoIosArrowForward />
                     </button>
                     {
                         subMenuActive == "cadastro" &&

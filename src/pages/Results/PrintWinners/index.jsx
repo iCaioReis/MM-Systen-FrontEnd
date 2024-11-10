@@ -120,7 +120,7 @@ export function PrintWinners() {
                                     <table>
                                         <thead>
                                             <tr>
-                                                <td>N</td>
+                                                <td className='col3'>Classificação</td>
                                                 <td className='col1'>Nome do Cavaleiro</td>
                                                 <td className='col1'>Nome do Animal</td>
                                                 <td className='col2'>Tempo Apurado</td>
@@ -141,7 +141,7 @@ export function PrintWinners() {
                                                                         if(field == "N"){
                                                                             return (
                                                                                 <td key={subIndex}>
-                                                                                    {index + 1 }
+                                                                                    {`${index + 1 } º`}
                                                                                 </td>
                                                                             );
                                                                         }

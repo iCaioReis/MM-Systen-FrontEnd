@@ -1,5 +1,5 @@
 import { useNavigate, useParams } from 'react-router-dom';
-import { ToastContainer, toast } from 'react-toastify';
+import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { useState, useEffect } from 'react';
 
@@ -225,7 +225,6 @@ export function EventFormm({ event, mode = "add", refresh }) {
                             </Select>
 
                             <Button onClick={handleSaveCompetitor}>Adicionar</Button>
-                            <ToastContainer />
                         </div>
 
                         {
@@ -259,8 +258,6 @@ export function EventFormm({ event, mode = "add", refresh }) {
                                 </div>
                             </div>
                         }
-
-
                     </div>
                 }
             />
@@ -401,8 +398,6 @@ export function EventFormm({ event, mode = "add", refresh }) {
                     </Button>
                 }
             </Status>
-
-            <ToastContainer />
         </Form>
     );
 }

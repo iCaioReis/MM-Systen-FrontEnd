@@ -74,8 +74,6 @@ export function PrintEvent() {
 
     return (
         <Container className='content'>
-
-
             {results && results.proofs.map((prooff, prooffIndex) => {
                 return (
                     <div className='data page-break' key={prooffIndex}>
@@ -128,9 +126,6 @@ export function PrintEvent() {
                     </div>
                 )
             })}
-
-
-
 
             <ToastContainer />
         </Container>

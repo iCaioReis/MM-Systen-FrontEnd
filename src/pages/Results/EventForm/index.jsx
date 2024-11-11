@@ -1,10 +1,10 @@
-import { ToastContainer, toast } from 'react-toastify';
+import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 
 import { FaArrowRight } from "react-icons/fa6";
-import { PiPrinter } from "react-icons/pi";
+import { PiPrinter, PiMicrosoftExcelLogo } from "react-icons/pi";
 
 import avatarPlaceholder from "../../../assets/user.svg";
 
@@ -148,7 +148,7 @@ export function EventFormm({ mode = "show" }) {
                     <Button onClick={() => handleResultsDatails(data.id)}><PiPrinter />Resultados</Button>
                     <Button onClick={() => handleWinnersDatails(data.id)}><PiPrinter /> Ganhadores</Button>
                     <Button onClick={() => handleOverallRating(data.id)}><PiPrinter /> Class. geral</Button>
-                    <Button onClick={() => generateExcelTable(results)}>Exportar Excel</Button>
+                    <Button onClick={() => generateExcelTable(results)}><PiMicrosoftExcelLogo />Exportar dados</Button>
                 </div>
             </Profile>
 
@@ -291,8 +291,6 @@ export function EventFormm({ mode = "show" }) {
 
 
             </MainForm>
-
-            <ToastContainer />
         </Form>
     );
 }

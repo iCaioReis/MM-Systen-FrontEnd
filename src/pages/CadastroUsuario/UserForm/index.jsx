@@ -1,4 +1,4 @@
-import { ToastContainer, toast } from 'react-toastify';
+import { toast } from 'react-toastify';
 import { useNavigate } from 'react-router-dom';
 import 'react-toastify/dist/ReactToastify.css';
 import { useState, useEffect } from 'react';
@@ -391,8 +391,6 @@ export function UserForm({ user, mode = "add", refresh }) {
                 </div>
 
             </Status>
-
-            <ToastContainer/>
         </Form>
     );
 }

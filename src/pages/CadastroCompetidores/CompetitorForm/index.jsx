@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { ToastContainer, toast } from 'react-toastify';
+import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
 import { FiCamera, FiTrash2 } from 'react-icons/fi';
@@ -487,8 +487,6 @@ export function CompetitorForm({ competitor, mode = "add", refresh }) {
                     </Button>
                 }
             </Status>
-
-            <ToastContainer />
         </Form>
     )
 }

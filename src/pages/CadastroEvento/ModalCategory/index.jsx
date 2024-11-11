@@ -1,5 +1,5 @@
 import { FaRegTrashCan, FaPencil, FaArrowTurnDown, FaArrowTurnUp } from "react-icons/fa6";
-import { ToastContainer, toast } from 'react-toastify';
+import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { useState, useEffect } from 'react';
 
@@ -33,6 +33,7 @@ export function ModalCategory({ isOpen, onClose, category }) {
   const [editCompetitorId, setEditCompetitorId] = useState(null);
   const [editHorseId, setEditHorseId] = useState(null);
   const [editRegisterId, setEditRegisterId] = useState(null);
+  const [editCategoryId, setEditCategoryId] = useState(null);
 
   const larguras = {
     competitor_order: "50px",
@@ -84,6 +85,7 @@ export function ModalCategory({ isOpen, onClose, category }) {
     setEditRegisterId(register.id);
     setEditCompetitorId(register.competitor_id);
     setEditHorseId(register.horse_id);
+    setEditCategoryId(register.categorie_id);
     setRegisterToEdit([
       { id: register.competitor_id, name: register.competitor_name },
       { id: register.horse_id, name: register.horse_name }]);
@@ -92,6 +94,7 @@ export function ModalCategory({ isOpen, onClose, category }) {
       setEditHorseId(null);
       setEditRegisterId(null);
       setEditCompetitorId(null);
+      setEditCategoryId(null);
     }
 
     setShowModalEditRegister(!showModalEditRegister);
@@ -155,7 +158,7 @@ export function ModalCategory({ isOpen, onClose, category }) {
   };
   const handleEditRegister = async () => {
     try {
-      await api.put(`categoryRegisters/${editRegisterId}`, { "competitor_id": editCompetitorId, "horse_id": editHorseId });
+      await api.put(`categoryRegisters/${editRegisterId}`, { "competitor_id": editCompetitorId, "horse_id": editHorseId, "category_id": editCategoryId });
 
       setRefresh(prev => !prev);
       toast.success("Registro salvo com sucesso!");
@@ -370,7 +373,6 @@ export function ModalCategory({ isOpen, onClose, category }) {
 
         </Status>
       </div>
-      <ToastContainer position="top-left" />
     </ModalOverlay>
   );
 };

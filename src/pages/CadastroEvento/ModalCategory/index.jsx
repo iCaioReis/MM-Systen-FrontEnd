@@ -159,19 +159,19 @@ export function ModalCategory({ isOpen, onClose, category }) {
     }
   };
   const handleAwardsCategory = async () => {
-      try {
-        await api.put(`/categories/${category.id}`, 
-          { 
-            first_place_award: status.categorie_first_place_award, 
-            second_place_award: status.categorie_second_place_award, 
-            third_place_award: status.categorie_third_place_award 
-          });
-        setRefresh(prev => !prev);
-        toast.success("Premiações atualizadas com sucesso!");
-      } catch (error) {
-        const errorMessage = error.response?.data?.message || error.message;
-        toast.error(errorMessage);
-      }
+    try {
+      await api.put(`/categories/${category.id}`,
+        {
+          first_place_award: status.categorie_first_place_award,
+          second_place_award: status.categorie_second_place_award,
+          third_place_award: status.categorie_third_place_award
+        });
+      setRefresh(prev => !prev);
+      toast.success("Premiações atualizadas com sucesso!");
+    } catch (error) {
+      const errorMessage = error.response?.data?.message || error.message;
+      toast.error(errorMessage);
+    }
   };
   const handleEditRegister = async () => {
     try {
@@ -234,7 +234,7 @@ export function ModalCategory({ isOpen, onClose, category }) {
     const { name, value } = e.target;
     let updatedData = { ...status, [name]: value };
     setStatus(updatedData);
-};
+  };
 
   return (
     <ModalOverlay>
@@ -270,33 +270,32 @@ export function ModalCategory({ isOpen, onClose, category }) {
           <div className='content'>
             <h2>Editar Premiações</h2>
             <div className="flex">
-            <Input
-              title={"Primeiro colocado"}
-              value={status.categorie_first_place_award}
-              name="categorie_first_place_award"  
-              onChange={handleInputAwardsChange}
-              dataType={"money"}
-              className={"input-medium-width"}
-            />
-            <Input
-              title={"Segundo colocado"}
-              value={status.categorie_second_place_award}
-              name="categorie_second_place_award"  
-              onChange={handleInputAwardsChange}
-              dataType={"money"}
-              className={"input-medium-width"}
-            />
-            <Input
-              placeholder = {'teste'}
-              value={status.categorie_third_place_award}
-              name="categorie_third_place_award"  
-              onChange={handleInputAwardsChange}
-              title={"Terceiro colocado"}
-              dataType={"money"}
-              className={"input-medium-width"}
-            />
-              
-              <Button onClick={() => {handleAwardsCategory()}}>Salvar</Button>
+              <Input
+                title={"Primeiro colocado"}
+                value={status.categorie_first_place_award}
+                name="categorie_first_place_award"
+                onChange={handleInputAwardsChange}
+                dataType={"money"}
+                className={"input-medium-width"}
+              />
+              <Input
+                title={"Segundo colocado"}
+                value={status.categorie_second_place_award}
+                name="categorie_second_place_award"
+                onChange={handleInputAwardsChange}
+                dataType={"money"}
+                className={"input-medium-width"}
+              />
+              <Input
+                value={status.categorie_third_place_award}
+                name="categorie_third_place_award"
+                onChange={handleInputAwardsChange}
+                title={"Terceiro colocado"}
+                dataType={"money"}
+                className={"input-medium-width"}
+              />
+
+              <Button onClick={() => { handleAwardsCategory() }}>Salvar</Button>
             </div>
           </div>
         }
@@ -422,7 +421,7 @@ export function ModalCategory({ isOpen, onClose, category }) {
               <Button onClick={() => handleAutoSortCategory()}><PiSortAscending size={20} /> Ordenar Registros</Button>
             }
             <Button onClick={() => setShowModalAwards(prev => !prev)}><PiMoneyWavy size={20} />Premiações</Button>
-            
+
           </div>
 
           {(status.categorie_state === "active" || status.categorie_state === "making_registrations") &&

@@ -49,6 +49,8 @@ export function EventFormm({ event, mode = "add", refresh }) {
     const [selectedHorse, setSelectedHorse] = useState(null);
     const [selectedCompetitor, setSelectedCompetitor] = useState(null);
     const [lastRegisters, setLastRegisters] = useState([]);
+    const [showModalAwards, setShowModalAwards] = useState(false);
+    const [awards, setAwards] = useState({ first_place_award: '', second_place_award: '', third_place_award: '' });
 
     const navigate = useNavigate();
     const params = useParams();
@@ -185,6 +187,25 @@ export function EventFormm({ event, mode = "add", refresh }) {
     function navigateToPrintCompetitors(id) {
         window.open(`/evento/impressaoCompetidores/${id}`, '_blank');
     };
+    const handleInputAwardsChange = (e) => {
+        const { name, value } = e.target;
+        let updatedData = { ...awards, [name]: value };
+        setAwards(updatedData);
+    };
+    const handleAwardsCategory = async () => {
+        try {
+          await api.put(`/allCategoryAwards/${params.id}`,
+            {
+              first_place_award: awards.first_place_award,
+              second_place_award: awards.second_place_award,
+              third_place_award: awards.third_place_award
+            });
+          toast.success("Premiações atualizadas com sucesso!");
+        } catch (error) {
+          const errorMessage = error.response?.data?.message || error.message;
+          toast.error(errorMessage);
+        }
+      };
 
     return (
         <Form>
@@ -262,6 +283,44 @@ export function EventFormm({ event, mode = "add", refresh }) {
                     </div>
                 }
             />
+            <Modal
+                visible={showModalAwards}
+                onClose={() => setShowModalAwards(prev => !prev)}
+                content={
+                    <div className='content'>
+                        <h2>Editar premiações em todas as categorias</h2>
+                        <div className="flex">
+                            <Input
+                                title={"Primeiro colocado"}
+                                value={awards.first_place_award}
+                                name="first_place_award"
+                                onChange={handleInputAwardsChange}
+                                dataType={"money"}
+                                className={"input-medium-width"}
+                            />
+                            <Input
+                                title={"Segundo colocado"}
+                                value={awards.second_place_award}
+                                name="second_place_award"
+                                onChange={handleInputAwardsChange}
+                                dataType={"money"}
+                                className={"input-medium-width"}
+                            />
+                            <Input
+                                placeholder={'teste'}
+                                value={awards.third_place_award}
+                                name="third_place_award"
+                                onChange={handleInputAwardsChange}
+                                title={"Terceiro colocado"}
+                                dataType={"money"}
+                                className={"input-medium-width"}
+                            />
+
+                            <Button onClick={() => { handleAwardsCategory() }}>Salvar</Button>
+                        </div>
+                    </div>
+                }
+            />
 
             <Profile>
                 <div>
@@ -291,18 +350,21 @@ export function EventFormm({ event, mode = "add", refresh }) {
                         </Button>
                     )}
                     {params.id && !isEditing &&
+                        <Button type={"button"} onClick={() => setShowModalAwards(prev => !prev)}>Premiações</Button>
+                    }
+                    {params.id && !isEditing &&
                         <Button type={"button"} onClick={() => handleShowModalAddUser()}>Registrar Competidor</Button>
                     }
                 </div>
                 <div>
                     {params.id && !isEditing &&
-                        <Button type={"button"} onClick={() => navigateToPrintPage(params.id)}> <PiPrinter/>Evento</Button>
+                        <Button type={"button"} onClick={() => navigateToPrintPage(params.id)}> <PiPrinter />Evento</Button>
                     }
                     {params.id && !isEditing &&
-                        <Button type={"button"} onClick={() => navigateToPrintHorsePage(params.id)}><PiPrinter/>Cavalos</Button>
+                        <Button type={"button"} onClick={() => navigateToPrintHorsePage(params.id)}><PiPrinter />Cavalos</Button>
                     }
                     {params.id && !isEditing &&
-                        <Button type={"button"} onClick={() => navigateToPrintCompetitors(params.id)}><PiPrinter/>Competidores</Button>
+                        <Button type={"button"} onClick={() => navigateToPrintCompetitors(params.id)}><PiPrinter />Competidores</Button>
                     }
 
                     {mode != 'add' && isEditing && data.state == 'active' &&

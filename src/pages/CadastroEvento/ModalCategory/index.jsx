@@ -158,7 +158,7 @@ export function ModalCategory({ isOpen, onClose, category }) {
   };
   const handleEditRegister = async () => {
     try {
-      await api.put(`categoryRegisters/${editRegisterId}`, { "competitor_id": editCompetitorId, "horse_id": editHorseId, "category_id": editCategoryId });
+      await api.put(`categoryRegisters/${editRegisterId}`, { "competitor_id": editCompetitorId, "horse_id": editHorseId, "categorie_id": editCategoryId });
 
       setRefresh(prev => !prev);
       toast.success("Registro salvo com sucesso!");

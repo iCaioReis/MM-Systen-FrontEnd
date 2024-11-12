@@ -154,6 +154,41 @@ export const Timer = styled.div`
         font-size: 5rem;
         color: ${({ theme }) => theme.COLORS.LIGHT_100};
     }
+
+    @keyframes rotateInY {
+    from {
+        transform: rotateY(180deg);
+        
+    }
+    to {
+        transform: rotateY(0deg);
+        
+    }
+}
+
+    .front{
+        
+    }
+
+    .elimination{
+        position: fixed;
+        
+      
+        width: 30rem;
+        height: 7.4rem;
+        padding: 0 2rem;
+
+        letter-spacing: .5rem;
+        font-size: 3rem;
+        color: ${({ theme }) => theme.COLORS.LIGHT_100};
+        animation: rotateInY 0.8s ease-out forwards;
+
+        border-radius: 1rem;
+
+        background-color: ${({ theme }) => theme.COLORS.RED};
+
+        
+    }
 `;
 
 export const Actions = styled.div`
@@ -227,27 +262,53 @@ export const RankingCompetitorsTable = styled.div`
       border-collapse: separate;
       border-spacing: 0 .2rem;
 
+        border-spacing: 0 .5rem;
+
       tbody {
          tr {
             th {
                font-weight: 400;
-               font-size: .9rem;
+               font-size: 1.3rem;
                padding: .2rem;
-               border: 1px dashed ${({ theme }) => theme.COLORS.THEME_600};
-               border-radius: 8px;
+               background-color: ${({ theme }) => theme.COLORS.LIGHT_300};
             }
 
             :nth-child(1){
-                border-radius: 8px 0 0 8px;
+               width: 2.5rem;
+               height: 1.875rem;
+
+               border-radius: .5rem;
+               color: ${({ theme }) => theme.COLORS.LIGHT_100};
+               background-color: ${({ theme }) => theme.COLORS.THEME_600};
+               transform: skew(-10deg);
+               position: absolute;
+
+               
             }
             :nth-child(2){
-                border-radius: 0 8px 8px 0;
+                border-radius: 8px 0 0 8px;
+                border-right:1px solid ${({ theme }) => theme.COLORS.LIGHT_400};
+            }
+
+            :nth-child(3){
+                width: 8.125rem;
             }
          }
       }
 
       .bg_yellow {
         background-color: #ffd700;
+    }
+
+    .time {
+        font-size: 1rem;
+        padding: 5px 0;
+
+        background-color: ${({ theme }) => theme.COLORS.THEME_700};
+        color: ${({ theme }) => theme.COLORS.LIGHT_100};
+        
+        position: relative;
+        top: .5rem;
     }
    }
 `;

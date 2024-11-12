@@ -3,6 +3,7 @@ import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { useState, useEffect } from 'react';
 
+import { PiPrinter } from "react-icons/pi";
 import { FaArrowRight } from "react-icons/fa6";
 import { FiCamera } from 'react-icons/fi';
 
@@ -295,13 +296,13 @@ export function EventFormm({ event, mode = "add", refresh }) {
                 </div>
                 <div>
                     {params.id &&
-                        <Button type={"button"} onClick={() => navigateToPrintPage(params.id)}>Imprimir Evento</Button>
+                        <Button type={"button"} onClick={() => navigateToPrintPage(params.id)}> <PiPrinter/>Evento</Button>
                     }
                     {params.id &&
-                        <Button type={"button"} onClick={() => navigateToPrintHorsePage(params.id)}>Imprimir Cavalos</Button>
+                        <Button type={"button"} onClick={() => navigateToPrintHorsePage(params.id)}><PiPrinter/>Cavalos</Button>
                     }
                     {params.id &&
-                        <Button type={"button"} onClick={() => navigateToPrintCompetitors(params.id)}>Imprimir Competidores</Button>
+                        <Button type={"button"} onClick={() => navigateToPrintCompetitors(params.id)}><PiPrinter/>Competidores</Button>
                     }
 
 

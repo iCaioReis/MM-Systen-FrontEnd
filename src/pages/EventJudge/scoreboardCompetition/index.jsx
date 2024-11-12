@@ -19,7 +19,6 @@ export function ScoreboardCompetition() {
     const [loading, setLoading] = useState(true);
     const [refresh, setRefresh] = useState(false);
     const [categoryData, setCategoryData] = useState(null);
-    const [competingRegisterNumber, setCompetingRegisterNumber] = useState();
     const [competingRegisterData, setCompetingRegisterData] = useState();
     const [competitorPicture, setCompetitorPicture] = useState(avatarPlaceholder);
     const [horsePicture, setHorsePicture] = useState(avatarPlaceholder);
@@ -33,6 +32,7 @@ export function ScoreboardCompetition() {
             async function fetchData() {
                 try {
                     const result = await api.get(`/categoryRegisters/${competingRegisterData.categorie_id}`);
+                    setCategoryData(result.data);
 
                     const finishedCompetitions = result.data.competitorHorses.filter(horse => horse.state === 'finished');
 
@@ -103,8 +103,8 @@ export function ScoreboardCompetition() {
     }, [competingRegisterData]);
 
     const handleUpcomingCompetitors = () => {
-        if(categoryData){
-            const competitors = categoryData.competitorHorses.slice(competingRegisterData.competitor_order , competingRegisterData.competitor_order + 3)
+        if (categoryData) {
+            const competitors = categoryData.competitorHorses.slice(competingRegisterData.competitor_order, competingRegisterData.competitor_order + 3)
             setUpcomingCompetitors(competitors);
         }
     };
@@ -147,34 +147,55 @@ export function ScoreboardCompetition() {
                         <span> {competingRegisterData.horse_surname} </span>
                     </Title>
 
-                    <Timer className="timer">
-                        {competingRegisterData.fouls != 0 &&
+                    {competingRegisterData.SAT != 1 && competingRegisterData.NCP != 1 &&
+                        <Timer className="timer">
+                            {competingRegisterData.fouls != 0 &&
+                                <Input
+                                    className={"addition"}
+                                    type="text"
+                                    value={`+ ${competingRegisterData.fouls * 5} s`}
+                                    disabled={true}
+                                />
+                            }
+
                             <Input
-                                className={"addition"}
+                                dataType="timer"
                                 type="text"
-                                value={`+ ${competingRegisterData.fouls * 5} s`}
+                                value={FormatTimer(parseFloat(competingRegisterData.time) + parseFloat(competingRegisterData.fouls) * 5)}
                                 disabled={true}
                             />
+                            <span className='s'>s</span>
+                        </Timer>
+                    }
+
+                    <Timer className='elimination-box'>
+                       
+
+                        {
+                            competingRegisterData.SAT == 1 &&
+                            <div className='elimination'>
+                                <h1>SAT</h1>
+                            </div>
                         }
-                        <Input
-                            dataType="timer"
-                            type="text"
-                            value={FormatTimer(parseFloat(competingRegisterData.time) + parseFloat(competingRegisterData.fouls) * 5)}
-                            disabled={true}
-                        />
-                        <span className='s'>s</span>
+                        {
+                            competingRegisterData.NCP == 1 &&
+                            <div className='elimination'>
+                                <h1>NCP</h1>
+                            </div>
+                        }
+
                     </Timer>
+
 
                     {ranking && ranking.length > 0 &&
                         <RankingCompetitorsTable>
-                            <h3>Ranking</h3>
 
                             <table>
                                 <thead>
                                     <tr>
-                                        <th>N</th>
-                                        <th>Competidor</th>
-                                        <th>Tempo</th>
+                                        <th></th>
+                                        <th></th>
+                                        <th className='time'>Tempo total</th>
                                     </tr>
                                 </thead>
 
@@ -189,7 +210,7 @@ export function ScoreboardCompetition() {
                                                 <tr key={index}>
                                                     <th>{index + 1 + "º"}</th>
                                                     <th>{register.competitor_surname}</th>
-                                                    <th className={isDuplicateTime ? "bg_yellow" : ""}>{register.total_time}</th>
+                                                    <th className={isDuplicateTime ? "bg_yellow" : ""}>{register.total_time + " s"}</th>
                                                 </tr>
                                             )
                                         }
@@ -201,6 +222,7 @@ export function ScoreboardCompetition() {
                 </Main>
 
                 <Actions>
+                    {upcomingCompetitors.length > 0 && 
                     <UpcomingCompetitorsTable>
                         <h3>Próximas chamadas</h3>
 
@@ -218,6 +240,7 @@ export function ScoreboardCompetition() {
                             </tbody>
                         </table>
                     </UpcomingCompetitorsTable>
+                    }
                 </Actions>
             </Content>
 

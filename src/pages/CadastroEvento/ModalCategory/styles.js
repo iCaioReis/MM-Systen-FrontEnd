@@ -58,7 +58,7 @@ export const MainForm = styled.div`
   }
   
   .registers {
-    max-height: 426px;
+    max-height: 31rem;
 
     position: relative;
     overflow-y: scroll;
@@ -66,7 +66,7 @@ export const MainForm = styled.div`
     border-radius: 8px;
   }
   .active {
-    max-height: 370px;
+    max-height: 26.625rem;
   }
   .flex-buttons {
     display: flex;

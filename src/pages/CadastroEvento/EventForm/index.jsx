@@ -290,21 +290,20 @@ export function EventFormm({ event, mode = "add", refresh }) {
                             Editar
                         </Button>
                     )}
-                    {params.id &&
+                    {params.id && !isEditing &&
                         <Button type={"button"} onClick={() => handleShowModalAddUser()}>Registrar Competidor</Button>
                     }
                 </div>
                 <div>
-                    {params.id &&
+                    {params.id && !isEditing &&
                         <Button type={"button"} onClick={() => navigateToPrintPage(params.id)}> <PiPrinter/>Evento</Button>
                     }
-                    {params.id &&
+                    {params.id && !isEditing &&
                         <Button type={"button"} onClick={() => navigateToPrintHorsePage(params.id)}><PiPrinter/>Cavalos</Button>
                     }
-                    {params.id &&
+                    {params.id && !isEditing &&
                         <Button type={"button"} onClick={() => navigateToPrintCompetitors(params.id)}><PiPrinter/>Competidores</Button>
                     }
-
 
                     {mode != 'add' && isEditing && data.state == 'active' &&
                         <Button className={"danger"}

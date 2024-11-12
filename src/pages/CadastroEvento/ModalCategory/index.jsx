@@ -1,4 +1,5 @@
 import { FaRegTrashCan, FaPencil, FaArrowTurnDown, FaArrowTurnUp } from "react-icons/fa6";
+import { PiMoneyWavy, PiSortAscending, PiListChecks } from "react-icons/pi";
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { useState, useEffect } from 'react';
@@ -29,6 +30,7 @@ export function ModalCategory({ isOpen, onClose, category }) {
   const [isModalConfirmVisible, setIsModalConfirmVisible] = useState(false);
   const [registerToDelete, setRegisterToDelete] = useState({ id: "", horse: "", competitor: "" });
   const [showModalEditRegister, setShowModalEditRegister] = useState(false);
+  const [showModalAwards, setShowModalAwards] = useState(false);
   const [registerToEdit, setRegisterToEdit] = useState([{ "id": 0, "name": "" }, { "id": 0, "name": "" }]);
   const [editCompetitorId, setEditCompetitorId] = useState(null);
   const [editHorseId, setEditHorseId] = useState(null);
@@ -130,7 +132,7 @@ export function ModalCategory({ isOpen, onClose, category }) {
     if (state == "finished_inscriptions") {
       try {
         await api.put(`/categories/${category.id}`, { state });
-        setRefresh(prev => !prev)
+        setRefresh(prev => !prev);
         setSelectedCompetitorId(null);
         setSelectedHorseId(null);
         setClearSelection(true);
@@ -144,7 +146,7 @@ export function ModalCategory({ isOpen, onClose, category }) {
     else {
       try {
         await api.put(`/categories/${category.id}`, { state });
-        setRefresh(prev => !prev)
+        setRefresh(prev => !prev);
         setSelectedCompetitorId(null);
         setSelectedHorseId(null);
         setClearSelection(true);
@@ -155,6 +157,21 @@ export function ModalCategory({ isOpen, onClose, category }) {
         toast.error(errorMessage);
       }
     }
+  };
+  const handleAwardsCategory = async () => {
+      try {
+        await api.put(`/categories/${category.id}`, 
+          { 
+            first_place_award: status.categorie_first_place_award, 
+            second_place_award: status.categorie_second_place_award, 
+            third_place_award: status.categorie_third_place_award 
+          });
+        setRefresh(prev => !prev);
+        toast.success("Premiações atualizadas com sucesso!");
+      } catch (error) {
+        const errorMessage = error.response?.data?.message || error.message;
+        toast.error(errorMessage);
+      }
   };
   const handleEditRegister = async () => {
     try {
@@ -213,6 +230,12 @@ export function ModalCategory({ isOpen, onClose, category }) {
     }
   };
 
+  const handleInputAwardsChange = (e) => {
+    const { name, value } = e.target;
+    let updatedData = { ...status, [name]: value };
+    setStatus(updatedData);
+};
+
   return (
     <ModalOverlay>
       <Modal
@@ -236,6 +259,44 @@ export function ModalCategory({ isOpen, onClose, category }) {
                 onItemSelected={(item) => setEditHorseId(item.id)}
               />
               <Button onClick={() => handleEditRegister()}>Salvar</Button>
+            </div>
+          </div>
+        }
+      />
+      <Modal
+        visible={showModalAwards}
+        onClose={() => setShowModalAwards(prev => !prev)}
+        content={
+          <div className='content'>
+            <h2>Editar Premiações</h2>
+            <div className="flex">
+            <Input
+              title={"Primeiro colocado"}
+              value={status.categorie_first_place_award}
+              name="categorie_first_place_award"  
+              onChange={handleInputAwardsChange}
+              dataType={"money"}
+              className={"input-medium-width"}
+            />
+            <Input
+              title={"Segundo colocado"}
+              value={status.categorie_second_place_award}
+              name="categorie_second_place_award"  
+              onChange={handleInputAwardsChange}
+              dataType={"money"}
+              className={"input-medium-width"}
+            />
+            <Input
+              placeholder = {'teste'}
+              value={status.categorie_third_place_award}
+              name="categorie_third_place_award"  
+              onChange={handleInputAwardsChange}
+              title={"Terceiro colocado"}
+              dataType={"money"}
+              className={"input-medium-width"}
+            />
+              
+              <Button onClick={() => {handleAwardsCategory()}}>Salvar</Button>
             </div>
           </div>
         }
@@ -355,12 +416,13 @@ export function ModalCategory({ isOpen, onClose, category }) {
             />
 
             {(status.categorie_state === "active" || status.categorie_state === "making_registrations") &&
-              <Button onClick={() => handleStateCategory("finished_inscriptions")}>Encerrar inscrições</Button>
+              <Button onClick={() => handleStateCategory("finished_inscriptions")} className={"text_light_size"}><PiListChecks size={20} /> Encerrar inscrições</Button>
             }
             {(status.categorie_state === "active" || status.categorie_state === "making_registrations") &&
-              <Button onClick={() => handleAutoSortCategory()}>Ordenar Registros</Button>
+              <Button onClick={() => handleAutoSortCategory()}><PiSortAscending size={20} /> Ordenar Registros</Button>
             }
-
+            <Button onClick={() => setShowModalAwards(prev => !prev)}><PiMoneyWavy size={20} />Premiações</Button>
+            
           </div>
 
           {(status.categorie_state === "active" || status.categorie_state === "making_registrations") &&

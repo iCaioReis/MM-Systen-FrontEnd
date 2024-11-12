@@ -17,24 +17,24 @@ export const Container = styled.button`
     color: ${({ theme }) => theme.COLORS.LIGHT_100};
     background-color: ${({ theme }) => theme.COLORS.THEME_900};
 
+    &.text_light_size {
+        font-size: .9rem;
+    }
+
     &.noBackground {
         background: none;
 
         color: ${({ theme }) => theme.COLORS.THEME_900};
     }
-
     &.noBorder {
         border-style: none;
     }
-
-
     &.larger-width {
         width: 20rem;
     }
     &.auto-width {
         width: auto;
     }
-
     &.danger {
         padding: .6rem 1rem;
 

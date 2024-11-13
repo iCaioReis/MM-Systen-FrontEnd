@@ -1,167 +1,117 @@
-import * as XLSX from 'xlsx';
-import { saveAs } from 'file-saver';
 import { FormatProof, FormatCategory } from './formatDatas';
+import ExcelJS from 'exceljs';
 
-import Logo from '/logo.png'
-
-import { generateExcel } from "mr-excel";
+import Logo from '/logo01.png'
 
 export function generateExcelTable(data) {
-    const workbook = XLSX.utils.book_new();
+    console.log(data)
 
-    const calculatePoints = (index) => {
-        const tablePontis = [
-            17,
-             13,
-             10,
-             8,
-             7,
-             6,
-             5,
-             4,
-             3,
-             2
-        ]
-        const points = tablePontis[index] || 1
-        return(points )
+    async function createAndDownloadExcelFile() {
+        const logoImage = await fetch(Logo).then(res => res.arrayBuffer());
+
+        const workbook = new ExcelJS.Workbook();
+
+
+        data.proofs.map((proof) => {
+            proof.categories.map((categorie) => {
+                const worksheet = workbook.addWorksheet(`${FormatProof(proof.name)} - ${FormatCategory(categorie.name)}`);
+
+                const titleRow = worksheet.getRow(1);
+                titleRow.getCell(2).value = data.name;
+                worksheet.mergeCells('B1:H1');
+
+                titleRow.getCell(2).fill = {
+                    type: 'pattern',
+                    pattern: 'solid',
+                    fgColor: { argb: 'ff0a2006' }
+                };
+                titleRow.getCell(1).fill = {
+                    type: 'pattern',
+                    pattern: 'solid',
+                    fgColor: { argb: 'ff0a2006' },
+                };
+
+                titleRow.height = 50;
+
+                worksheet.getRow(1).eachCell(cell => {
+                    cell.alignment = { horizontal: 'center', vertical: 'middle' };
+                    cell.font = {
+                        color: { argb: 'FFFFFFFF' },
+                        bold: true,
+                        size: 16
+                    };
+                });
+
+                worksheet.columns = [
+                    { header: '', key: 'id', width: 12 },
+                    { header: 'Competidor', key: 'competitor_name', width: 40 },
+                    { header: 'Cavalo', key: 'horse_name', width: 40 },
+                    { header: 'Tempo', key: 'time', width: 8 },
+                    { header: 'Faltas', key: 'fouls', width: 10 },
+                    { header: 'Acréssimo', key: 'time_acress', width: 10 },
+                    { header: 'total_time', key: 'total_time', width: 10 },
+                    { header: data.name, key: 'points', width: 10, alignment: { horizontal: 'center' } },
+                ];
+                const header = worksheet.addRow({ id: "Classificação", competitor_name: "Competidor", horse_name: "Cavalo", time: "Tempo", fouls: "Faltas", time_acress: "Acréssimo", total_time: "Tempo Total", points: "Pontuação" });
+                header.height = 20; 
+                // Adicionar imagem
+                
+                const imageId = workbook.addImage({
+                    buffer: logoImage,
+                    extension: 'png',
+                });
+
+                worksheet.addImage(imageId, {
+                    tl: { col: 0, row: 0 },  // Top left position
+                    ext: { width: 190, height: 65 }  // Dimensões da imagem
+                });
+
+
+                categorie.competitors.map((competitor, index) => {
+                    const classification = 
+                        competitor.valid == true ? `${index + 1} º Colocado`
+                        : competitor.SAT == 1 ? "SAT"
+                        : competitor.NCP == 1 ? "NCP"
+                        : "DESCARTADO"
+
+                    worksheet.addRow({ 
+                        id: classification , 
+                        competitor_name: competitor.competitor_name, 
+                        horse_name: competitor.horse_name, 
+                        time: competitor.time, 
+                        fouls: competitor.fouls || "", 
+                        time_acress: competitor.fouls && `${(Number(competitor.fouls) * 5).toFixed(2)} s`, 
+                        total_time: competitor.total_time, 
+                        points: competitor.points 
+                    });
+                })
+
+                worksheet.eachRow((row, rowIndex) => {
+                    row.eachCell((cell, colIndex) => {
+                      cell.border = {
+                        top: { style: 'thin' },
+                        left: { style: 'thin' },
+                        bottom: { style: 'thin' },
+                        right: { style: 'thin' }
+                      };
+                    });
+                  });
+            })
+        })
+        // Gerar o arquivo para download
+        const buffer = await workbook.xlsx.writeBuffer();
+        const blob = new Blob([buffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+        const url = URL.createObjectURL(blob);
+
+        // Criar um link para download
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = `${data.name}.xlsx`;
+        link.click();
+
+        // Limpar o objeto URL após o download
+        URL.revokeObjectURL(url);
     }
 
-    data.proofs.map((proof) => {
-        const proofName = FormatProof(proof.name)
-        proof.categories.map((categorie, index) => {
-            const categorieName = FormatCategory(categorie.name);
-            //console.log(`Prova: ${proofName}   Categoria: ${categorieName}`)
-
-            const sheetData = [["N", "Competidor", "Cavalo", "Tempo", "Faltas", "Acréssimo", "Tempo total", "Pontos"]];
-
-            categorie.competitors.map((competitor, index) => {
-                const competitorSheetData = [
-                    `${index + 1}`,
-                    `${competitor.competitor_name}`,
-                    `${competitor.horse_name}`,
-                    `${competitor.time} s`,
-                    `${competitor.fouls}`,
-                    `${competitor.fouls * 5}.000 s`,
-                    `${(parseFloat(competitor.time) + parseInt(competitor.fouls) * 5).toFixed(3)}`,   
-                    `${competitor.SAT ? "SAT" : competitor.NCP ? "NCP" : competitor.valid == false ? "Descartado" : calculatePoints(index)}`,
-                ]
-
-                sheetData.push(competitorSheetData);
-            });
-            // Cria as folhas (abas)
-            const worksheet = XLSX.utils.aoa_to_sheet(sheetData);
-
-            const textStyle = { font: { bold: true, color: { rgb: "FF0000" } } }; // Texto vermelho
-
-            worksheet['A1'].s = textStyle;
-            
-            // Cria o workbook com as diferentes abas
-            XLSX.utils.book_append_sheet(workbook, worksheet, `${proofName} ${categorieName}`);
-        })
-    })
-
-    // Converte o workbook para um arquivo binário
-    const wbout = XLSX.write(workbook, { bookType: 'xlsx', type: 'binary' });
-
-    // Função para converter a string em binário
-    const s2ab = (s) => {
-        const buf = new ArrayBuffer(s.length);
-        const view = new Uint8Array(buf);
-        for (let i = 0; i < s.length; i++) view[i] = s.charCodeAt(i) & 0xff;
-        return buf;
-    };
-
-    // Salva o arquivo
-    saveAs(new Blob([s2ab(wbout)], { type: 'application/octet-stream' }), `${data.name}.xlsx`);
-};
-
-export function generateExcelTable1(data) {
-    console.log(data)
-
-    const competitorStyle = {
-        backgroundColor: colorPalette.c2,
-        fontFamily: "Times New Roman",
-        color: colorPalette.c4,
-        border: {
-          full: {
-            style: "medium",
-            color: colorPalette.c1,
-          },
-        },
-        alignment: {
-          horizontal: "left",
-          vertical: "top",
-        },
-      };
-
-
-    const dataa = {
-        creator: "mr",
-        styles: {
-            headerStyle: {
-              backgroundColor: '0A2006',
-              color: "FFFFFF",
-
-              border: {
-                full: {
-                  color: "53354A",
-                },
-            }
-            },
-          },
-        sheet: [
-            {
-                headerStyleKey: "headerStyle",
-                headerHeight: 120,
-                images: [
-                    {
-                        url: Logo,
-                        from: "A1",
-                        to: "B1",
-                        type: "two",
-                    },
-                ],
-                headers: [
-                    { label: "N", text: "", size: 5},
-                    { label: "Competidor", text: "", size: 25},
-                    { label: "Cavalo", text: "", size: 25},
-                    { label: "Tempo", text: "", size: 12},
-                    { label: "Faltas", text: "", size: 7},
-                    { label: "Acréssimo", text: "", size: 12},
-                    { label: "Tempo_total", text: "", size: 12},
-                    { label: "SAT", text: "", size: 5},
-                    { label: "NCP", text: "", size: 5},
-                ],
-                data: [
-                    { 
-                        N: "N", 
-                        Competidor:"Competidor",
-                        Cavalo: "Cavalo",
-                        Tempo: "Tempo" ,
-                        Faltas: "Faltas" ,
-                        Acréssimo: "Acréssimo" ,
-                        Tempo_total: "Tempo total" ,
-                        SAT: "SAT" ,
-                        NCP: "NCP" 
-                    },
-
-                    { 
-                        N: "N", 
-                        Competidor:"Competidor",
-                        Cavalo: "Cavalo",
-                        Tempo: "Tempo" ,
-                        Faltas: "Faltas" ,
-                        Acréssimo: "Acréssimo" ,
-                        Tempo_total: "Tempo total" ,
-                        SAT: "SAT" ,
-                        NCP: "NCP" 
-                    },
-                ],
-            },
-        ],
-    };
-
-    generateExcel(dataa);
-
-    console.log(data)
+    createAndDownloadExcelFile();
 }

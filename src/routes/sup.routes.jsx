@@ -19,9 +19,10 @@ import { Results } from '../pages/Results';
 import { PrintEvent } from '../pages/CadastroEvento/PrintEvent';
 import { PrintEventHorsesWithChip } from '../pages/CadastroEvento/PrintEventHorsesWithChip';
 import { PrintEventCompetitors } from '../pages/CadastroEvento/PrintEventCompetitors';
-import { PrintAllResults } from '../pages/Results/PrintAllResults'
-import { PrintProofsResult } from '../pages/Results/PrintProofsResult'
-import { PrintWinners } from '../pages/Results/PrintWinners'
+import { PrintAllResults } from '../pages/Results/PrintAllResults';
+import { PrintProofsResult } from '../pages/Results/PrintProofsResult';
+import { PrintWinners } from '../pages/Results/PrintWinners';
+import { PrintSumOfPoints } from '../pages/Results/PrintSumOfPoints';
 
 export function SupRoutes() {
     return (
@@ -52,6 +53,7 @@ export function SupRoutes() {
             <Route path='/resultados/impressao/:id' element={<PrintAllResults/>}></Route>
             <Route path='/resultados/impressao/vencedores/:id' element={<PrintWinners/>}></Route>
             <Route path='/resultados/impressao/classificacao-geral/:id' element={<PrintProofsResult/>}></Route>
+            <Route path='/resultados/impressao/somatorio-de-pontos/:id' element={<PrintSumOfPoints/>}></Route>
 
             <Route path='/evento/juiz/competition/:id' element={<Competition/>}/>
             <Route path='/evento/telao' element={<ScoreboardCompetition/>}/>

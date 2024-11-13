@@ -10,7 +10,7 @@ export const Form = styled.div`
 export const Profile = styled.div`
     display: flex;
     flex-direction: column;
-    gap: 1rem;
+    justify-content: space-between;
         
     > div {
         display: flex;
@@ -51,8 +51,11 @@ export const Picture = styled.div`
 }
 `;
 export const MainForm = styled.div`
+display: flex;
+flex-direction: column;
+
     .table {
-        max-height: 380px;
+        max-height: 23.75rem;
         overflow-y: auto;
     }
 `;

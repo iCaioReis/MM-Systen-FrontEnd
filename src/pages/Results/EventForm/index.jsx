@@ -69,6 +69,9 @@ export function EventFormm({ mode = "show" }) {
     function handleOverallRating(id) {
         window.open(`/resultados/impressao/classificacao-geral/${id}`, '_blank');
     }
+    function handleSumOfPoints(id) {
+        window.open(`/resultados/impressao/somatorio-de-pontos/${id}`, '_blank');
+    }
 
     useEffect(() => {
         if (params.id) {
@@ -132,22 +135,11 @@ export function EventFormm({ mode = "show" }) {
                 <Picture>
                     <img src={avatarPlaceholder} alt="" />
                 </Picture>
-                <Input
-                    title={"Número único"}
-                    value={data.id}
-                    disabled
-                    status
-                />
-                <Input
-                    title={"Status"}
-                    value={FormatStatus(data.state)}
-                    disabled
-                    status
-                />
                 <div>
                     <Button onClick={() => handleResultsDatails(data.id)}><PiPrinter />Resultados</Button>
                     <Button onClick={() => handleWinnersDatails(data.id)}><PiPrinter /> Ganhadores</Button>
                     <Button onClick={() => handleOverallRating(data.id)}><PiPrinter /> Class. geral</Button>
+                    <Button onClick={() => handleSumOfPoints(data.id)}><PiPrinter /> Som. de pontos</Button>
                     <Button onClick={() => generateExcelTable(results)}><PiMicrosoftExcelLogo />Exportar dados</Button>
                 </div>
             </Profile>
@@ -155,67 +147,82 @@ export function EventFormm({ mode = "show" }) {
             <MainForm>
                 <h1>Resultados Evento</h1>
 
-                <div className="flex">
-                    <Input
-                        title={"Nome do evento"}
-                        name="name"
-                        value={data.name}
-                        disabled
-                    />
-
-                    <DateContainer className="date">
+                <div>
+                    <div className="flex">
                         <Input
-                            title={"Data início"}
-                            name="start_date"
-                            value={data.start_date}
-                            type={"date"}
-                            className={"input-larger-width"}
+                            title={"Nome do evento"}
+                            name="name"
+                            value={data.name}
                             disabled
                         />
+                        <DateContainer className="date">
+                            <Input
+                                title={"Data início"}
+                                name="start_date"
+                                value={data.start_date}
+                                type={"date"}
+                                className={"input-larger-width"}
+                                disabled
+                            />
 
-                        <FaArrowRight size={20} />
+                            <FaArrowRight size={20} />
 
+                            <Input
+                                title={"Data fim"}
+                                name="end_date"
+                                value={data.end_date}
+                                type={"date"}
+                                className={"input-larger-width"}
+                                disabled
+                            />
+                        </DateContainer>
                         <Input
-                            title={"Data fim"}
-                            name="end_date"
-                            value={data.end_date}
-                            type={"date"}
-                            className={"input-larger-width"}
+                            title={"Número único"}
+                            value={data.id}
                             disabled
+                            status
+                            className={"input-larger-width"}
                         />
-                    </DateContainer>
-                </div>
 
-                <div className="flex">
+                    </div>
 
-                    <Select
-                        label={"Prova"}
-                        name="proof"
-                        value={proof}
-                        onChange={(e) => setProof(e.target.value)}
-                        mandatory
-                    >
-                        <option value="1">Seis Balizas</option>
-                        <option value="2">Três Tambores</option>
-                        <option value="3">Maneabilidade</option>
-                    </Select>
+                    <div className="flex">
+                        <Select
+                            label={"Prova"}
+                            name="proof"
+                            value={proof}
+                            onChange={(e) => setProof(e.target.value)}
+                            mandatory
+                        >
+                            <option value="1">Seis Balizas</option>
+                            <option value="2">Três Tambores</option>
+                            <option value="3">Maneabilidade</option>
+                        </Select>
 
-                    <Select
-                        label={"Categoria"}
-                        name="category"
-                        value={categorie}
-                        onChange={(e) => setCategorie(e.target.value)}
-                        mandatory
-                    >
-                        <option value="1">Kids</option>
-                        <option value="2">Mirim</option>
-                        <option value="3">Juvenil</option>
-                        <option value="4">Iniciante</option>
-                        <option value="5">Feminino</option>
-                        <option value="6">Adulto</option>
-                        <option value="7">Master</option>
-                        <option value="8">Aberta</option>
-                    </Select>
+                        <Select
+                            label={"Categoria"}
+                            name="category"
+                            value={categorie}
+                            onChange={(e) => setCategorie(e.target.value)}
+                            mandatory
+                        >
+                            <option value="1">Kids</option>
+                            <option value="2">Mirim</option>
+                            <option value="3">Juvenil</option>
+                            <option value="4">Iniciante</option>
+                            <option value="5">Feminino</option>
+                            <option value="6">Adulto</option>
+                            <option value="7">Master</option>
+                            <option value="8">Aberta</option>
+                        </Select>
+                        <Input
+                            title={"Status"}
+                            value={FormatStatus(data.state)}
+                            disabled
+                            status
+                            className={"input-larger-width"}
+                        />
+                    </div>
                 </div>
 
                 <div className="table">

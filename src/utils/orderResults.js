@@ -1,3 +1,5 @@
+import { calculatePoints } from './assignScore';
+
 export function orderResults(data) {
     const fullData = data.proofs.map(proof => {
         proof.categories.forEach(categorie => {
@@ -58,7 +60,6 @@ export function orderResults(data) {
             // Ordena os itens válidos pelo tempo, do menor para o maior
             validItems.sort((a, b) => a.total_time - b.total_time);
 
-
             // Ordena os outros itens em ordem alfabética por competitor_name
             satItems.sort((a, b) => a.competitor_name.localeCompare(b.competitor_name));
             invalidItems.sort((a, b) => a.competitor_name.localeCompare(b.competitor_name));
@@ -67,7 +68,21 @@ export function orderResults(data) {
             // Combina todos os grupos na ordem desejada
             const finalSortedData = [...validItems, ...invalidItems, ...satItems, ...ncpItems];
 
-            categorie.competitors = finalSortedData;
+            const finalSortedDataWitchPoints = finalSortedData.map((competitor, index) => {
+                if(competitor.valid == true){
+                    return({
+                        ...competitor,
+                        points: calculatePoints(index)
+                    })
+                }
+
+                return({
+                    ...competitor,
+                    points: 0
+                })
+              });
+
+            categorie.competitors = finalSortedDataWitchPoints;
         });
     });
 }
@@ -138,5 +153,5 @@ export function orderByValidInvalidSatNcp(data) {
     // Combina todos os grupos na ordem desejada
     const finalSortedData = [...validItems, ...invalidItems, ...satItems, ...ncpItems];
 
-    return(finalSortedData);
+    return (finalSortedData);
 }

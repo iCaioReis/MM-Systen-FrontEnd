@@ -133,7 +133,7 @@ export function PrintWinners() {
                                                 categoriee.competitors
                                                     .map((row, index) => {
 
-                                                        if(index <= 2 && row.valid != false) {
+                                                        if(index <= 2 && row.valid == true) {
                                                             return (
                                                                 <tr key={index}>
                                                                     {Object.keys(header).map((field, subIndex) => {
